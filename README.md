@@ -4,6 +4,8 @@
 
 当前公开版本 **0.0.1**。这是首个公开仓库版本，功能基线来自内部 4.0 构建；版本号按公开仓库重新起算。
 
+安装包从 [Releases](https://github.com/Cleverrobot996/Tokeru/releases) 下载。0.0.1 未签名，Windows 可能提示「未知发布者」。
+
 ![首页](docs/screenshots/home.png)
 
 | 导入材料 | 考试工作台 |

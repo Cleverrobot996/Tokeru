@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 给 AI Agent 的说明
+    url: https://github.com/Cleverrobot996/Tokeru/blob/main/AGENTS.md
+    about: 提交代码或生成 PR 前，先读 AGENTS.md 和 README。
