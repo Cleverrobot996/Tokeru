@@ -48,6 +48,11 @@ fn count_sql(conn: &rusqlite::Connection, sql: &str) -> Result<i64, String> {
     conn.query_row(sql, [], |row| row.get(0)).map_err(|e| e.to_string())
 }
 
+/// 只读开关每次写操作都从设置表读取，避免已经建立的 MCP 连接继续持有启动时的旧值。
+fn readonly_mode(conn: &rusqlite::Connection) -> bool {
+    crate::db::get_setting(conn, "mcp_readonly").as_deref() != Some("0")
+}
+
 fn clean_tags(tags: &[String]) -> Vec<String> {
     let mut out: Vec<String> = Vec::new();
     for tag in tags {
@@ -100,6 +105,12 @@ impl McpManager {
         }
     }
 
+    fn set_readonly(&self, readonly: bool) {
+        if let Ok(mut state) = self.inner.lock() {
+            state.readonly = readonly;
+        }
+    }
+
     fn snapshot(&self) -> ManagerState {
         let state = self.inner.lock().unwrap();
         ManagerState {
@@ -132,7 +143,7 @@ impl McpManager {
         }
         let listener = listener.ok_or_else(|| format!("无法监听 127.0.0.1:{port}：{last_error}"))?;
         let previews: Arc<Mutex<HashMap<String, PreviewEntry>>> = Arc::new(Mutex::new(HashMap::new()));
-        let handler = TokeruMcp::new(app, readonly, previews);
+        let handler = TokeruMcp::new(app, previews);
         let service: TokeruService = StreamableHttpService::new(
             move || Ok(handler.clone()),
             Default::default(),
@@ -231,17 +242,17 @@ struct PreviewEntry {
 #[derive(Clone)]
 pub struct TokeruMcp {
     app: AppHandle,
-    readonly: bool,
     previews: Arc<Mutex<HashMap<String, PreviewEntry>>>,
 }
 
 impl TokeruMcp {
-    pub fn new(app: AppHandle, readonly: bool, previews: Arc<Mutex<HashMap<String, PreviewEntry>>>) -> Self {
-        Self { app, readonly, previews }
+    pub fn new(app: AppHandle, previews: Arc<Mutex<HashMap<String, PreviewEntry>>>) -> Self {
+        Self { app, previews }
     }
 
     fn write_guard(&self) -> Result<(), McpError> {
-        if self.readonly {
+        let readonly = self.with_conn(|conn| Ok(readonly_mode(conn)))?;
+        if readonly {
             Err(err("当前 MCP 连接是只读模式。请在 Tokeru「设置 → MCP 连接」里关闭只读后重试。"))
         } else {
             Ok(())
@@ -964,18 +975,18 @@ pub fn mcp_status(state: TauriState<'_, Db>, manager: TauriState<'_, McpManager>
     let conn = state.conn.lock().map_err(|_| "数据库锁不可用。".to_string())?;
     let enabled = crate::db::get_setting(&conn, "mcp_enabled").as_deref() == Some("1");
     let port = crate::db::get_setting(&conn, "mcp_port").and_then(|v| v.parse().ok()).unwrap_or(DEFAULT_PORT);
-    let readonly = crate::db::get_setting(&conn, "mcp_readonly").as_deref() != Some("0");
+    let readonly = readonly_mode(&conn);
     let token = crate::db::get_setting(&conn, "mcp_token").unwrap_or_default();
     drop(conn);
     let mut status = status_of(&manager);
     status.enabled = enabled;
+    status.readonly = readonly;
     /* 关闭时服务没启动，manager 里没有端口/Token；用设置里的值填回去，设置页才能复制完整配置。 */
     if status.token.trim().is_empty() {
         status.token = token;
     }
     if !status.running {
         status.port = port;
-        status.readonly = readonly;
         status.url = format!("http://127.0.0.1:{port}/mcp");
     }
     Ok(status)
@@ -991,11 +1002,15 @@ pub async fn mcp_configure(
     readonly: Option<bool>,
     regenerate: Option<bool>,
 ) -> Result<McpStatus, String> {
-    let (port, token, readonly) = {
+    let snap = manager.snapshot();
+    let (port, token, readonly, was_enabled, was_port, was_token) = {
         let conn = state.conn.lock().map_err(|_| "数据库锁不可用。".to_string())?;
         let port = port.unwrap_or_else(|| crate::db::get_setting(&conn, "mcp_port").and_then(|v| v.parse().ok()).unwrap_or(DEFAULT_PORT));
-        let readonly = readonly.unwrap_or_else(|| crate::db::get_setting(&conn, "mcp_readonly").as_deref() != Some("0"));
+        let readonly = readonly.unwrap_or_else(|| readonly_mode(&conn));
+        let was_enabled = crate::db::get_setting(&conn, "mcp_enabled").as_deref() == Some("1");
+        let was_port = crate::db::get_setting(&conn, "mcp_port").and_then(|v| v.parse().ok()).unwrap_or(DEFAULT_PORT);
         let mut token = crate::db::get_setting(&conn, "mcp_token").unwrap_or_default();
+        let was_token = token.clone();
         if regenerate.unwrap_or(false) || token.trim().is_empty() {
             token = new_token();
             crate::db::put_setting(&conn, "mcp_token", &token);
@@ -1003,21 +1018,27 @@ pub async fn mcp_configure(
         crate::db::put_setting(&conn, "mcp_enabled", if enabled { "1" } else { "0" });
         crate::db::put_setting(&conn, "mcp_port", &port.to_string());
         crate::db::put_setting(&conn, "mcp_readonly", if readonly { "1" } else { "0" });
-        (port, token, readonly)
+        (port, token, readonly, was_enabled, was_port, was_token)
     };
     if enabled {
-        if let Err(e) = manager.start(app.clone(), port, token.clone(), readonly).await {
-            manager.set_error(e.clone());
-            return Err(e);
+        // 只读开关由 write_guard 实时读取；只改它时保留现有监听与客户端会话。
+        let restart = regenerate.unwrap_or(false) || !snap.running || !was_enabled || was_port != port || was_token != token;
+        if restart {
+            if let Err(e) = manager.start(app.clone(), port, token.clone(), readonly).await {
+                manager.set_error(e.clone());
+                return Err(e);
+            }
+        } else {
+            manager.set_readonly(readonly);
         }
     } else {
         manager.stop();
     }
     let mut status = status_of(&manager);
     status.enabled = enabled;
+    status.readonly = readonly;
     if !enabled {
         status.port = port;
-        status.readonly = readonly;
         status.url = format!("http://127.0.0.1:{port}/mcp");
         status.token = token;
     }
@@ -1034,7 +1055,7 @@ pub async fn mcp_regenerate_token(
         let conn = state.conn.lock().map_err(|_| "数据库锁不可用。".to_string())?;
         let enabled = crate::db::get_setting(&conn, "mcp_enabled").as_deref() == Some("1");
         let port = crate::db::get_setting(&conn, "mcp_port").and_then(|v| v.parse().ok()).unwrap_or(DEFAULT_PORT);
-        let readonly = crate::db::get_setting(&conn, "mcp_readonly").as_deref() != Some("0");
+        let readonly = readonly_mode(&conn);
         let token = new_token();
         crate::db::put_setting(&conn, "mcp_token", &token);
         (enabled, port, readonly, token)
@@ -1063,7 +1084,7 @@ pub async fn boot(app: AppHandle) {
         };
         let enabled = crate::db::get_setting(&conn, "mcp_enabled").as_deref() == Some("1");
         let port = crate::db::get_setting(&conn, "mcp_port").and_then(|v| v.parse().ok()).unwrap_or(DEFAULT_PORT);
-        let readonly = crate::db::get_setting(&conn, "mcp_readonly").as_deref() != Some("0");
+        let readonly = readonly_mode(&conn);
         let mut token = crate::db::get_setting(&conn, "mcp_token").unwrap_or_default();
         if token.trim().is_empty() {
             token = new_token();
@@ -1081,4 +1102,32 @@ pub async fn boot(app: AppHandle) {
 
 fn new_token() -> String {
     format!("tk_{}", uuid::Uuid::new_v4().simple())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn conn() -> rusqlite::Connection {
+        let conn = rusqlite::Connection::open_in_memory().unwrap();
+        conn.execute_batch("CREATE TABLE settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);").unwrap();
+        conn
+    }
+
+    #[test]
+    fn readonly_defaults_to_true() {
+        let conn = conn();
+        assert!(readonly_mode(&conn));
+    }
+
+    #[test]
+    fn readonly_reads_current_setting() {
+        let conn = conn();
+        crate::db::put_setting(&conn, "mcp_readonly", "0");
+        assert!(!readonly_mode(&conn));
+        crate::db::put_setting(&conn, "mcp_readonly", "1");
+        assert!(readonly_mode(&conn));
+        crate::db::put_setting(&conn, "mcp_readonly", "0");
+        assert!(!readonly_mode(&conn));
+    }
 }

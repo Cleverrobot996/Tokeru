@@ -283,7 +283,7 @@ export default function SettingsPage() {
     }));
   }
 
-  async function applyMcp(enabled: boolean) {
+  async function applyMcp(enabled: boolean, readonly = mcpReadonly) {
     const port = Math.round(Number(mcpPort));
     if (!Number.isFinite(port) || port < 1024 || port > 65535) {
       toast.error("MCP 端口需要是 1024~65535 之间的整数。");
@@ -291,7 +291,7 @@ export default function SettingsPage() {
     }
     setMcpBusy(true);
     try {
-      const status = await api.mcpConfigure({ enabled, port, readonly: mcpReadonly });
+      const status = await api.mcpConfigure({ enabled, port, readonly });
       setMcp(status);
       setMcpPort(String(status.port));
       setMcpReadonly(status.readonly);
@@ -641,7 +641,14 @@ export default function SettingsPage() {
           </Field>
           <Field label="只读模式" hint="开启后拒绝导入、改题、改名等写操作。">
             <div className="settings-switch-row">
-              <Switch on={mcpReadonly} onChange={setMcpReadonly} label="只读模式" />
+              <Switch
+                on={mcpReadonly}
+                onChange={(v) => {
+                  setMcpReadonly(v);
+                  if (mcp?.enabled) void applyMcp(true, v);
+                }}
+                label="只读模式"
+              />
             </div>
           </Field>
           <div className="field">

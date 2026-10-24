@@ -1,7 +1,7 @@
 {
   "name": "tokeru",
   "private": true,
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "本地优先的试卷练习桌面应用：导入任意材料，按原卷排版练习，记录作答与错题。",
   "license": "AGPL-3.0-only",
   "author": "Cleverrobot996",

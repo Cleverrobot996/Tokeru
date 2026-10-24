@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-10-24
+
+### Fixed
+
+- MCP 关闭只读后仍然拒绝写入：写操作每次都从设置读取只读开关，已经建立的 MCP 连接也会立即生效；只读开关切换后直接应用，不再需要再点一次保存。
+- MCP 设置页运行中始终显示设置表里的只读状态，不再被启动时的旧快照覆盖。
+
 ### Changed
 
 - 主分支许可证从 Apache-2.0 切换到 AGPL-3.0-only；已发布的 v0.0.1 保持发布时的许可证。
@@ -68,7 +75,9 @@
 - 内置 MCP Server（默认只读、仅监听 127.0.0.1）。
 - NSIS 安装包与 GitHub Actions 发布流程。
 
-[Unreleased]: https://github.com/Cleverrobot996/Tokeru/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/Cleverrobot996/Tokeru/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/Cleverrobot996/Tokeru/releases/tag/v0.1.3
+[0.1.2]: https://github.com/Cleverrobot996/Tokeru/releases/tag/v0.1.2
 [0.1.1]: https://github.com/Cleverrobot996/Tokeru/releases/tag/v0.1.1
 [0.1.0]: https://github.com/Cleverrobot996/Tokeru/releases/tag/v0.1.0
 [0.0.1]: https://github.com/Cleverrobot996/Tokeru/releases/tag/v0.0.1

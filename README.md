@@ -21,7 +21,7 @@
 
 从 [Releases](https://github.com/Cleverrobot996/Tokeru/releases) 下载：
 
-`Tokeru_0.1.2_x64-setup.exe`
+`Tokeru_0.1.3_x64-setup.exe`
 
 ## 功能
 
@@ -68,8 +68,7 @@ pnpm tauri build --bundles nsis     # NSIS 安装包
 产物：
 
 - `src-tauri/target/release/tokeru.exe`
-- `src-tauri/target/release/bundle/nsis/Tokeru_0.1.2_x64-setup.exe`
-
+- `src-tauri/target/release/bundle/nsis/Tokeru_0.1.3_x64-setup.exe`
 
 ### 导入第一份材料
 
