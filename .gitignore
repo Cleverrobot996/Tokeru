@@ -26,6 +26,9 @@ custom-exam*
 org-tag-added
 *.log
 
+# Local tooling (portable CLI downloads, login logs)
+.tools/
+
 # Generated screenshots and temporary test artifacts
 tools/shots/
 tools/.shot-profile/
