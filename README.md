@@ -21,10 +21,6 @@
 
 从 [Releases](https://github.com/Cleverrobot996/Tokeru/releases) 下载：
 
-- `Tokeru_0.1.0_x64-setup.exe`
-- 安装到 `%LOCALAPPDATA%\Tokeru\app-版本号`，不需要管理员权限，不会覆盖已有题库。
-- 安装包未签名；SmartScreen 提示时点「更多信息 → 仍要运行」。
-
 ## 功能
 
 - **导入任意材料**：拖入 PDF、Markdown、TXT、JSON 提取文字，或直接粘贴按导入规范写的文字；复制提示词交给任意 AI 或 MCP Agent 清洗。
