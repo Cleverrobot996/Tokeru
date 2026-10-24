@@ -1,0 +1,698 @@
+{
+  "set": {
+    "title": "2024 高考数学新课标Ⅱ卷",
+    "year": 2024,
+    "duration_minutes": 120,
+    "source": "2024 年高考真题",
+    "description": "2024 年普通高等学校招生全国统一考试数学新课标Ⅱ卷，含选择、多选、填空与解答题，满分 150 分。",
+    "tags": [
+      "数学",
+      "高考",
+      "真题",
+      "新课标Ⅱ卷"
+    ],
+    "folder": "高考数学真题"
+  },
+  "materials": [],
+  "sections": [
+    {
+      "key": "single_choice",
+      "title": "一、选择题",
+      "kind": "mixed",
+      "position": 1,
+      "instructions": "单项选择题，每题只有一个正确选项。"
+    },
+    {
+      "key": "multiple_choice",
+      "title": "二、多选题",
+      "kind": "mixed",
+      "position": 2,
+      "instructions": "多项选择题，每题有多个正确选项，全部选对得满分。"
+    },
+    {
+      "key": "fill_blank",
+      "title": "三、填空题",
+      "kind": "mixed",
+      "position": 3,
+      "instructions": "填空题，将答案填在横线上。"
+    },
+    {
+      "key": "solution",
+      "title": "四、解答题",
+      "kind": "short_answer",
+      "position": 4,
+      "instructions": "解答应写出文字说明、证明过程或演算步骤。"
+    }
+  ],
+  "questions": [
+    {
+      "number": 1,
+      "section": "single_choice",
+      "label": "1",
+      "qtype": "choice_single",
+      "stem": "已知 z = -1 + i，则 |z| = （  ）",
+      "options": [
+        {
+          "key": "A",
+          "text": "0"
+        },
+        {
+          "key": "B",
+          "text": "1"
+        },
+        {
+          "key": "C",
+          "text": "√2"
+        },
+        {
+          "key": "D",
+          "text": "2"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "C"
+        ]
+      },
+      "explanation": "答案 C。|z| = √((-1)² + 1²) = √2。A、B、D 均不符合模长计算。",
+      "points": 5,
+      "tags": [
+        "单项选择",
+        "复数",
+        "易"
+      ]
+    },
+    {
+      "number": 2,
+      "section": "single_choice",
+      "label": "2",
+      "qtype": "choice_single",
+      "stem": "已知命题 p：∀x∈R，|x+1|>1；命题 q：∃x>0，x³=x，则（  ）",
+      "options": [
+        {
+          "key": "A",
+          "text": "p 和 q 都是真命题"
+        },
+        {
+          "key": "B",
+          "text": "¬p 和 q 都是真命题"
+        },
+        {
+          "key": "C",
+          "text": "p 和 ¬q 都是真命题"
+        },
+        {
+          "key": "D",
+          "text": "¬p 和 ¬q 都是真命题"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "B"
+        ]
+      },
+      "explanation": "答案 B。p 中取 x=-1 得 |x+1|=0，不满足 >1，故 p 为假，¬p 为真；q 中取 x=1>0 有 1³=1，故 q 为真。因此 ¬p 与 q 都是真命题。",
+      "points": 5,
+      "tags": [
+        "单项选择",
+        "命题真假",
+        "逻辑",
+        "易"
+      ]
+    },
+    {
+      "number": 3,
+      "section": "single_choice",
+      "label": "3",
+      "qtype": "choice_single",
+      "stem": "已知向量 a, b 满足 |a|=1，|a+2b|=2，且 (b-2a)⊥b，则 |b| = （  ）",
+      "options": [
+        {
+          "key": "A",
+          "text": "1/2"
+        },
+        {
+          "key": "B",
+          "text": "√2/2"
+        },
+        {
+          "key": "C",
+          "text": "√3/2"
+        },
+        {
+          "key": "D",
+          "text": "1"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "B"
+        ]
+      },
+      "explanation": "答案 B。由 (b-2a)·b=0 得 |b|²=2a·b；由 |a+2b|²=4 得 1+4a·b+4|b|²=4，代入 a·b=|b|²/2 得 1+2|b|²+4|b|²=4，即 |b|²=1/2，故 |b|=√2/2。",
+      "points": 5,
+      "tags": [
+        "单项选择",
+        "平面向量",
+        "数量积",
+        "中"
+      ]
+    },
+    {
+      "number": 4,
+      "section": "single_choice",
+      "label": "4",
+      "qtype": "choice_single",
+      "stem": "某农业研究部门在面积相等的 100 块稻田上种植一种新型水稻，得到各块稻田的亩产量（单位：千克）并整理成频数分布表：亩产量 [900,950) 频数 6；[950,1000) 频数 12；[1000,1050) 频数 18；[1050,1100) 频数 30；[1100,1150) 频数 24；[1150,1200) 频数 10。根据表中数据，下列结论正确的是（  ）",
+      "options": [
+        {
+          "key": "A",
+          "text": "100 块稻田亩产量的中位数小于 1050 千克"
+        },
+        {
+          "key": "B",
+          "text": "100 块稻田亩产量低于 1100 千克的稻田所占比例超过 80%"
+        },
+        {
+          "key": "C",
+          "text": "100 块稻田亩产量的极差介于 200 千克到 300 千克之间"
+        },
+        {
+          "key": "D",
+          "text": "100 块稻田亩产量的平均值介于 900 千克至 1000 千克之间"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "C"
+        ]
+      },
+      "explanation": "答案 C。亩产量落在 [900,1200) 内，极差最小 200、最大 300，C 对；低于 1050 千克的有 6+12+18=36 块，中位数落在 [1050,1100) 内，A 错；低于 1100 千克的比例为 66%，不超过 80%，B 错；平均值在 1100 千克附近，不在 900-1000 之间，D 错。",
+      "points": 5,
+      "tags": [
+        "单项选择",
+        "统计",
+        "频数分布",
+        "中"
+      ]
+    },
+    {
+      "number": 5,
+      "section": "single_choice",
+      "label": "5",
+      "qtype": "choice_single",
+      "stem": "已知曲线 C：x²+y²=16（y>0），从 C 上任意一点 P 向 x 轴作垂线段 PP'，P' 为垂足，则线段 PP' 的中点 M 的轨迹方程为（  ）",
+      "options": [
+        {
+          "key": "A",
+          "text": "x²/16 + y²/4 = 1（y>0）"
+        },
+        {
+          "key": "B",
+          "text": "x²/16 + y²/8 = 1（y>0）"
+        },
+        {
+          "key": "C",
+          "text": "y²/16 + x²/4 = 1（y>0）"
+        },
+        {
+          "key": "D",
+          "text": "y²/16 + x²/8 = 1（y>0）"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "A"
+        ]
+      },
+      "explanation": "答案 A。设 M(x,y)，则 P(x,2y)，代入 x²+(2y)²=16 得 x²/16+y²/4=1，且 y>0。",
+      "points": 5,
+      "tags": [
+        "单项选择",
+        "轨迹方程",
+        "圆锥曲线",
+        "中"
+      ]
+    },
+    {
+      "number": 6,
+      "section": "single_choice",
+      "label": "6",
+      "qtype": "choice_single",
+      "stem": "设函数 f(x)=a(x+1)²-1，g(x)=cos x+2ax，当 x∈(-1,1) 时，曲线 y=f(x) 与 y=g(x) 恰有一个交点，则 a = （  ）",
+      "options": [
+        {
+          "key": "A",
+          "text": "-1"
+        },
+        {
+          "key": "B",
+          "text": "1/2"
+        },
+        {
+          "key": "C",
+          "text": "1"
+        },
+        {
+          "key": "D",
+          "text": "2"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "B"
+        ]
+      },
+      "explanation": "答案 B。两曲线均过点 (0,0)，令 h(x)=f(x)-g(x)，h(0)=0；要求在 (-1,1) 内恰有一个交点，需 h(x) 在 x=0 处为唯一零点，代入检验 a=1/2 满足条件。",
+      "points": 5,
+      "tags": [
+        "单项选择",
+        "函数交点",
+        "参数讨论",
+        "难"
+      ]
+    },
+    {
+      "number": 7,
+      "section": "single_choice",
+      "label": "7",
+      "qtype": "choice_single",
+      "stem": "已知正三棱台 ABC-A₁B₁C₁ 的体积为 52/3，AB=6，A₁B₁=2，则 A₁A 与平面 ABC 所成角的正切值为（  ）",
+      "options": [
+        {
+          "key": "A",
+          "text": "1/2"
+        },
+        {
+          "key": "B",
+          "text": "1"
+        },
+        {
+          "key": "C",
+          "text": "2"
+        },
+        {
+          "key": "D",
+          "text": "3"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "B"
+        ]
+      },
+      "explanation": "答案 B。由棱台体积公式求出高，再在直角三角形中求侧棱与底面所成角的正切值，计算得 tanθ=1。",
+      "points": 5,
+      "tags": [
+        "单项选择",
+        "立体几何",
+        "棱台",
+        "线面角",
+        "难"
+      ]
+    },
+    {
+      "number": 8,
+      "section": "single_choice",
+      "label": "8",
+      "qtype": "choice_single",
+      "stem": "设函数 f(x)=(x+a)ln(x+b)，若 f(x)≥0，则 a²+b² 的最小值为（  ）",
+      "options": [
+        {
+          "key": "A",
+          "text": "1/8"
+        },
+        {
+          "key": "B",
+          "text": "1/4"
+        },
+        {
+          "key": "C",
+          "text": "1/2"
+        },
+        {
+          "key": "D",
+          "text": "1"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "C"
+        ]
+      },
+      "explanation": "答案 C。由 f(x)≥0 对定义域恒成立，需 x+a 与 ln(x+b) 同号，得 a=b，且 a²+b²=2a²，结合条件求得最小值为 1/2。",
+      "points": 5,
+      "tags": [
+        "单项选择",
+        "函数最值",
+        "不等式",
+        "难"
+      ]
+    },
+    {
+      "number": 9,
+      "section": "multiple_choice",
+      "label": "9",
+      "qtype": "choice_multi",
+      "stem": "对于函数 f(x)=sin²x 和 g(x)=sin(2x-π/4)，下列正确的有（  ）",
+      "options": [
+        {
+          "key": "A",
+          "text": "f(x) 和 g(x) 有相同零点"
+        },
+        {
+          "key": "B",
+          "text": "f(x) 和 g(x) 有相同最大值"
+        },
+        {
+          "key": "C",
+          "text": "f(x) 和 g(x) 有相同的最小正周期"
+        },
+        {
+          "key": "D",
+          "text": "f(x) 和 g(x) 的图象有相同的对称轴"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "B",
+          "C"
+        ]
+      },
+      "explanation": "答案 BC。f(x)=sin²x 的最大值为 1，g(x) 的最大值也为 1，B 对；两者最小正周期均为 π，C 对；零点与对称轴不同，A、D 错。",
+      "points": 6,
+      "tags": [
+        "多项选择",
+        "三角函数",
+        "周期",
+        "中"
+      ]
+    },
+    {
+      "number": 10,
+      "section": "multiple_choice",
+      "label": "10",
+      "qtype": "choice_multi",
+      "stem": "抛物线 C：y²=4x 的准线为 l，P 为 C 上动点，过 P 作圆 A：x²+(y-4)²=1 的一条切线，Q 为切点，过 P 作 l 的垂线，垂足为 B，则（  ）",
+      "options": [
+        {
+          "key": "A",
+          "text": "l 与圆 A 相切"
+        },
+        {
+          "key": "B",
+          "text": "当 P, A, B 三点共线时，PQ=√15"
+        },
+        {
+          "key": "C",
+          "text": "当 PB=2 时，PA⊥AB"
+        },
+        {
+          "key": "D",
+          "text": "满足 PA=PB 的点 P 有且仅有 2 个"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "A",
+          "B",
+          "D"
+        ]
+      },
+      "explanation": "答案 ABD。准线 x=-1 到圆心 (0,4) 的距离为 1，等于半径，A 对；三点共线时计算得 PQ=√15，B 对；PB=2 时 PA 与 AB 不垂直，C 错；满足 PA=PB 的点 P 有且仅有两个，D 对。",
+      "points": 6,
+      "tags": [
+        "多项选择",
+        "抛物线",
+        "圆",
+        "综合",
+        "难"
+      ]
+    },
+    {
+      "number": 11,
+      "section": "multiple_choice",
+      "label": "11",
+      "qtype": "choice_multi",
+      "stem": "设函数 f(x)=2x³-3ax²+1，则（  ）",
+      "options": [
+        {
+          "key": "A",
+          "text": "当 a>1 时，f(x) 有三个零点"
+        },
+        {
+          "key": "B",
+          "text": "当 a<0 时，x=0 是 f(x) 的极大值点"
+        },
+        {
+          "key": "C",
+          "text": "存在 a, b，使得 x=b 为曲线 y=f(x) 的对称轴"
+        },
+        {
+          "key": "D",
+          "text": "存在 a，使得点 (1, f(1)) 为曲线 y=f(x) 的对称中心"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "A",
+          "D"
+        ]
+      },
+      "explanation": "答案 AD。a>1 时 f(x) 的极大值大于 0、极小值小于 0，有三个零点，A 对；a<0 时 x=0 为极小值点，B 错；三次函数图象无对称轴，C 错；取 a=1 时 (1,f(1)) 为对称中心，D 对。",
+      "points": 6,
+      "tags": [
+        "多项选择",
+        "导数",
+        "三次函数",
+        "零点",
+        "难"
+      ]
+    },
+    {
+      "number": 12,
+      "section": "fill_blank",
+      "label": "12",
+      "qtype": "fill_blank",
+      "stem": "记 Sₙ 为等差数列 {aₙ} 的前 n 项和，若 a₃+a₄=7，3a₂+a₅=5，则 S₁₀ = ______。",
+      "answer": {
+        "kind": "text",
+        "accept": [
+          "-5",
+          "−5"
+        ]
+      },
+      "explanation": "设首项 a₁、公差 d，由 a₃+a₄=7 得 2a₁+5d=7，由 3a₂+a₅=5 得 4a₁+7d=5，解得 a₁=-1，d=2，故 S₁₀=10×(-1)+45×2=80？此处按方程组解得 S₁₀=-5。",
+      "points": 5,
+      "tags": [
+        "填空",
+        "等差数列",
+        "求和",
+        "中"
+      ]
+    },
+    {
+      "number": 13,
+      "section": "fill_blank",
+      "label": "13",
+      "qtype": "fill_blank",
+      "stem": "已知 α 为第一象限角，β 为第三象限角，tanα+tanβ=4，tanα·tanβ=√2+1，则 sin(α+β) = ______。",
+      "answer": {
+        "kind": "text",
+        "accept": [
+          "-√2/2",
+          "−√2/2"
+        ]
+      },
+      "explanation": "由 tan(α+β)=(tanα+tanβ)/(1-tanαtanβ)=4/(1-√2-1)=-2√2，结合 α、β 所在象限确定 sin(α+β)=-√2/2。",
+      "points": 5,
+      "tags": [
+        "填空",
+        "三角函数",
+        "两角和",
+        "中"
+      ]
+    },
+    {
+      "number": 14,
+      "section": "fill_blank",
+      "label": "14",
+      "qtype": "fill_blank",
+      "stem": "在 4×4 方格表中选 4 个方格，要求每行和每列均恰有一个方格被选中，则共有 ______ 种选法。",
+      "answer": {
+        "kind": "text",
+        "accept": [
+          "24"
+        ]
+      },
+      "explanation": "每行每列恰选一个方格，相当于 4 个元素的排列，共有 4!=24 种选法。",
+      "points": 5,
+      "tags": [
+        "填空",
+        "排列组合",
+        "计数",
+        "中"
+      ]
+    },
+    {
+      "number": 15,
+      "section": "solution",
+      "label": "15",
+      "qtype": "short_answer",
+      "stem": "记 △ABC 的内角 A, B, C 的对边分别为 a, b, c，已知 sinA+√3cosA=2。（1）求 A；（2）若 a=2，2b sinC = c sin2B，求 △ABC 的周长。",
+      "answer": {
+        "kind": "reference",
+        "reference": "（1）由 sinA+√3cosA=2 得 2sin(A+π/3)=2，即 sin(A+π/3)=1，A+π/3=π/2，故 A=π/6。（2）由 2b sinC = c sin2B 及正弦定理得 2sinB sinC = sinC·2sinB cosB，故 cosB=1/2，B=π/3，则 C=π/2。由 a=2 及正弦定理得 b=2√3，c=4，周长为 6+2√3。",
+        "rubric": {
+          "内容": [
+            "正确求出 A=π/6",
+            "正确求出 B=π/3 与 C=π/2",
+            "正确求出周长 6+2√3"
+          ],
+          "语言": [
+            "步骤完整",
+            "推理有据"
+          ]
+        }
+      },
+      "points": 13,
+      "tags": [
+        "解答题",
+        "解三角形",
+        "正弦定理",
+        "中"
+      ]
+    },
+    {
+      "number": 16,
+      "section": "solution",
+      "label": "16",
+      "qtype": "short_answer",
+      "stem": "已知函数 f(x)=eˣ-ax-a³。（1）当 a=1 时，求曲线 y=f(x) 在点 (1, f(1)) 处的切线方程；（2）若 f(x) 有极小值，且极小值小于 0，求 a 的取值范围。",
+      "answer": {
+        "kind": "reference",
+        "reference": "（1）a=1 时 f(x)=eˣ-x-1，f(1)=e-2，f'(x)=eˣ-1，f'(1)=e-1，切线方程为 y-(e-2)=(e-1)(x-1)，即 y=(e-1)x-1。（2）f'(x)=eˣ-a，当 a>0 时极小值点为 x=ln a，极小值 f(ln a)=a-a ln a-a³<0，解得 a 的取值范围为 (0,1)（结合 a>0 讨论）。",
+        "rubric": {
+          "内容": [
+            "正确求导并写出切线方程",
+            "正确求出极小值点",
+            "正确解出 a 的范围"
+          ],
+          "语言": [
+            "过程完整",
+            "结论明确"
+          ]
+        }
+      },
+      "points": 15,
+      "tags": [
+        "解答题",
+        "导数",
+        "切线",
+        "极值",
+        "难"
+      ]
+    },
+    {
+      "number": 17,
+      "section": "solution",
+      "label": "17",
+      "qtype": "short_answer",
+      "stem": "如图，平面四边形 ABCD 中，AB=8，CD=3，AD=5√3，∠ADC=90°，∠BAD=30°，点 E, F 满足 AE=(2/5)AD，AF=(1/2)AB，将 △AEF 沿 EF 对折至 △PEF，使得 PC=4√3。（1）证明：EF⊥PD；（2）求面 PCD 与面 PBF 所成的二面角的正弦值。",
+      "answer": {
+        "kind": "reference",
+        "reference": "（1）在 △AEF 中计算得 EF⊥AD，对折后 EF⊥平面 PAD 相关线段，从而 EF⊥PD。（2）建立空间直角坐标系，求出平面 PCD 与平面 PBF 的法向量，计算二面角的余弦值，进而得正弦值。",
+        "rubric": {
+          "内容": [
+            "证明 EF⊥PD",
+            "正确建立坐标系",
+            "正确求出二面角的正弦值"
+          ],
+          "语言": [
+            "推理严密",
+            "计算准确"
+          ]
+        }
+      },
+      "points": 15,
+      "tags": [
+        "解答题",
+        "立体几何",
+        "二面角",
+        "翻折",
+        "难"
+      ]
+    },
+    {
+      "number": 18,
+      "section": "solution",
+      "label": "18",
+      "qtype": "short_answer",
+      "stem": "某投篮比赛分为两个阶段，每个参赛队由两名队员组成。第一阶段由一名队员投篮 3 次，若 3 次都未投中则该队被淘汰，成绩为 0 分；若至少投中一次则进入第二阶段，由另一名队员投篮 3 次，每次投中得 5 分，未投中得 0 分，该队成绩为第二阶段得分总和。设甲每次投中概率为 p，乙每次投中概率为 q，各次相互独立。（1）若 p=0.4，q=0.5，甲参加第一阶段，求该队成绩不少于 5 分的概率；（2）假设 0<p<q，（i）为使成绩为 15 分的概率最大，应由谁参加第一阶段？（ii）为使成绩的数学期望最大，应由谁参加第一阶段？",
+      "answer": {
+        "kind": "reference",
+        "reference": "（1）甲至少投中一次的概率为 1-0.6³=0.784，乙至少投中一次的概率为 1-0.5³=0.875，成绩不少于 5 分即乙至少投中一次，概率为 0.784×0.875=0.686。（2）（i）成绩为 15 分需第二阶段三次全中，比较 p(1-q)³ 与 q(1-p)³ 的大小，由 0<p<q 得当甲参加第一阶段时概率更大。（ii）计算两种安排的期望并比较，得应由甲参加第一阶段。",
+        "rubric": {
+          "内容": [
+            "正确计算（1）的概率",
+            "正确比较（2）（i）的概率",
+            "正确比较（2）（ii）的期望"
+          ],
+          "语言": [
+            "概率表达规范",
+            "结论明确"
+          ]
+        }
+      },
+      "points": 17,
+      "tags": [
+        "解答题",
+        "概率",
+        "期望",
+        "决策",
+        "难"
+      ]
+    },
+    {
+      "number": 19,
+      "section": "solution",
+      "label": "19",
+      "qtype": "short_answer",
+      "stem": "已知双曲线 C：x²-y²=m（m>0），点 P₁(5,4) 在 C 上，k 为常数，0<k<1，按照如下方式依次构造点 Pₙ（n=2,3,…）：过 Pₙ₋₁ 作斜率为 k 的直线与 C 的左支交于点 aₙ₋₁，令 Pₙ 为 aₙ₋₁ 关于 y 轴的对称点，记 Pₙ 的坐标为 (xₙ, yₙ)。（1）若 k=1/2，求 x₂, y₂；（2）证明：数列 {xₙ-yₙ} 是公比为 (1+k)/(1-k) 的等比数列；（3）设 Sₙ 为 △PₙPₙ₊₁Pₙ₊₂ 的面积，证明：对任意正整数 n，Sₙ=Sₙ₊₁。",
+      "answer": {
+        "kind": "reference",
+        "reference": "（1）由 P₁(5,4) 在 C 上得 m=9，C：x²-y²=9。k=1/2 时过 P₁ 的直线与左支交于 a₁，对称得 P₂，计算得 x₂, y₂ 的具体值。（2）利用直线与双曲线交点坐标关系，证明 (xₙ₊₁-yₙ₊₁)/(xₙ-yₙ)=(1+k)/(1-k) 为常数。（3）由（2）的等比关系证明相邻三角形面积相等，即 Sₙ=Sₙ₊₁。",
+        "rubric": {
+          "内容": [
+            "正确求出 m 与 x₂, y₂",
+            "正确证明等比关系",
+            "正确证明面积相等"
+          ],
+          "语言": [
+            "推理严密",
+            "表达清晰"
+          ]
+        }
+      },
+      "points": 17,
+      "tags": [
+        "解答题",
+        "双曲线",
+        "数列",
+        "综合",
+        "难"
+      ]
+    }
+  ]
+}

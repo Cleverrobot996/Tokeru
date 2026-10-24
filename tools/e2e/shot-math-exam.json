@@ -1,0 +1,130 @@
+[shot] 连接已运行的桌面窗口：127.0.0.1:9333
+[shot] tauri 模式沿用窗口实际尺寸（要固定视口请显式传 --w/--h）
+[shot] Git Bash 改写了路由参数（#C:/Users/19646/.dsh/profiles/desktop/node_modules/@dsh-ops/bash-win32-x64/sets/3/exam），已还原为 /sets/3/exam；更稳的写法：--route "#/..." 或 MSYS_NO_PATHCONV=1
+[shot] 切换路由 #/sets/3/exam
+[shot] 截图 -> tools/shots/e2e-desk-math-exam.png（1283x780，164 KB，113ms）
+{
+  "ok": true,
+  "url": "http://tauri.localhost/#/sets/3/exam",
+  "title": "Tokeru",
+  "text": "首页\n题库\n练习记录\n错题本\n导入\n设置\n考试工作台\n2024 高考数学新课标Ⅱ卷\n整卷\n已答 0/19\n满分 147\n不限时\n交卷\n答题进度\n已答 0 / 19 · 标记 0\n一、选择题\n0/8\n1\n2\n3\n4\n5\n6\n7\n8\n二、多选题\n0/3\n9\n10\n11\n三、填空题\n0/3\n12\n13\n14\n四、解答题\n0/5\n15\n16\n17\n18\n19\n未答\n已答\n标记\n整卷练习\n2024 高考数学新课标Ⅱ卷\n19 题\n满分 147\n建议 120 分钟\n一、选择题\n8 题 · 40 分\n1\n5 分\n已知 z = -1 + i，则 |z| = （ ）\nA\n0\nB\n1\nC\n√2\nD\n2\n2\n5 分\n已知命题 p：∀x∈R，|x+1|>1；命题 q：∃x>0，x³=x，则（ ）\nA\np 和 q 都是真命题\nB\n¬p 和 q 都是真命题\nC\np 和 ¬q 都是真命题\nD\n¬p 和 ¬q 都是真命题\n3\n5 分\n已知向量 a, b 满足 |a|=1，|a+2b|=2，且 (b-2a)⊥b，则 |b| = （ ）\nA\n1/2\nB\n√2/2\nC\n√3/2\nD\n1\n4\n5 分\n某农业研究部门在面积相等的 100 块稻田上种植一种新型水稻，得到各块稻田的亩产量（单位：千克）并整理成频数分布表：亩产量 [900,950) 频数 6；[950,1000) 频数 12；[1000,1050) 频数 18；[1100,1150) 频数 24；[1150,1200) 频数 10。根据表中数据，下列结论正确的是（ ）\nA\n100 块稻田亩产量的中位数小于 1050 千克\nB\n100 块稻田亩产量低于 1100 千克的稻田所占比例超过 80%\nC\n100 块稻田亩产量的极差介于 200 千克到 300 千克之间\nD\n100 块稻田亩产量的平均值介于 900 千克至 1000 千克之间\n5\n5 分\n已知曲线 C：x²+y²=16（y>0），从 C 上任意一点 P 向 x 轴作垂线段 PP'，P' 为垂足，则线段 PP' 的中点 M 的轨迹方程为（ ）\nA\nx²/16 + y²/4 = 1（y>0）\nB\nx²/16 + y²/8 = 1（y>0）\nC\ny²/16 + x²/4 = 1（y>0）\nD\ny²/16 + x²/8 = 1（y>0）\n6\n5 分\n设函数 f(x)=a(x+1)²-1，g(x)=cos x+2ax，当 x∈(-1,1) 时，曲线 y=f(x) 与 y=g(x) 恰有一个交点，则 a = （ ）\nA\n-1\nB\n1/2\nC\n1\nD\n2\n7\n5 分\n已知正三棱台 ABC-A₁B₁C₁ 的体积为 52/3，AB=6，A₁B₁=2，则 A₁A 与平面 ABC 所成角的正切值为（ ）\nA\n1/2\nB\n1\nC\n2\nD\n3\n8\n5 分\n设函数 f(x)=(x+a)ln(x+b)，若 f(x)≥0，则 a²+b² 的最小值为（ ）\nA\n1/8\nB\n1/4\nC\n1/2\nD\n1\n二、多选题\n3 题 · 15 分\n9\n5 分\n对于函数 f(x)=sin²x 和 g(x)=sin(2x-π/4)，下列正确的有（ ）\nA\nf(x) 和 g(x) 有相同零点\nB\nf(x) 和 g(x) 有相同最大值\nC\nf(x) 和 g(x) 有相同的最小正周期\nD\nf(x) 和 g(x) 的图象有相同的对称轴\n10\n5 分\n抛物线 C：y²=4x 的准线为 l，P 为 C 上动点，过 P 作圆 A：x²+(y-4)²=1 的一条切线，Q 为切点，过 P 作 l 的垂线，垂足为 B，则（ ）\nA\nl 与圆 A 相切\nB\n当 P, A, B 三点共线时，PQ=√15\nC\n当 PB=2 时，PA⊥AB\nD\n满足 PA=PB 的点 P 有且仅有 2 个\n11\n5 分\n设函数 f(x)=2x³-3ax²+1，则（ ）\nA\n当 a>1 时，f(x) 有三个零点\nB\n当 a<0 时，x=0 是 f(x) 的极大值点\nC\n存在 a, b，使得 x=b 为曲线 y=f(x) 的对称轴\nD\n存在 a，使得点 (1, f(1)) 为曲线 y=f(x) 的对称中心\n三、填空题\n3 题 · 15 分\n12\n5 分\n记 Sₙ 为等差数列 {aₙ} 的前 n 项和，若 a₃+a₄=7，3a₂+a₅=5，则 S₁₀ = 。\n13\n5 分\n已知 α 为第一象限角，β 为第三象限角，tanα+tanβ=4，tanα·tanβ=√2+1，则 sin(α+β) = 。\n14\n5 分\n在 4×4 方格表中选 4 个方格，要求每行和每列均恰有一个方格被选中，则共有  种选法。\n四、解答题\n5 题 · 77 分\n15\n13 分\n记 △ABC 的内角 A, B, C 的对边分别为 a, b, c，已知 sinA+√3cosA=2。（1）求 A；（2）若 a=2，2b sinC = c sin2B，求 △ABC 的周长。\n16\n15 分\n已知函数 f(x)=eˣ-ax-a³。（1）当 a=1 时，求曲线 y=f(x) 在点 (1, f(1)) 处的切线方程；（2）若 f(x) 有极小值，且极小值小于 0，求 a 的取值范围。\n17\n15 分\n如图，平面四边形 ABCD 中，AB=8，CD=3，AD=5√3，∠ADC=90°，∠BAD=30°，点 E, F 满足 AE=(2/5)AD，AF=(1/2)AB，将 △AEF 沿 EF 对折至 △PEF，使得 PC=4√3。（1）证明：EF⊥PD；（2）求面 PCD 与面 PBF 所成的二面角的正弦值。\n18\n17 分\n某投篮比赛分为两个阶段，每个参赛队由两名队员组成。第一阶段由一名队员投篮 3 次，若 3 次都未投中则该队被淘汰，成绩为 0 分；若至少投中一次则进入第二阶段，由另一名队员投篮 3 次，每次投中得 5 分，未投中得 0 分，该队成绩为第二阶段得分总和。设甲每次投中概率为 p，乙每次投中概率为 q，各次相互独立。（1）若 p=0.4，q=0.5，甲参加第一阶段，求该队成绩不少于 5 分的概率；（2）假设 0<p<q，（i）为使成绩为 15 分的概率最大，应由谁参加第一阶段？（ii）为使成绩的数学期望最大，应由谁参加第一阶段？\n19\n17 分\n已知双曲线 C：x²-y²=m（m>0），点 P₁(5,4) 在 C 上，k 为常数，0<k<1，按照如下方式依次构造点 Pₙ（n=2,3,…）：过 Pₙ₋₁ 作斜率为 k 的直线与 C 的左支交于点 aₙ₋₁，令 Pₙ 为 aₙ₋₁ 关于 y 轴的对称点，记 Pₙ 的坐标为 (xₙ, yₙ)。（1）若 k=1/2，求 x₂, y₂；（2）证明：数列 {xₙ-yₙ} 是公比为 (1+k)/(1-k) 的等比数列；（3）设 Sₙ 为 △PₙPₙ₊₁Pₙ₊₂ 的面积，证明：对任意正整数 n，Sₙ=Sₙ₊₁。\n答题卡\n已答 0 / 19 · 标记 0\n自动保存\n一、选择题\n0/8\n1\nA\nB\nC\nD\n2\nA\nB\nC\nD\n3\nA\nB\nC\nD\n4\nA\nB\nC\nD\n5\nA\nB\nC\nD\n6\nA\nB\nC\nD\n7\nA\nB\nC\nD\n8\nA\nB\nC\nD\n二、多选题\n0/3\n9\nA\nB\nC\nD\n10\nA\nB\nC\nD\n11\nA\nB\nC\nD\n三、填空题\n0/3\n12\n13\n14\n四、解答题\n0/5\n15\n16\n17\n18\n19",
+  "textLength": 3049,
+  "textTruncated": false,
+  "theme": "light",
+  "accent": "violet",
+  "target": "tauri",
+  "viewport": {
+    "w": 1283,
+    "h": 780,
+    "dpr": 1.5
+  },
+  "consoleErrors": [],
+  "warnings": [],
+  "failedRequests": [],
+  "evals": [],
+  "shots": [
+    {
+      "path": "C:\\Users\\19646\\Desktop\\学习与效率工具\\折腾\\dsh_zone_common\\Tokeru\\tools\\shots\\e2e-desk-math-exam.png",
+      "rel": "tools/shots/e2e-desk-math-exam.png",
+      "width": 1283,
+      "height": 780,
+      "bytes": 167556,
+      "full": false,
+      "clipped": false,
+      "theme": "light",
+      "accent": "violet",
+      "ms": 113
+    }
+  ],
+  "diag": {
+    "url": "http://tauri.localhost/#/sets/3/exam",
+    "viewport": {
+      "w": 1283,
+      "h": 780,
+      "dpr": 1.5
+    },
+    "doc": {
+      "scrollWidth": 1283,
+      "scrollHeight": 780,
+      "clientWidth": 1283,
+      "clientHeight": 780
+    },
+    "hScroll": false,
+    "vScroll": false,
+    "theme": "light",
+    "accent": "violet",
+    "overflowX": [],
+    "hScrollBoxes": [],
+    "nativeControls": [],
+    "jie": {
+      "count": 3,
+      "at": [
+        {
+          "el": "aside.col-progress > div.exam-side-body > div.prog-group > div.prog-group-head > span",
+          "text": "四、解答题"
+        },
+        {
+          "el": "div.paper-scroll > article.paper-sheet > section.paper-sec > header.paper-sec-head > h2",
+          "text": "四、解答题"
+        },
+        {
+          "el": "aside.col-sheet > div.exam-side-body > div.sheet-group > div.sheet-group-head > span",
+          "text": "四、解答题"
+        }
+      ]
+    },
+    "inlineColors": [],
+    "errorOverlay": false,
+    "rootChildren": 1,
+    "textLength": 3049,
+    "name": "tools/shots/e2e-desk-math-exam.png"
+  },
+  "diags": [
+    {
+      "url": "http://tauri.localhost/#/sets/3/exam",
+      "viewport": {
+        "w": 1283,
+        "h": 780,
+        "dpr": 1.5
+      },
+      "doc": {
+        "scrollWidth": 1283,
+        "scrollHeight": 780,
+        "clientWidth": 1283,
+        "clientHeight": 780
+      },
+      "hScroll": false,
+      "vScroll": false,
+      "theme": "light",
+      "accent": "violet",
+      "overflowX": [],
+      "hScrollBoxes": [],
+      "nativeControls": [],
+      "jie": {
+        "count": 3,
+        "at": [
+          {
+            "el": "aside.col-progress > div.exam-side-body > div.prog-group > div.prog-group-head > span",
+            "text": "四、解答题"
+          },
+          {
+            "el": "div.paper-scroll > article.paper-sheet > section.paper-sec > header.paper-sec-head > h2",
+            "text": "四、解答题"
+          },
+          {
+            "el": "aside.col-sheet > div.exam-side-body > div.sheet-group > div.sheet-group-head > span",
+            "text": "四、解答题"
+          }
+        ]
+      },
+      "inlineColors": [],
+      "errorOverlay": false,
+      "rootChildren": 1,
+      "textLength": 3049,
+      "name": "tools/shots/e2e-desk-math-exam.png"
+    }
+  ],
+  "stepErrors": [],
+  "errorOverlay": false,
+  "elapsedMs": 2052
+}

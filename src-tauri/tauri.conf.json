@@ -1,0 +1,47 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Tokeru",
+  "version": "0.0.1",
+  "mainBinaryName": "tokeru",
+  "identifier": "com.tokero.app",
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "pnpm build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [],
+    "security": {
+      "csp": null,
+      "assetProtocol": {
+        "enable": true,
+        "scope": ["**"]
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "publisher": "Tokeru",
+    "copyright": "Copyright © 2026 Tokeru",
+    "category": "Education",
+    "shortDescription": "本地优先的试卷练习与错题整理工具",
+    "longDescription": "Tokeru 把 PDF、Markdown 或纯文本试卷导入本地题库，支持原卷练习、答题卡、错题本与 AI 讲解。所有题目和作答记录默认保存在本机。",
+    "targets": ["nsis"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "webviewInstallMode": {
+        "type": "skip"
+      },
+      "nsis": {
+        "installerIcon": "icons/icon.ico",
+        "installerHooks": "nsis/installer-hooks.nsh"
+      }
+    }
+  }
+}

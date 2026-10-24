@@ -1,0 +1,63 @@
+[shot] 执行 6 步：tools/e2e/steps-setfilter.mjs
+[shot] 连接已运行的桌面窗口：127.0.0.1:9333
+[shot] 切换路由 #/bank
+[shot] 完成 1/6：route
+[shot] 完成 2/6：wait
+[shot] 完成 3/6：eval
+[shot] 完成 4/6：wait
+[shot] 截图 -> bank-set-filter（1283x780，354 KB，189ms）
+[shot] 完成 5/6：shot
+[shot] 完成 6/6：eval
+{
+  "ok": true,
+  "url": "http://tauri.localhost/#/bank",
+  "title": "Tokeru",
+  "text": "首页\n题库\n练习记录\n错题本\n导入\n设置\n题库\n3 份试卷 · 133 道题 · 筛出 1 份 / 19 道\n清空筛选\n导入题目\n两者\n仅试卷\n仅题目\n题号升序\n题号降序\n添加时间 新→旧\n添加时间 旧→新\n已选 0 题\n开始练习\n筛选\n试卷 · 2024 高考数学新课标Ⅱ卷\n清空筛选\n标签\n77\n单项选择\n73\n英语\n67\n中\n37\n听力\n20\n词汇\n20\n难\n19\n填空\n13\n改错\n10\n完形\n10\n易\n10\n语法\n10\n阅读\n10\n翻译\n7\n简答\n5\n英译汉\n5\n解答题\n5\n非谓语动词\n5\n多项选择\n3\n三角函数\n2\n定语从句\n2\n导数\n2\n汉译英\n2\n真题\n2\n立体几何\n2\n综合\n2\n词性\n2\nE2E验证\n1\nTEM4\n1\n三次函数\n1\n不等式\n1\n两角和\n1\n主谓一致\n1\n二面角\n1\n写作\n1\n决策\n1\n函数交点\n1\n函数最值\n1\n切线\n1\n动词搭配\n1\n参数讨论\n1\n双曲线\n1\n同步测试\n1\n听写\n1\n周期\n1\n命题真假\n1\n圆\n1\n圆锥曲线\n1\n复数\n1\n平面向量\n1\n并列结构\n1\n抛物线\n1\n排列组合\n1\n数列\n1\n数学\n1\n数量积\n1\n新课标Ⅱ卷\n1\n时态语态\n1\n期望\n1\n极值\n1\n棱台\n1\n概率\n1\n正弦定理\n1\n求和\n1\n等差数列\n1\n线面角\n1\n统计\n1\n翻折\n1\n虚拟语气\n1\n解三角形\n1\n计数\n1\n让步状语\n1\n词汇语法\n1\n轨迹方程\n1\n逻辑\n1\n零点\n1\n频数分布\n1\n高考\n1\n试卷\n3\n全部\n清空\n数学卷 2024·改名验收\n67 题\nUnit 2 同步测试\n47 题\n2024 高考数学新课标Ⅱ卷\n19 题\n文件夹\n3\n新建\n全部试卷\n3\n未归类\n1\nUnit 2 同步测试\n1\n高考数学真题\n1\nE2E 文件夹\n0\n试卷\n1 份\n已选 1 份\n清空\n2024\n2024 年高考真题\n高考数学真题\n2024 高考数学新课标Ⅱ卷\n没有副标题\n19 题\n4 分区\n147 分\n120 分钟\n数学\n高考\n真题\n新课标Ⅱ卷\n开始练习\n速查与整理\n题目\n19 道 · 0 已选\n简要\n详细\n2024 高考数学新课标Ⅱ卷\n19 题\n速查与整理\n全选\n1\n单项选择\n5 分\n已知 z = -1 + i，则 |z| = （  ）\n单项选择\n复数\n易\n2\n单项选择\n5 分\n已知命题 p：∀x∈R，|x+1|>1；命题 q：∃x>0，x³=x，则（  ）\n单项选择\n命题真假\n逻辑\n+1\n3\n单项选择\n5 分\n已知向量 a, b 满足 |a|=1，|a+2b|=2，且 (b-2a)⊥b，则 |b| = （  ）\n单项选择\n平面向量\n数量积\n+1\n4\n单项选择\n5 分\n某农业研究部门在面积相等的 100 块稻田上种植一种新型水稻，得到各块稻田的亩产量（单位：千克）并整理成频数分布表：亩产量 [900,950) 频数 6；[950,1000) 频数 12；[1000,1050) 频数 18；[1100,1150) 频数 24；[1150,1200) 频数 10。根据表中数据，下列结论正确的是（  ）\n单项选择\n统计\n频数分布\n+1\n5\n单项选择\n5 分\n已知曲线 C：x²+y²=16（y>0），从 C 上任意一点 P 向 x 轴作垂线段 PP'，P' 为垂足，则线段 PP' 的中点 M 的轨迹方程为（  ）\n单项选择\n轨迹方程\n圆锥曲线\n+1\n6\n单项选择\n5 分\n设函数 f(x)=a(x+1)²-1，g(x)=cos x+2ax，当 x∈(-1,1) 时，曲线 y=f(x) 与 y=g(x) 恰有一个交点，则 a = （  ）\n单项选择\n函数交点\n参数讨论\n+1\n7\n单项选择\n5 分\n已知正三棱台 ABC-A₁B₁C₁ 的体积为 52/3，AB=6，A₁B₁=2，则 A₁A 与平面 ABC 所成角的正切值为（  ）\n单项选择\n立体几何\n棱台\n+2\n8\n单项选择\n5 分\n设函数 f(x)=(x+a)ln(x+b)，若 f(x)≥0，则 a²+b² 的最小值为（  ）\n单项选择\n函数最值\n不等式\n+1\n9\n多项选择\n5 分\n对于函数 f(x)=sin²x 和 g(x)=sin(2x-π/4)，下列正确的有（  ）\n多项选择\n三角函数\n周期\n+1\n10\n多项选择\n5 分\n抛物线 C：y²=4x 的准线为 l，P 为 C 上动点，过 P 作圆 A：x²+(y-4)²=1 的一条切线，Q 为切点，过 P 作 l 的垂线，垂足为 B，则（  ）\n多项选择\n抛物线\n圆\n+2\n11\n多项选择\n5 分\n设函数 f(x)=2x³-3ax²+1，则（  ）\n多项选择\n导数\n三次函数\n+2\n12\n填空\n5 分\n记 Sₙ 为等差数列 {aₙ} 的前 n 项和，若 a₃+a₄=7，3a₂+a₅=5，则 S₁₀ = 。\n填空\n等差数列\n求和\n+1\n13\n填空\n5 分\n已知 α 为第一象限角，β 为第三象限角，tanα+tanβ=4，tanα·tanβ=√2+1，则 sin(α+β) = 。\n填空\n三角函数\n两角和\n+1\n14\n填空\n5 分\n在 4×4 方格表中选 4 个方格，要求每行和每列均恰有一个方格被选中，则共有  种选法。\n填空\n排列组合\n计数\n+1\n15\n简答\n13 分\n记 △ABC 的内角 A, B, C 的对边分别为 a, b, c，已知 sinA+√3cosA=2。（1）求 A；（2）若 a=2，2b sinC = c sin2B，求 △ABC 的周长。\n解答题\n解三角形\n正弦定理\n+1\n16\n简答\n15 分\n已知函数 f(x)=eˣ-ax-a³。（1）当 a=1 时，求曲线 y=f(x) 在点 (1, f(1)) 处的切线方程；（2）若 f(x) 有极小值，且极小值小于 0，求 a 的取值范围。\n解答题\n导数\n切线\n+2\n17\n简答\n15 分\n如图，平面四边形 ABCD 中，AB=8，CD=3，AD=5√3，∠ADC=90°，∠BAD=30°，点 E, F 满足 AE=(2/5)AD，AF=(1/2)AB，将 △AEF 沿 EF 对折至 △PEF，使得 PC=4√3。（1）证明：EF⊥PD；（2）求面 PCD 与面 PBF 所成的二面角的正弦值。\n解答题\n立体几何\n二面角\n+2\n18\n简答\n17 分\n某投篮比赛分为两个阶段，每个参赛队由两名队员组成。第一阶段由一名队员投篮 3 次，若 3 次都未投中则该队被淘汰，成绩为 0 分；若至少投中一次则进入第二阶段，由另一名队员投篮 3 次，每次投中得 5 分，未投中得 0 分，该队成绩为第二阶段得分总和。设甲每次投中概率为 p，乙每次投中概率为 q，各次相互独立。（1）若 p=0.4，q=0.5，甲参加第一阶段，求该队成绩不少于 5 分的概率；（2）假设 0<p<q，（i）为使成绩为 15 分的概率最大，应由谁参加第一阶段？（ii）为使成绩的数学期望最大，应由谁参加第一阶段？\n解答题\n概率\n期望\n+2\n19\n简答\n17 分\n已知双曲线 C：x²-y²=m（m>0），点 P₁(5,4) 在 C 上，k 为常数，0<k<1，按照如下方式依次构造点 Pₙ（n=2,3,…）：过 Pₙ₋₁ 作斜率为 k 的直线与 C 的左支交于点 aₙ₋₁，令 Pₙ 为 aₙ₋₁ 关于 y 轴的对称点，记 Pₙ 的坐标为 (xₙ, yₙ)。（1）若 k=1/2，求 x₂, y₂；（2）证明：数列 {xₙ-yₙ} 是公比为 (1+k)/(1-k) 的等比数列；（3）设 Sₙ 为 △PₙPₙ₊₁Pₙ₊₂ 的面积，证明：对任意正整数 n，Sₙ=Sₙ₊₁。\n解答题\n双曲线\n数列\n+2\n选题篮\n0\n0\n题\n0\n分\n还没有选题\n点题目卡上的圆圈即可加入。\n开始练习\n清空",
+  "textLength": 3192,
+  "textTruncated": false,
+  "theme": "light",
+  "accent": "violet",
+  "target": "tauri",
+  "viewport": {
+    "w": 1283,
+    "h": 780,
+    "dpr": 1.5
+  },
+  "consoleErrors": [],
+  "warnings": [],
+  "failedRequests": [],
+  "evals": [
+    {
+      "name": "(() => { const r=[...document.querySelectorAll('.bk-set-row')].find(x=>(x.innerText||'').includes('2024 高考数学')); if(!r) return 'no row'; r.click(); return r.innerText.replace(/s+/g,' ').slice(0,60); })()",
+      "js": "(() => { const r=[...document.querySelectorAll('.bk-set-row')].find(x=>(x.innerText||'').includes('2024 高考数学')); if(!r) return 'no row'; r.click(); return r.innerText.replace(/s+/g,' ').slice(0,60); })()",
+      "value": "2024 高考数学新课标Ⅱ卷\n19 题"
+    },
+    {
+      "name": "(() => ({sets:document.querySelectorAll('.bk-set-card').length, questions:document.querySelectorAll('.bk-qcard').length, sub:(document.querySelector('.bk-head-sub')||{}).innerText}))()",
+      "js": "(() => ({sets:document.querySelectorAll('.bk-set-card').length, questions:document.querySelectorAll('.bk-qcard').length, sub:(document.querySelector('.bk-head-sub')||{}).innerText}))()",
+      "value": {
+        "sets": 1,
+        "questions": 19
+      }
+    }
+  ],
+  "shots": [
+    {
+      "path": "C:\\Users\\19646\\Desktop\\学习与效率工具\\折腾\\dsh_zone_common\\Tokeru\\bank-set-filter",
+      "rel": "bank-set-filter",
+      "width": 1283,
+      "height": 780,
+      "bytes": 362960,
+      "full": false,
+      "clipped": false,
+      "theme": "light",
+      "accent": "violet",
+      "ms": 189
+    }
+  ],
+  "diag": null,
+  "diags": [],
+  "stepErrors": [],
+  "errorOverlay": false,
+  "elapsedMs": 2755
+}

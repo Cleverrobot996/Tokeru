@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Frontend build output
+dist/
+dist-portable/
+vite.config.js
+vite.config.d.ts
+*.tsbuildinfo
+
+# Rust / Tauri build output
+src-tauri/target/
+src-tauri/gen/
+target/
+
+# Local test data and runtime files
+.tmp/
+.tmp-pdf-pages.json
+.appdata-test/
+.cargo/
+.smoke-run/
+test-rusqlite.db
+bank-*
+custom-exam*
+org-tag-added
+*.log
+
+# Generated screenshots and temporary test artifacts
+tools/shots/
+tools/.shot-profile/
+tools/.sum*.md
+tools/e2e/*.png
+tools/diag.exe
+tools/diag.nsi
+tools/lock-file.py
+tools/probe.py
+tools/run-setup.py
+tools/start-setup.py
+tools/shot-win.py
+tools/wintext.py
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

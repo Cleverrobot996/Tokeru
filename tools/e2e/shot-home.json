@@ -1,0 +1,104 @@
+[shot] 连接已运行的桌面窗口：127.0.0.1:9333
+[shot] tauri 模式沿用窗口实际尺寸（要固定视口请显式传 --w/--h）
+[shot] Git Bash 改写了路由参数（#C:/Users/19646/.dsh/profiles/desktop/node_modules/@dsh-ops/bash-win32-x64/home），已还原为 /home；更稳的写法：--route "#/..." 或 MSYS_NO_PATHCONV=1
+[shot] 切换路由 #/home
+[shot] 截图 -> tools/shots/e2e-desk-home2.png（1283x780，218 KB，141ms）
+{
+  "ok": true,
+  "url": "http://tauri.localhost/#/home",
+  "title": "Tokeru",
+  "text": "首页\n题库\n练习记录\n错题本\n导入\n设置\nTokeru\n\n3 份试卷 · 133 道题 · 0 次练习\n\n试卷集\n3 份\n全部\n3\n未归类\n1\nUnit 2 同步测试\n1\n高考数学真题\n1\n未归类\n2016 · 130 分钟\nTEM4 2016 真题\n\nTEST FOR ENGLISH MAJORS (2016) GRADE FOUR\n\n67 题\n8 个分区\n100 分\n英语\n真题\nTEM4\n尚未练习\n开始练习\n速查与整理\nUnit 2 同步测试\n试卷\nUnit 2 同步测试\n\nUnit 2 Why Fiction Is Good for You\n\n47 题\n3 个分区\n56 分\n英语\n同步测试\n词汇语法\n改错\n+1\n尚未练习\n开始练习\n速查与整理\n高考数学真题\n2024 · 120 分钟\n2024 高考数学新课标Ⅱ卷\n19 题\n4 个分区\n147 分\n数学\n高考\n真题\n新课标Ⅱ卷\n尚未练习\n开始练习\n速查与整理\n最近的练习\n还没有练习记录，去 题库 挑一道开始。",
+  "textLength": 438,
+  "textTruncated": false,
+  "theme": "light",
+  "accent": "violet",
+  "target": "tauri",
+  "viewport": {
+    "w": 1283,
+    "h": 780,
+    "dpr": 1.5
+  },
+  "consoleErrors": [],
+  "warnings": [],
+  "failedRequests": [],
+  "evals": [],
+  "shots": [
+    {
+      "path": "C:\\Users\\19646\\Desktop\\学习与效率工具\\折腾\\dsh_zone_common\\Tokeru\\tools\\shots\\e2e-desk-home2.png",
+      "rel": "tools/shots/e2e-desk-home2.png",
+      "width": 1283,
+      "height": 780,
+      "bytes": 223021,
+      "full": false,
+      "clipped": false,
+      "theme": "light",
+      "accent": "violet",
+      "ms": 141
+    }
+  ],
+  "diag": {
+    "url": "http://tauri.localhost/#/home",
+    "viewport": {
+      "w": 1283,
+      "h": 780,
+      "dpr": 1.5
+    },
+    "doc": {
+      "scrollWidth": 1268,
+      "scrollHeight": 986,
+      "clientWidth": 1268,
+      "clientHeight": 780
+    },
+    "hScroll": false,
+    "vScroll": true,
+    "theme": "light",
+    "accent": "violet",
+    "overflowX": [],
+    "hScrollBoxes": [],
+    "nativeControls": [],
+    "jie": {
+      "count": 0,
+      "at": []
+    },
+    "inlineColors": [],
+    "errorOverlay": false,
+    "rootChildren": 1,
+    "textLength": 438,
+    "name": "tools/shots/e2e-desk-home2.png"
+  },
+  "diags": [
+    {
+      "url": "http://tauri.localhost/#/home",
+      "viewport": {
+        "w": 1283,
+        "h": 780,
+        "dpr": 1.5
+      },
+      "doc": {
+        "scrollWidth": 1268,
+        "scrollHeight": 986,
+        "clientWidth": 1268,
+        "clientHeight": 780
+      },
+      "hScroll": false,
+      "vScroll": true,
+      "theme": "light",
+      "accent": "violet",
+      "overflowX": [],
+      "hScrollBoxes": [],
+      "nativeControls": [],
+      "jie": {
+        "count": 0,
+        "at": []
+      },
+      "inlineColors": [],
+      "errorOverlay": false,
+      "rootChildren": 1,
+      "textLength": 438,
+      "name": "tools/shots/e2e-desk-home2.png"
+    }
+  ],
+  "stepErrors": [],
+  "errorOverlay": false,
+  "elapsedMs": 1750
+}

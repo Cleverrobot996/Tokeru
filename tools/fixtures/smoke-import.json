@@ -1,0 +1,125 @@
+{
+  "set": {
+    "title": "冒烟测试：主题阅读小测",
+    "subtitle": "Smoke Set",
+    "year": 2024,
+    "duration_minutes": 30,
+    "source": "冒烟材料",
+    "audio_file": "",
+    "description": "真实桌面端导入冒烟。"
+  },
+  "materials": [
+    {
+      "key": "audio-script",
+      "kind": "listening",
+      "title": "听力题目说明",
+      "content": "W: Are you going to the museum on Friday?\nM: I planned to, but the train strike may change my plan.\nW: Then let's meet on Saturday instead.",
+      "position": 1
+    },
+    {
+      "key": "reading-passage",
+      "kind": "reading",
+      "title": "PASSAGE ONE — Learning by Teaching",
+      "content": "(1) Students who explain a concept to others tend to remember it longer.\n(2) The act of explaining forces them to reorganize what they know and to notice gaps in their understanding.",
+      "position": 2
+    }
+  ],
+  "sections": [
+    {
+      "key": "listening",
+      "title": "PART I LISTENING",
+      "kind": "listening",
+      "position": 1,
+      "instructions": "听两遍后作答。",
+      "duration_minutes": 10,
+      "material": "audio-script"
+    },
+    {
+      "key": "reading",
+      "title": "PART II READING",
+      "kind": "reading",
+      "position": 2,
+      "instructions": "阅读材料后作答。",
+      "duration_minutes": 20,
+      "material": "reading-passage"
+    }
+  ],
+  "questions": [
+    {
+      "number": 1,
+      "section": "listening",
+      "material": "audio-script",
+      "label": "1",
+      "qtype": "choice_single",
+      "stem": "Why may the man change his plan?",
+      "options": [
+        {
+          "key": "A",
+          "text": "He has to work on Friday."
+        },
+        {
+          "key": "B",
+          "text": "The train strike may affect his trip."
+        },
+        {
+          "key": "C",
+          "text": "The museum is closed on Friday."
+        },
+        {
+          "key": "D",
+          "text": "He prefers to go alone."
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "B"
+        ]
+      },
+      "explanation": "答案 B。男士说 the train strike may change my plan。",
+      "points": 1,
+      "tags": [
+        "听力",
+        "出行"
+      ]
+    },
+    {
+      "number": 2,
+      "section": "listening",
+      "material": "audio-script",
+      "label": "2",
+      "qtype": "fill_blank",
+      "stem": "The two speakers will meet on ______.",
+      "answer": {
+        "kind": "text",
+        "accept": [
+          "Saturday",
+          "on Saturday"
+        ]
+      },
+      "explanation": "meet on Saturday instead。",
+      "points": 1,
+      "tags": [
+        "听力",
+        "填空"
+      ]
+    },
+    {
+      "number": 3,
+      "section": "reading",
+      "material": "reading-passage",
+      "label": "写作",
+      "qtype": "writing",
+      "stem": "Write a short passage of about 120 words explaining one benefit of teaching others.",
+      "answer": {
+        "kind": "reference",
+        "reference": "Teaching others helps learners reorganize knowledge and notice gaps."
+      },
+      "explanation": "先给观点再举例。",
+      "points": 15,
+      "tags": [
+        "写作"
+      ]
+    }
+  ]
+}

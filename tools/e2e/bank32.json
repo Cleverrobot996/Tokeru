@@ -1,0 +1,103 @@
+[shot] 启动 headless Edge（C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe，调试端口 25971，视口 1600x1000）
+[shot] Git Bash 改写了路由参数（#C:/Users/19646/.dsh/profiles/desktop/node_modules/@dsh-ops/bash-win32-x64/bank），已还原为 /bank；更稳的写法：--route "#/..." 或 MSYS_NO_PATHCONV=1
+[shot] 打开 http://127.0.0.1:1420/#/bank
+[shot] 截图 -> tools/shots/v32-bank-1600.png（1600x1000，197 KB，95ms）
+{
+  "ok": true,
+  "url": "http://127.0.0.1:1420/#/bank",
+  "title": "Tokeru",
+  "text": "首页\n题库\n练习记录\n错题本\n导入\n设置\n题库\n1 份试卷 · 67 道题\n导入题目\n两者\n仅试卷\n仅题目\n题号升序\n题号降序\n添加时间 新→旧\n添加时间 旧→新\n已选 0 题\n开始练习\n标签\n11\n英语\n67\n单项选择\n40\n听力\n20\n填空\n10\n完形\n10\n阅读\n10\n简答\n5\n听写\n1\n写作\n1\n真题\n1\nTEM4\n1\n试卷\n1\n全部\n清空\nTEM4 2016 真题\n67 题\n文件夹\n2\n新建\n全部试卷\n1\n未归类\n0\n真题\n1\n同步测试\n0\n试卷\n1 份\n2016\n用户上传真题 PDF + 听力音频\n真题\nTEM4 2016 真题\nTEST FOR ENGLISH MAJORS (2016) GRADE FOUR\n67 题\n8 分区\n100 分\n130 分钟\n英语\n真题\n开始练习\n速查与整理\n题目\n67 道 · 0 已选\n简要\n详细\nTEM4 2016 真题\n67 题\n速查与整理\n全选\n1\n听写\n10 分\n听写：Think Positive and Feel Positive（首句已给出：Are you confident or insecure in a difficult situation?）\n英语\n听写\n(1)\n填空\n1 分\n空 (1)：What is the key to ?\n英语\n听力\n填空\n(2)\n填空\n1 分\n空 (2)：investigation of all kinds of \n英语\n听力\n填空\n(3)\n填空\n1 分\n空 (3)：the third research setting: \n英语\n听力\n填空\n(4)\n填空\n1 分\n空 (4)：Grit is  for very long-term goals.\n英语\n听力\n填空\n(5)\n填空\n1 分\n空 (5)：Grit is working hard for years to make .\n英语\n听力\n填空\n(6)\n填空\n1 分\n空 (6)：Grit is living your life like a .\n英语\n听力\n填空\n(7)\n填空\n1 分\n空 (7)： kids were more likely to graduate.\n英语\n听力\n填空\n(8)\n填空\n1 分\n空 (8)：data show grit is unrelated to .\n英语\n听力\n填空\n(9)\n填空\n1 分\n空 (9)：growth mindset is the belief that the ability to learn is .\n英语\n听力\n填空\n(10)\n填空\n1 分\n空 (10)：kids with grit believe failure is .\n英语\n听力\n填空\n1\n单项选择\n1 分\nWhy does the woman call the man?\n英语\n听力\n单项选择\n2\n单项选择\n1 分\nWhat kind of questions can the man ask in the interview?\n英语\n听力\n单项选择\n3\n单项选择\n1 分\nWhich is the last part of the interview?\n英语\n听力\n单项选择\n4\n单项选择\n1 分\nWhat might be expected from the man's presentation?\n英语\n听力\n单项选择\n5\n单项选择\n1 分\nWhen is the interview scheduled?\n英语\n听力\n单项选择\n6\n单项选择\n1 分\nWhat is the conversation mainly about?\n英语\n听力\n单项选择\n7\n单项选择\n1 分\nHow does the cost of college education change every year?\n英语\n听力\n单项选择\n8\n单项选择\n1 分\nWhat is used to measure student loan debt as a guideline?\n英语\n听力\n单项选择\n9\n单项选择\n1 分\nWhat is the advantage of joining a college savings plan?\n英语\n听力\n单项选择\n10\n单项选择\n1 分\nWhat is the possible social cost of a college loan?\n英语\n听力\n单项选择\n11\n单项选择\n1 分\nHow can I concentrate if you  continually  me with silly questions?\n英语\n单项选择\n12\n单项选择\n1 分\nAmong the four sentences below, Sentence  expresses the highest degree of possibility.\n英语\n单项选择\n13\n单项选择\n1 分\nShe is a better speaker than  in the class.\n英语\n单项选择\n14\n单项选择\n1 分\nNobody heard him sing, ?\n英语\n单项选择\n15\n单项选择\n1 分\nI can't put up with .\n英语\n单项选择\n16\n单项选择\n1 分\nThere has been an increasing number of  in primary schools in the past few years.\n英语\n单项选择\n17\n单项选择\n1 分\nThis is one of the issues that deserve .\n英语\n单项选择\n18\n单项选择\n1 分\nThe audience  excited on seeing  favorite star glide onto the stage.\n英语\n单项选择\n19\n单项选择\n1 分\n_ _ your advice, I would have made the wrong decision.\n英语\n单项选择\n20\n单项选择\n1 分\nThe sentence I wish I had been more careful in spending money expresses the speaker's \n英语\n单项选择\n21\n单项选择\n1 分\nThe Attorney General ordered a federal autopsy of Brown's body, seeking to  the family and community there would be a thorough investigation into his death.\n英语\n单项选择\n22\n单项选择\n1 分\nThe police department came under strong criticism for both the death of an unarmed man and its handling of the .\n英语\n单项选择\n23\n单项选择\n1 分\nThe Foreign Secretary tried to  doubts about his handling of the crisis.\n英语\n单项选择\n24\n单项选择\n1 分\nMutual funds are thus best for investors who don't want to take the time to study stocks in detail or who _  the resources to build a portfolio.\n英语\n单项选择\n25\n单项选择\n1 分\nChris ran  John at a sporting-goods trade show and the two quickly struck  an easy rapport.\n英语\n单项选择\n26\n单项选择\n1 分\n\"I am leaving the country soon,\" he told a _  convened group of reporters.\n英语\n单项选择\n27\n单项选择\n1 分\nIsrael and Hamas had reached a deal on extending the  ceasefire by an extra 24 hours until Tuesday at midnight.\n英语\n单项选择\n28\n单项选择\n1 分\n to unplugging the alarm clock and trusting your ability to wake on time on your own, you should probably ease yourself into the new arrangement by keeping a very regular schedule for several weeks.\n英语\n单项选择\n29\n单项选择\n1 分\nIf you are an athlete, strong abdominal muscles help you ensure a strong back and freedom from injury during  upper-body movement.\n英语\n单项选择\n30\n单项选择\n1 分\nFinning is a cruel  in which the shark's fins are lopped off, and the live shark is thrown back to sea.\n英语\n单项选择\n31\n完形填空\n1 分\n31. \n英语\n完形\n32\n完形填空\n1 分\n32. \n英语\n完形\n33\n完形填空\n1 分\n33. \n英语\n完形\n34\n完形填空\n1 分\n34. \n英语\n完形\n35\n完形填空\n1 分\n35. \n英语\n完形\n36\n完形填空\n1 分\n36. \n英语\n完形\n37\n完形填空\n1 分\n37. \n英语\n完形\n38\n完形填空\n1 分\n38. \n英语\n完形\n39\n完形填空\n1 分\n39. \n英语\n完形\n40\n完形填空\n1 分\n40. \n英语\n完形\n41\n单项选择\n1 分\nIn Para. 1, the phrase \"set my feet\" probably means\n英语\n阅读\n单项选择\n42\n单项选择\n1 分\nIt can be concluded from Para.2 that\n英语\n阅读\n单项选择\n43\n单项选择\n1 分\nCompared with Brother A, Brother B was more  towards the effect of the one-million-pound bank-note on a total stranger.\n英语\n阅读\n单项选择\n44\n单项选择\n1 分\nWhich of the following is the best title for the passage?\n英语\n阅读\n单项选择\n45\n单项选择\n1 分\nThe rainbow represents the connection between human beings and their gods in all the following countries EXCEPT\n英语\n阅读\n单项选择\n46\n单项选择\n1 分\nIn North Europe mistletoe was often hung in doorways to indicate\n英语\n阅读\n单项选择\n47\n单项选择\n1 分\nThe origin of the ankh can date back to\n英语\n阅读\n单项选择\n48\n单项选择\n1 分\nWhat is the author's attitude towards Clinton's proposal to welfare?\n英语\n阅读\n单项选择\n49\n单项选择\n1 分\nIt can be inferred from Para. 7 that optimum penalties are  to the underclass.\n英语\n阅读\n单项选择\n50\n单项选择\n1 分\nWhich of the following is the most appropriate title for the passage?\n英语\n阅读\n单项选择\n51\n简答\n2 分\nIn Para. 4, what does the man mean by saying \"I had to bear my trouble\"?\n英语\n简答\n52\n简答\n2 分\nWhat can be inferred from the last sentence of the passage?\n英语\n简答\n53\n简答\n2 分\nWhy does the UN use the olive branch in its symbol?\n英语\n简答\n54\n简答\n2 分\nAccording to the author, what balance should we keep in welfare?\n英语\n简答\n55\n简答\n2 分\nWhat does the author mean by saying \"Even under the worst of circumstances, we believe we are in control of our lives\" (Para. 10)?\n英语\n简答\n67\n写作\n20 分\nRead the excerpt and write a response of NO LESS THAN 200 words: summarize the main message, then comment on whether parents should take children out of school for holidays during term time.\n英语\n写作\n选题篮\n0\n0\n题\n0\n分\n还没有选题\n点题目卡上的圆圈即可加入。\n开始练习\n清空",
+  "textLength": 5891,
+  "textTruncated": false,
+  "theme": "light",
+  "accent": "violet",
+  "target": "vite",
+  "viewport": {
+    "w": 1600,
+    "h": 1000,
+    "dpr": 1
+  },
+  "consoleErrors": [],
+  "warnings": [],
+  "failedRequests": [],
+  "evals": [],
+  "shots": [
+    {
+      "path": "C:\\Users\\19646\\Desktop\\学习与效率工具\\折腾\\dsh_zone_common\\Tokeru\\tools\\shots\\v32-bank-1600.png",
+      "rel": "tools/shots/v32-bank-1600.png",
+      "width": 1600,
+      "height": 1000,
+      "bytes": 201932,
+      "full": false,
+      "clipped": false,
+      "theme": "light",
+      "accent": "violet",
+      "ms": 95
+    }
+  ],
+  "diag": {
+    "url": "http://127.0.0.1:1420/#/bank",
+    "viewport": {
+      "w": 1600,
+      "h": 1000,
+      "dpr": 1
+    },
+    "doc": {
+      "scrollWidth": 1600,
+      "scrollHeight": 3390,
+      "clientWidth": 1600,
+      "clientHeight": 1000
+    },
+    "hScroll": false,
+    "vScroll": true,
+    "theme": "light",
+    "accent": "violet",
+    "overflowX": [],
+    "hScrollBoxes": [],
+    "nativeControls": [],
+    "jie": {
+      "count": 0,
+      "at": []
+    },
+    "inlineColors": [],
+    "errorOverlay": false,
+    "rootChildren": 1,
+    "textLength": 5891,
+    "name": "tools/shots/v32-bank-1600.png"
+  },
+  "diags": [
+    {
+      "url": "http://127.0.0.1:1420/#/bank",
+      "viewport": {
+        "w": 1600,
+        "h": 1000,
+        "dpr": 1
+      },
+      "doc": {
+        "scrollWidth": 1600,
+        "scrollHeight": 3390,
+        "clientWidth": 1600,
+        "clientHeight": 1000
+      },
+      "hScroll": false,
+      "vScroll": true,
+      "theme": "light",
+      "accent": "violet",
+      "overflowX": [],
+      "hScrollBoxes": [],
+      "nativeControls": [],
+      "jie": {
+        "count": 0,
+        "at": []
+      },
+      "inlineColors": [],
+      "errorOverlay": false,
+      "rootChildren": 1,
+      "textLength": 5891,
+      "name": "tools/shots/v32-bank-1600.png"
+    }
+  ],
+  "stepErrors": [],
+  "errorOverlay": false,
+  "elapsedMs": 2586
+}

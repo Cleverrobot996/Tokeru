@@ -1,0 +1,1542 @@
+{
+  "set": {
+    "title": "Unit 2 同步测试",
+    "subtitle": "Unit 2 Why Fiction Is Good for You",
+    "source": "用户上传试卷材料",
+    "description": "词汇语法30题、改错10题、翻译（英译汉5句、汉译英2段）",
+    "tags": [
+      "英语",
+      "同步测试",
+      "词汇语法",
+      "改错",
+      "翻译"
+    ],
+    "folder": "Unit 2 同步测试"
+  },
+  "materials": [],
+  "sections": [
+    {
+      "key": "vocab_grammar",
+      "title": "Part I Vocabulary and Grammar",
+      "kind": "language",
+      "position": 1,
+      "instructions": "In this part there are 30 incomplete sentences, each with four suggested answers. Choose the one that best completes the sentence."
+    },
+    {
+      "key": "error_correction",
+      "title": "Part II Error Correction",
+      "kind": "language",
+      "position": 2,
+      "instructions": "Each of the following sentences has four underlined parts marked A, B, C, and D. Identify the part of the sentence that is incorrect and mark the corresponding letter. Then, without altering the meaning of the sentence, write down the correction."
+    },
+    {
+      "key": "translation",
+      "title": "Part III Translation",
+      "kind": "mixed",
+      "position": 3,
+      "instructions": "Section A: Translate the following sentences into Chinese. Section B: Translate the following paragraphs into English."
+    }
+  ],
+  "questions": [
+    {
+      "number": 1,
+      "section": "vocab_grammar",
+      "label": "1",
+      "qtype": "choice_single",
+      "stem": "If fish were ______ like livestock, the present global fish catch could easily multiply fivefold, or as much as tenfold.",
+      "options": [
+        {
+          "key": "A",
+          "text": "cultivated"
+        },
+        {
+          "key": "B",
+          "text": "agitated"
+        },
+        {
+          "key": "C",
+          "text": "treated"
+        },
+        {
+          "key": "D",
+          "text": "civilized"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "A"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "词汇",
+        "单项选择",
+        "易"
+      ]
+    },
+    {
+      "number": 2,
+      "section": "vocab_grammar",
+      "label": "2",
+      "qtype": "choice_single",
+      "stem": "Pain is described as an ______ sensory and emotional experience associated with actual or potential tissue damage.",
+      "options": [
+        {
+          "key": "A",
+          "text": "unusual"
+        },
+        {
+          "key": "B",
+          "text": "unpleasant"
+        },
+        {
+          "key": "C",
+          "text": "unfortunate"
+        },
+        {
+          "key": "D",
+          "text": "unexpected"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "B"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "词汇",
+        "单项选择",
+        "易"
+      ]
+    },
+    {
+      "number": 3,
+      "section": "vocab_grammar",
+      "label": "3",
+      "qtype": "choice_single",
+      "stem": "We strongly ______ terrorism in all its forms and manifestations, committed by whomever, wherever, and for whatever purposes.",
+      "options": [
+        {
+          "key": "A",
+          "text": "conduct"
+        },
+        {
+          "key": "B",
+          "text": "confine"
+        },
+        {
+          "key": "C",
+          "text": "confess"
+        },
+        {
+          "key": "D",
+          "text": "condemn"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "D"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "词汇",
+        "单项选择",
+        "易"
+      ]
+    },
+    {
+      "number": 4,
+      "section": "vocab_grammar",
+      "label": "4",
+      "qtype": "choice_single",
+      "stem": "Whatever you believe, you'll experience more in your later life, and you'll also find yourself behaving in ways that are ______ with your beliefs.",
+      "options": [
+        {
+          "key": "A",
+          "text": "conducted"
+        },
+        {
+          "key": "B",
+          "text": "congruent"
+        },
+        {
+          "key": "C",
+          "text": "congregated"
+        },
+        {
+          "key": "D",
+          "text": "contended"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "B"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "词汇",
+        "单项选择",
+        "中"
+      ]
+    },
+    {
+      "number": 5,
+      "section": "vocab_grammar",
+      "label": "5",
+      "qtype": "choice_single",
+      "stem": "Experimentalists in the first half of the 19th century participated in a complex historical process of ______ the physical sciences.",
+      "options": [
+        {
+          "key": "A",
+          "text": "retaining"
+        },
+        {
+          "key": "B",
+          "text": "conducting"
+        },
+        {
+          "key": "C",
+          "text": "molding"
+        },
+        {
+          "key": "D",
+          "text": "obtaining"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "C"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "词汇",
+        "单项选择",
+        "中"
+      ]
+    },
+    {
+      "number": 6,
+      "section": "vocab_grammar",
+      "label": "6",
+      "qtype": "choice_single",
+      "stem": "As a climatologist in a geography department it ______ me that often human activity is seen as an adjunct to the climate system rather than an integral part.",
+      "options": [
+        {
+          "key": "A",
+          "text": "dismays"
+        },
+        {
+          "key": "B",
+          "text": "questions"
+        },
+        {
+          "key": "C",
+          "text": "disputes"
+        },
+        {
+          "key": "D",
+          "text": "embarrasses"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "A"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "词汇",
+        "单项选择",
+        "中"
+      ]
+    },
+    {
+      "number": 7,
+      "section": "vocab_grammar",
+      "label": "7",
+      "qtype": "choice_single",
+      "stem": "Whether the giant panda belonged to the bear or cat families was a matter of zoological ______ for years.",
+      "options": [
+        {
+          "key": "A",
+          "text": "conception"
+        },
+        {
+          "key": "B",
+          "text": "complication"
+        },
+        {
+          "key": "C",
+          "text": "convention"
+        },
+        {
+          "key": "D",
+          "text": "controversy"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "D"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "词汇",
+        "单项选择",
+        "易"
+      ]
+    },
+    {
+      "number": 8,
+      "section": "vocab_grammar",
+      "label": "8",
+      "qtype": "choice_single",
+      "stem": "Some people are very ______ where food is concerned; they are not willing to try anything out of the ordinary.",
+      "options": [
+        {
+          "key": "A",
+          "text": "reserved"
+        },
+        {
+          "key": "B",
+          "text": "instructive"
+        },
+        {
+          "key": "C",
+          "text": "conservative"
+        },
+        {
+          "key": "D",
+          "text": "straightforward"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "C"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "词汇",
+        "单项选择",
+        "易"
+      ]
+    },
+    {
+      "number": 9,
+      "section": "vocab_grammar",
+      "label": "9",
+      "qtype": "choice_single",
+      "stem": "Helen got some books out of the library and ______ herself in Modern Chinese History and Chinese Culture.",
+      "options": [
+        {
+          "key": "A",
+          "text": "sank"
+        },
+        {
+          "key": "B",
+          "text": "immersed"
+        },
+        {
+          "key": "C",
+          "text": "attracted"
+        },
+        {
+          "key": "D",
+          "text": "involved"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "B"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "词汇",
+        "单项选择",
+        "易"
+      ]
+    },
+    {
+      "number": 10,
+      "section": "vocab_grammar",
+      "label": "10",
+      "qtype": "choice_single",
+      "stem": "Because of a lack of proper education, a lot of local people are ______; some of them can even write their own names.",
+      "options": [
+        {
+          "key": "A",
+          "text": "illiterate"
+        },
+        {
+          "key": "B",
+          "text": "literary"
+        },
+        {
+          "key": "C",
+          "text": "literate"
+        },
+        {
+          "key": "D",
+          "text": "literal"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "A"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "词汇",
+        "单项选择",
+        "易"
+      ]
+    },
+    {
+      "number": 11,
+      "section": "vocab_grammar",
+      "label": "11",
+      "qtype": "choice_single",
+      "stem": "Until the late 19th century, there was no ______ system of timekeeping in the United States.",
+      "options": [
+        {
+          "key": "A",
+          "text": "practical"
+        },
+        {
+          "key": "B",
+          "text": "flexible"
+        },
+        {
+          "key": "C",
+          "text": "consistent"
+        },
+        {
+          "key": "D",
+          "text": "substantial"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "C"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "词汇",
+        "单项选择",
+        "中"
+      ]
+    },
+    {
+      "number": 12,
+      "section": "vocab_grammar",
+      "label": "12",
+      "qtype": "choice_single",
+      "stem": "Many professors believe that they must first encourage students to think independently and challenge authority, cultivate students' ______ spirit, and guide a variety of views to cross swords.",
+      "options": [
+        {
+          "key": "A",
+          "text": "predictable"
+        },
+        {
+          "key": "B",
+          "text": "skeptical"
+        },
+        {
+          "key": "C",
+          "text": "powerful"
+        },
+        {
+          "key": "D",
+          "text": "constant"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "B"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "词汇",
+        "单项选择",
+        "中"
+      ]
+    },
+    {
+      "number": 13,
+      "section": "vocab_grammar",
+      "label": "13",
+      "qtype": "choice_single",
+      "stem": "Wind farms, solar power, and other sources of renewable energy must now ______ in the environment policy of all responsible governments.",
+      "options": [
+        {
+          "key": "A",
+          "text": "include"
+        },
+        {
+          "key": "B",
+          "text": "feature"
+        },
+        {
+          "key": "C",
+          "text": "portray"
+        },
+        {
+          "key": "D",
+          "text": "prompt"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "B"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "词汇",
+        "单项选择",
+        "中"
+      ]
+    },
+    {
+      "number": 14,
+      "section": "vocab_grammar",
+      "label": "14",
+      "qtype": "choice_single",
+      "stem": "In order to achieve dramatic improvements and ______ competitors, a corporation often need to make radical changes.",
+      "options": [
+        {
+          "key": "A",
+          "text": "incorporate"
+        },
+        {
+          "key": "B",
+          "text": "exterminate"
+        },
+        {
+          "key": "C",
+          "text": "dominate"
+        },
+        {
+          "key": "D",
+          "text": "outperform"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "D"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "词汇",
+        "单项选择",
+        "中"
+      ]
+    },
+    {
+      "number": 15,
+      "section": "vocab_grammar",
+      "label": "15",
+      "qtype": "choice_single",
+      "stem": "Anne is always encouraging her students to think for themselves and to act morally and ______.",
+      "options": [
+        {
+          "key": "A",
+          "text": "ethically"
+        },
+        {
+          "key": "B",
+          "text": "nationally"
+        },
+        {
+          "key": "C",
+          "text": "racially"
+        },
+        {
+          "key": "D",
+          "text": "ethnically"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "A"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "词汇",
+        "单项选择",
+        "易"
+      ]
+    },
+    {
+      "number": 16,
+      "section": "vocab_grammar",
+      "label": "16",
+      "qtype": "choice_single",
+      "stem": "The league prohibits players from ______ products related to alcohol, tobacco, casinos, or gambling.",
+      "options": [
+        {
+          "key": "A",
+          "text": "producing"
+        },
+        {
+          "key": "B",
+          "text": "exploiting"
+        },
+        {
+          "key": "C",
+          "text": "illustrating"
+        },
+        {
+          "key": "D",
+          "text": "endorsing"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "D"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "词汇",
+        "单项选择",
+        "中"
+      ]
+    },
+    {
+      "number": 17,
+      "section": "vocab_grammar",
+      "label": "17",
+      "qtype": "choice_single",
+      "stem": "Through mere ______, the scientist formed a half-baked theory about why the plants weren't growing.",
+      "options": [
+        {
+          "key": "A",
+          "text": "speculation"
+        },
+        {
+          "key": "B",
+          "text": "specification"
+        },
+        {
+          "key": "C",
+          "text": "separation"
+        },
+        {
+          "key": "D",
+          "text": "specimen"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "A"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "词汇",
+        "单项选择",
+        "中"
+      ]
+    },
+    {
+      "number": 18,
+      "section": "vocab_grammar",
+      "label": "18",
+      "qtype": "choice_single",
+      "stem": "Prejudice and discrimination are closely connected; prejudice leads to discrimination, and discrimination ______ prejudice in a vicious cycle.",
+      "options": [
+        {
+          "key": "A",
+          "text": "identifies"
+        },
+        {
+          "key": "B",
+          "text": "refines"
+        },
+        {
+          "key": "C",
+          "text": "reinforces"
+        },
+        {
+          "key": "D",
+          "text": "verifies"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "C"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "词汇",
+        "单项选择",
+        "中"
+      ]
+    },
+    {
+      "number": 19,
+      "section": "vocab_grammar",
+      "label": "19",
+      "qtype": "choice_single",
+      "stem": "As ______ cyclists ourselves, we are riding and racing all year around, so we know clear what cyclists are looking for and asking for.",
+      "options": [
+        {
+          "key": "A",
+          "text": "sacred"
+        },
+        {
+          "key": "B",
+          "text": "casual"
+        },
+        {
+          "key": "C",
+          "text": "avid"
+        },
+        {
+          "key": "D",
+          "text": "humble"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "C"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "词汇",
+        "单项选择",
+        "中"
+      ]
+    },
+    {
+      "number": 20,
+      "section": "vocab_grammar",
+      "label": "20",
+      "qtype": "choice_single",
+      "stem": "Instead of sending them away without an answer, the system encourages users to ______ the search.",
+      "options": [
+        {
+          "key": "A",
+          "text": "utilize"
+        },
+        {
+          "key": "B",
+          "text": "measure"
+        },
+        {
+          "key": "C",
+          "text": "erase"
+        },
+        {
+          "key": "D",
+          "text": "modify"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "D"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "词汇",
+        "单项选择",
+        "中"
+      ]
+    },
+    {
+      "number": 21,
+      "section": "vocab_grammar",
+      "label": "21",
+      "qtype": "choice_single",
+      "stem": "In order to grow vegetables properly, gardeners must know ______.",
+      "options": [
+        {
+          "key": "A",
+          "text": "that the requirements for each vegetable"
+        },
+        {
+          "key": "B",
+          "text": "what are each vegetable's requirements"
+        },
+        {
+          "key": "C",
+          "text": "that is required by each vegetable"
+        },
+        {
+          "key": "D",
+          "text": "what the requirements for each vegetable are"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "D"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "语法",
+        "单项选择",
+        "中"
+      ]
+    },
+    {
+      "number": 22,
+      "section": "vocab_grammar",
+      "label": "22",
+      "qtype": "choice_single",
+      "stem": "The fluoroscope makes ______ for medical doctors to view a silhouette of the bones and internal organs of a patient's body.",
+      "options": [
+        {
+          "key": "A",
+          "text": "being possible"
+        },
+        {
+          "key": "B",
+          "text": "possibly"
+        },
+        {
+          "key": "C",
+          "text": "it is possible"
+        },
+        {
+          "key": "D",
+          "text": "it possible"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "D"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "语法",
+        "单项选择",
+        "中"
+      ]
+    },
+    {
+      "number": 23,
+      "section": "vocab_grammar",
+      "label": "23",
+      "qtype": "choice_single",
+      "stem": "The buttocks are ______ most other parts of the body.",
+      "options": [
+        {
+          "key": "A",
+          "text": "less likely to cause fatal damage to"
+        },
+        {
+          "key": "B",
+          "text": "less likely to cause fatal damage than"
+        },
+        {
+          "key": "C",
+          "text": "likely less to cause fatal damage than"
+        },
+        {
+          "key": "D",
+          "text": "likely less causing fatal damage than"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "B"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "语法",
+        "单项选择",
+        "中"
+      ]
+    },
+    {
+      "number": 24,
+      "section": "vocab_grammar",
+      "label": "24",
+      "qtype": "choice_single",
+      "stem": "The higher the standard of living and the greater the national wealth, the ______.",
+      "options": [
+        {
+          "key": "A",
+          "text": "greater the amount of paper used"
+        },
+        {
+          "key": "B",
+          "text": "greater amount of paper is used"
+        },
+        {
+          "key": "C",
+          "text": "amount of paper is used is greater"
+        },
+        {
+          "key": "D",
+          "text": "greater is the amount of paper is used"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "A"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "语法",
+        "单项选择",
+        "中"
+      ]
+    },
+    {
+      "number": 25,
+      "section": "vocab_grammar",
+      "label": "25",
+      "qtype": "choice_single",
+      "stem": "\"Tom wants to stay up and watch an old movie on TV.\" \"Ten o'clock is ______ for a boy of his age to stay up.\"",
+      "options": [
+        {
+          "key": "A",
+          "text": "a too late hour"
+        },
+        {
+          "key": "B",
+          "text": "very much late an hour"
+        },
+        {
+          "key": "C",
+          "text": "too late an hour"
+        },
+        {
+          "key": "D",
+          "text": "a so late hour"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "C"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "语法",
+        "单项选择",
+        "中"
+      ]
+    },
+    {
+      "number": 26,
+      "section": "vocab_grammar",
+      "label": "26",
+      "qtype": "choice_single",
+      "stem": "______ there was an epidemic approaching, Mr. Smith ______ the invitation to visit that area.",
+      "options": [
+        {
+          "key": "A",
+          "text": "If he knew...would have declined"
+        },
+        {
+          "key": "B",
+          "text": "If he had known...would decline"
+        },
+        {
+          "key": "C",
+          "text": "Had he known...would decline"
+        },
+        {
+          "key": "D",
+          "text": "Had he known...would have declined"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "D"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "语法",
+        "虚拟语气",
+        "难"
+      ]
+    },
+    {
+      "number": 27,
+      "section": "vocab_grammar",
+      "label": "27",
+      "qtype": "choice_single",
+      "stem": "______ we wish him prosperous, we have objections to his ways of obtaining wealth.",
+      "options": [
+        {
+          "key": "A",
+          "text": "Much as"
+        },
+        {
+          "key": "B",
+          "text": "As much"
+        },
+        {
+          "key": "C",
+          "text": "More as"
+        },
+        {
+          "key": "D",
+          "text": "As well as"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "A"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "语法",
+        "让步状语",
+        "难"
+      ]
+    },
+    {
+      "number": 28,
+      "section": "vocab_grammar",
+      "label": "28",
+      "qtype": "choice_single",
+      "stem": "Just as the value of a telephone network increases with each new phone ______ to the system, so does the value of a computer system increase with each program that turns out.",
+      "options": [
+        {
+          "key": "A",
+          "text": "adding"
+        },
+        {
+          "key": "B",
+          "text": "added"
+        },
+        {
+          "key": "C",
+          "text": "to add"
+        },
+        {
+          "key": "D",
+          "text": "to have added"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "B"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "语法",
+        "非谓语动词",
+        "难"
+      ]
+    },
+    {
+      "number": 29,
+      "section": "vocab_grammar",
+      "label": "29",
+      "qtype": "choice_single",
+      "stem": "Between 1897 and 1919 at least 29 motion pictures in which artificial beings were portrayed ______.",
+      "options": [
+        {
+          "key": "A",
+          "text": "had produced"
+        },
+        {
+          "key": "B",
+          "text": "have been produced"
+        },
+        {
+          "key": "C",
+          "text": "had been produced"
+        },
+        {
+          "key": "D",
+          "text": "would have produced"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "C"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "语法",
+        "时态语态",
+        "难"
+      ]
+    },
+    {
+      "number": 30,
+      "section": "vocab_grammar",
+      "label": "30",
+      "qtype": "choice_single",
+      "stem": "How many of us ______, say, a meeting that is irrelevant to us would be interested in the discussion?",
+      "options": [
+        {
+          "key": "A",
+          "text": "attended"
+        },
+        {
+          "key": "B",
+          "text": "attending"
+        },
+        {
+          "key": "C",
+          "text": "to attend"
+        },
+        {
+          "key": "D",
+          "text": "have attended"
+        }
+      ],
+      "answer": {
+        "kind": "choice",
+        "correct": [
+          "B"
+        ]
+      },
+      "points": 1,
+      "tags": [
+        "语法",
+        "非谓语动词",
+        "难"
+      ]
+    },
+    {
+      "number": 31,
+      "section": "error_correction",
+      "label": "1",
+      "qtype": "fill_blank",
+      "stem": "We've given him just about everything he asked; whatever else can he want? 错误项为 B（asked），改正为 ______。",
+      "answer": {
+        "kind": "text",
+        "accept": [
+          "asked for"
+        ]
+      },
+      "explanation": "答案 B → asked for。ask for 表示「要求得到」，此处需要介词 for 才能接 everything 作宾语。",
+      "points": 1,
+      "tags": [
+        "改错",
+        "动词搭配",
+        "中"
+      ]
+    },
+    {
+      "number": 32,
+      "section": "error_correction",
+      "label": "2",
+      "qtype": "fill_blank",
+      "stem": "Rarely has a technological development had such an impact on society as the rapid grow of electronics. 错误项为 D（grow），改正为 ______。",
+      "answer": {
+        "kind": "text",
+        "accept": [
+          "growth"
+        ]
+      },
+      "explanation": "答案 D → growth。the rapid 后需要名词，grow 是动词，应改为名词 growth。",
+      "points": 1,
+      "tags": [
+        "改错",
+        "词性",
+        "中"
+      ]
+    },
+    {
+      "number": 33,
+      "section": "error_correction",
+      "label": "3",
+      "qtype": "fill_blank",
+      "stem": "The migration of African Americans from the rural South to the industrial North in the early 1900s were the biggest internal migration in American history. 错误项为 C（were），改正为 ______。",
+      "answer": {
+        "kind": "text",
+        "accept": [
+          "was"
+        ]
+      },
+      "explanation": "答案 C → was。主语中心词是 The migration（单数），谓语应用单数 was。",
+      "points": 1,
+      "tags": [
+        "改错",
+        "主谓一致",
+        "中"
+      ]
+    },
+    {
+      "number": 34,
+      "section": "error_correction",
+      "label": "4",
+      "qtype": "fill_blank",
+      "stem": "The Atlantic cable, which began to be operated in 1866, linked the United States to Britain and another cable stretch eastward. 错误项为 D（stretch），改正为 ______。",
+      "answer": {
+        "kind": "text",
+        "accept": [
+          "stretching"
+        ]
+      },
+      "explanation": "答案 D → stretching。another cable 与 stretch 之间是主动关系，作后置定语应用现在分词 stretching。",
+      "points": 1,
+      "tags": [
+        "改错",
+        "非谓语动词",
+        "难"
+      ]
+    },
+    {
+      "number": 35,
+      "section": "error_correction",
+      "label": "5",
+      "qtype": "fill_blank",
+      "stem": "Inner sunshine warms not only the heart of the owner, but of all which come in contact with it. 错误项为 C（which），改正为 ______。",
+      "answer": {
+        "kind": "text",
+        "accept": [
+          "who"
+        ]
+      },
+      "explanation": "答案 C → who。先行词 all 指人，且从句谓语 come 为复数，关系代词应用 who。",
+      "points": 1,
+      "tags": [
+        "改错",
+        "定语从句",
+        "中"
+      ]
+    },
+    {
+      "number": 36,
+      "section": "error_correction",
+      "label": "6",
+      "qtype": "fill_blank",
+      "stem": "In films, optical printing can be combined with blue-screen photography for produce such special effects as characters seeming to fly through the air. 错误项为 B（for produce），改正为 ______。",
+      "answer": {
+        "kind": "text",
+        "accept": [
+          "to"
+        ]
+      },
+      "explanation": "答案 B → to。表示目的应用不定式 to produce，for 后不能直接接动词原形。",
+      "points": 1,
+      "tags": [
+        "改错",
+        "非谓语动词",
+        "中"
+      ]
+    },
+    {
+      "number": 37,
+      "section": "error_correction",
+      "label": "7",
+      "qtype": "fill_blank",
+      "stem": "She did not answer immediately, but meditated again, with her eyes fixing on the opposite wall. 错误项为 D（fixing），改正为 ______。",
+      "answer": {
+        "kind": "text",
+        "accept": [
+          "fixed"
+        ]
+      },
+      "explanation": "答案 D → fixed。with 复合结构中 eyes 与 fix 是被动关系，应用过去分词 fixed。",
+      "points": 1,
+      "tags": [
+        "改错",
+        "非谓语动词",
+        "难"
+      ]
+    },
+    {
+      "number": 38,
+      "section": "error_correction",
+      "label": "8",
+      "qtype": "fill_blank",
+      "stem": "An ideal listener stays both inside and outside the music at the moment it is played and enjoying it almost as much as the composer at the moment he composes. 错误项为 B（enjoying），改正为 ______。",
+      "answer": {
+        "kind": "text",
+        "accept": [
+          "enjoys"
+        ]
+      },
+      "explanation": "答案 B → enjoys。and 连接两个并列谓语，与 stays 保持一致，应用第三人称单数 enjoys。",
+      "points": 1,
+      "tags": [
+        "改错",
+        "并列结构",
+        "中"
+      ]
+    },
+    {
+      "number": 39,
+      "section": "error_correction",
+      "label": "9",
+      "qtype": "fill_blank",
+      "stem": "The reform of the socialist market economic system actually covers many dimensions all of whom have different time horizons. 错误项为 D（all of whom），改正为 ______。",
+      "answer": {
+        "kind": "text",
+        "accept": [
+          "all of which"
+        ]
+      },
+      "explanation": "答案 D → all of which。先行词 dimensions 指物，关系代词应用 which 而非 whom。",
+      "points": 1,
+      "tags": [
+        "改错",
+        "定语从句",
+        "中"
+      ]
+    },
+    {
+      "number": 40,
+      "section": "error_correction",
+      "label": "10",
+      "qtype": "fill_blank",
+      "stem": "First specializing in industrial photography, Margaret Bourke-White later became a famous news photographer and editorial. 错误项为 D（editorial），改正为 ______。",
+      "answer": {
+        "kind": "text",
+        "accept": [
+          "editor"
+        ]
+      },
+      "explanation": "答案 D → editor。与 photographer 并列，指人应用名词 editor，editorial 是形容词或指「社论」。",
+      "points": 1,
+      "tags": [
+        "改错",
+        "词性",
+        "中"
+      ]
+    },
+    {
+      "number": 41,
+      "section": "translation",
+      "label": "Section A-1",
+      "qtype": "short_answer",
+      "stem": "Translate the following sentence into Chinese: Adults today are as aware as Wordsworth of the importance of childhood experiences that a cherished and well-behaved child has a better chance of growing into a balanced, loving, and law-abiding adult than an unloved one.",
+      "answer": {
+        "kind": "reference",
+        "reference": "今天的成年人和华兹华斯一样意识到了孩童时期生活经历的重要性——备受关怀、行为良好的儿童比没有人疼爱的儿童更有机会成长为心态平衡、关心他人和遵纪守法的成年人。",
+        "rubric": {
+          "内容": [
+            "译出 as aware as Wordsworth 的比较",
+            "译出 a balanced, loving, and law-abiding adult"
+          ],
+          "语言": [
+            "中文通顺",
+            "无漏译"
+          ]
+        }
+      },
+      "points": 2,
+      "tags": [
+        "翻译",
+        "英译汉",
+        "中"
+      ]
+    },
+    {
+      "number": 42,
+      "section": "translation",
+      "label": "Section A-2",
+      "qtype": "short_answer",
+      "stem": "Translate the following sentence into Chinese: Toward the end of the afternoon, we followed what seemed to be a large movement of chimpanzees into one great open space in the forest, which was relatively clear except for columns of nut trees.",
+      "answer": {
+        "kind": "reference",
+        "reference": "临近傍晚，我们沿着貌似一大群黑猩猩的活动踪迹进入到森林当中一个空旷的地带，那里除了几排坚果树以外，什么都没有。",
+        "rubric": {
+          "内容": [
+            "译出 what seemed to be 的推测语气",
+            "译出 except for columns of nut trees"
+          ],
+          "语言": [
+            "中文通顺",
+            "无漏译"
+          ]
+        }
+      },
+      "points": 2,
+      "tags": [
+        "翻译",
+        "英译汉",
+        "中"
+      ]
+    },
+    {
+      "number": 43,
+      "section": "translation",
+      "label": "Section A-3",
+      "qtype": "short_answer",
+      "stem": "Translate the following sentence into Chinese: Having become more and more sophisticated, a robot can mimic man himself—even to the extent of being able to learn and remember its work assignments.",
+      "answer": {
+        "kind": "reference",
+        "reference": "机器人已变得日益复杂，它可以模拟人本身，甚至能够学会并记住分配给它的任务。",
+        "rubric": {
+          "内容": [
+            "译出 Having become 的分词状语",
+            "译出 to the extent of being able to"
+          ],
+          "语言": [
+            "中文通顺",
+            "无漏译"
+          ]
+        }
+      },
+      "points": 2,
+      "tags": [
+        "翻译",
+        "英译汉",
+        "中"
+      ]
+    },
+    {
+      "number": 44,
+      "section": "translation",
+      "label": "Section A-4",
+      "qtype": "short_answer",
+      "stem": "Translate the following sentence into Chinese: The scientific method is the systematic pursuit of knowledge involving the identification of a problem, the collection of relevant data through observation and experimentation, and the formulation and testing of hypotheses that aim to solve the problem.",
+      "answer": {
+        "kind": "reference",
+        "reference": "科学方法是系统地追求知识，包括识别问题、通过观察和实验收集相关数据，以及构建和验证为了解决问题而作的假设。",
+        "rubric": {
+          "内容": [
+            "译出 involving 引导的三个并列成分",
+            "译出 that aim to solve the problem"
+          ],
+          "语言": [
+            "中文通顺",
+            "无漏译"
+          ]
+        }
+      },
+      "points": 2,
+      "tags": [
+        "翻译",
+        "英译汉",
+        "中"
+      ]
+    },
+    {
+      "number": 45,
+      "section": "translation",
+      "label": "Section A-5",
+      "qtype": "short_answer",
+      "stem": "Translate the following sentence into Chinese: Every code of etiquette has contained three elements: basic moral duties; practical rules which promote efficiency; and artificial, optional graces such as formal compliments to, say, women on their beauty or superiors on their generosity and importance.",
+      "answer": {
+        "kind": "reference",
+        "reference": "每一种社会礼仪都包含三个要素：基本的道德责任、实际而有效的日常规则和可选择的客套话——比如对妇女的美貌或显贵人物的慷慨及地位的赞美之辞。",
+        "rubric": {
+          "内容": [
+            "译出三个并列要素",
+            "译出 artificial, optional graces 与 say 的插入语"
+          ],
+          "语言": [
+            "中文通顺",
+            "无漏译"
+          ]
+        }
+      },
+      "points": 2,
+      "tags": [
+        "翻译",
+        "英译汉",
+        "难"
+      ]
+    },
+    {
+      "number": 46,
+      "section": "translation",
+      "label": "Section B-1",
+      "qtype": "short_answer",
+      "stem": "Translate the following paragraph into English: 世界上有两种人，他们拥有同等的健康、财富以及生活舒适度，结果，一种人是幸运的，另一种却不幸。这是由于他们对物、对人和对事的观点不同，这些不同的观点对他们的思想所产生的影响也不一样。（提示：生活舒适度 the comforts of life）",
+      "answer": {
+        "kind": "reference",
+        "reference": "There are two sorts of people in the world, who with equal degrees of health, and wealth, and the other comforts of life, become, the one happy, and the other miserable. This arises very much from the different views in which they consider things, persons, and events; and the effect of those different views upon their own minds.",
+        "rubric": {
+          "内容": [
+            "译出两种人及其不同结果",
+            "译出观点不同及其影响"
+          ],
+          "语言": [
+            "英文语法基本正确",
+            "用词准确"
+          ]
+        }
+      },
+      "points": 3,
+      "tags": [
+        "翻译",
+        "汉译英",
+        "难"
+      ]
+    },
+    {
+      "number": 47,
+      "section": "translation",
+      "label": "Section B-2",
+      "qtype": "short_answer",
+      "stem": "Translate the following paragraph into English: 尽管我们对“学习”的理解不尽完善，然而我们对此已有不少了解。“学习”可以呈现不同的形式，也可以在许多情况下进行。一般来说，“学习”必然会引起行为的变化。“学习”导致人们行为发生变化时，这种变化常能持久。“学习”也许意味着对一系列细小而不相关的行为按新的顺序排列，就好比你在钢琴上学习弹奏一首新的曲子。（提示：在许多情况下进行 to take place under many conditions；持久 long-lasting；细小而不相关的行为 small independent acts）",
+      "answer": {
+        "kind": "reference",
+        "reference": "Although our understanding of learning is still not complete, a great deal is known. Learning has many different forms and takes place under many conditions. In general, it involves a change in behavior. When a change in behavior takes place as a result of learning, the change is usually a long-lasting one. Learning may mean that a number of small independent acts are arranged in a new order, just as you learn to play a new piece on the piano.",
+        "rubric": {
+          "内容": [
+            "译出对学习的理解与已知",
+            "译出学习引起行为变化及持久性",
+            "译出钢琴比喻"
+          ],
+          "语言": [
+            "英文语法基本正确",
+            "用词准确"
+          ]
+        }
+      },
+      "points": 3,
+      "tags": [
+        "翻译",
+        "汉译英",
+        "难"
+      ]
+    }
+  ]
+}

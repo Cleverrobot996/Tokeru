@@ -1,0 +1,116 @@
+[shot] 执行 15 步：tools/e2e/steps-interact2.mjs
+[shot] 连接已运行的桌面窗口：127.0.0.1:9333
+[shot] 切换路由 #/bank
+[shot] 完成 1/15：route
+[shot] 完成 2/15：wait
+[shot] 完成 3/15：eval
+[shot] 完成 4/15：wait
+[shot] 完成 5/15：eval
+[shot] 完成 6/15：wait
+[shot] 截图 -> bank-questions-only2（1283x780，268 KB，133ms）
+[shot] 完成 7/15：shot
+[shot] 完成 8/15：eval
+[shot] 完成 9/15：eval
+[shot] 完成 10/15：wait
+[shot] 完成 11/15：eval
+[shot] 完成 12/15：eval
+[shot] 完成 13/15：wait
+[shot] 截图 -> custom-exam2（1283x780，108 KB，86ms）
+[shot] 完成 14/15：shot,full
+[shot] 完成 15/15：eval
+{
+  "ok": true,
+  "url": "http://tauri.localhost/#/exam/1",
+  "title": "Tokeru",
+  "text": "首页\n题库\n练习记录\n错题本\n导入\n设置\n考试工作台\n自选练习 · 1 题\n自选练习\n已答 0/1\n满分 10\n不限时\n交卷\n答题进度\n已答 0 / 1 · 标记 0\nPART I DICTATION\n0/1\n1\n未答\n已答\n标记\n整卷练习\n自选练习 · 1 题\n1 题\n满分 10\nPART I DICTATION\n1 题 · 10 分\n1\n10 分\n听写：Think Positive and Feel Positive（首句已给出：Are you confident or insecure in a difficult situation?）\n答题卡\n已答 0 / 1 · 标记 0\n自动保存\nPART I DICTATION\n0/1\n1",
+  "textLength": 323,
+  "textTruncated": false,
+  "theme": "light",
+  "accent": "violet",
+  "target": "tauri",
+  "viewport": {
+    "w": 1283,
+    "h": 780,
+    "dpr": 1.5
+  },
+  "consoleErrors": [],
+  "warnings": [],
+  "failedRequests": [],
+  "evals": [
+    {
+      "name": "(() => { const b=[...document.querySelectorAll('button')].find(x=>(x.innerText||'').trim()==='清空筛选'); if(!b) return 'no clear'; b.click(); return 'cleared'; })()",
+      "js": "(() => { const b=[...document.querySelectorAll('button')].find(x=>(x.innerText||'').trim()==='清空筛选'); if(!b) return 'no clear'; b.click(); return 'cleared'; })()",
+      "value": "cleared"
+    },
+    {
+      "name": "(() => { const el=[...document.querySelectorAll(\"button\")].find(x=>(x.innerText||'').includes(\"仅题目\")); if(!el) return 'not found: 仅题目'; el.click(); return (el.innerText||'').trim().slice(0,40); })()",
+      "js": "(() => { const el=[...document.querySelectorAll(\"button\")].find(x=>(x.innerText||'').includes(\"仅题目\")); if(!el) return 'not found: 仅题目'; el.click(); return (el.innerText||'').trim().slice(0,40); })()",
+      "value": "仅题目"
+    },
+    {
+      "name": "(() => ({sets:document.querySelectorAll('.bk-set-card').length, questions:document.querySelectorAll('.bk-qcard').length}))()",
+      "js": "(() => ({sets:document.querySelectorAll('.bk-set-card').length, questions:document.querySelectorAll('.bk-qcard').length}))()",
+      "value": {
+        "sets": 0,
+        "questions": 133
+      }
+    },
+    {
+      "name": "(() => { const c=document.querySelector('.bk-qcard'); if(!c) return 'no card'; c.click(); return 'card click'; })()",
+      "js": "(() => { const c=document.querySelector('.bk-qcard'); if(!c) return 'no card'; c.click(); return 'card click'; })()",
+      "value": "card click"
+    },
+    {
+      "name": "(() => (document.querySelector('.bk-basket')||{}).innerText || 'no basket')()",
+      "js": "(() => (document.querySelector('.bk-basket')||{}).innerText || 'no basket')()",
+      "value": "选题篮\n1\n1\n题\n10\n分\nTEM4 2016 真题\n1\n1\n开始练习\n清空"
+    },
+    {
+      "name": "(() => { const b=[...document.querySelectorAll('button')].find(x=>/开始练习/.test(x.innerText||'') && x.closest('.bk-basket')); if(!b) return 'no start'; return {disabled:b.disabled, click:(b.click(),'ok')}; })()",
+      "js": "(() => { const b=[...document.querySelectorAll('button')].find(x=>/开始练习/.test(x.innerText||'') && x.closest('.bk-basket')); if(!b) return 'no start'; return {disabled:b.disabled, click:(b.click(),'ok')}; })()",
+      "value": {
+        "disabled": false,
+        "click": "ok"
+      }
+    },
+    {
+      "name": "(() => ({hash:location.hash, text:document.body.innerText.slice(0,200)}))()",
+      "js": "(() => ({hash:location.hash, text:document.body.innerText.slice(0,200)}))()",
+      "value": {
+        "hash": "#/exam/1",
+        "text": "首页\n题库\n练习记录\n错题本\n导入\n设置\n考试工作台\n自选练习 · 1 题\n自选练习\n已答 0/1\n满分 10\n不限时\n交卷\n答题进度\n已答 0 / 1 · 标记 0\nPART I DICTATION\n0/1\n1\n未答\n已答\n标记\n整卷练习\n自选练习 · 1 题\n1 题\n满分 10\nPART I DICTATION\n1 题 · 10 分\n1\n10 分\n听写：Think Positive and F"
+      }
+    }
+  ],
+  "shots": [
+    {
+      "path": "C:\\Users\\19646\\Desktop\\学习与效率工具\\折腾\\dsh_zone_common\\Tokeru\\bank-questions-only2",
+      "rel": "bank-questions-only2",
+      "width": 1283,
+      "height": 780,
+      "bytes": 274170,
+      "full": false,
+      "clipped": false,
+      "theme": "light",
+      "accent": "violet",
+      "ms": 133
+    },
+    {
+      "path": "C:\\Users\\19646\\Desktop\\学习与效率工具\\折腾\\dsh_zone_common\\Tokeru\\custom-exam2",
+      "rel": "custom-exam2",
+      "width": 1283,
+      "height": 780,
+      "bytes": 110834,
+      "full": false,
+      "clipped": false,
+      "theme": "light",
+      "accent": "violet",
+      "ms": 86
+    }
+  ],
+  "diag": null,
+  "diags": [],
+  "stepErrors": [],
+  "errorOverlay": false,
+  "elapsedMs": 5687
+}

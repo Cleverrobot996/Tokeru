@@ -1,0 +1,31 @@
+[shot] 执行 16 步：tools/e2e/steps-edit.mjs
+[shot] 连接已运行的桌面窗口：127.0.0.1:9333
+[shot] 切换路由 #/home
+[shot] 完成 1/16：route
+[shot] 完成 2/16：wait
+[shot] 完成 3/16：eval
+[shot] 完成 4/16：wait
+[shot] 完成 5/16：eval
+[shot] 完成 6/16：wait
+[shot] 截图 -> home-renamed（1283x780，218 KB，116ms）
+[shot] 完成 7/16：shot
+[shot] 完成 8/16：eval
+[shot] 切换路由 #/bank
+[shot] 完成 9/16：route
+[shot] 完成 10/16：wait
+[shot] 完成 11/16：eval
+[shot] 完成 12/16：wait
+[shot] 完成 13/16：eval
+[shot] 完成 14/16：wait
+[shot] 截图 -> bank-folder-created（1283x780，348 KB，152ms）
+[shot] 完成 15/16：shot
+
+✗ 第 16/16 步失败 {"eval":"(() => [...document.querySelectorAll('.bk-folder-main')].map(x=>x.innerText.replace(/\n/g,' ')))()"}：页面执行报错：SyntaxError: Invalid regular expression: missing /
+{
+  "ok": false,
+  "error": "第 16/16 步失败 {\"eval\":\"(() => [...document.querySelectorAll('.bk-folder-main')].map(x=>x.innerText.replace(/\\n/g,' ')))()\"}：页面执行报错：SyntaxError: Invalid regular expression: missing /",
+  "hint": null,
+  "shots": [],
+  "consoleErrors": [],
+  "failedRequests": []
+}

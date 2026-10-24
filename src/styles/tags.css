@@ -1,0 +1,545 @@
+/* 标签：TagChips / TagBoard
+   颜色只通过 --tag-color 表达；data-color 将 violet/teal/amber/rose/slate
+   映射到现有主题变量，深色主题自动跟随。
+   violet -> --accent, teal -> --ok, amber -> --warn, rose -> --bad, slate -> --text-2 */
+
+:is(.tag-chip, .tag-group, .tag-ai-group, .tag-swatch)[data-color="violet"] {
+  --tag-color: var(--accent);
+}
+:is(.tag-chip, .tag-group, .tag-ai-group, .tag-swatch)[data-color="teal"] {
+  --tag-color: var(--ok);
+}
+:is(.tag-chip, .tag-group, .tag-ai-group, .tag-swatch)[data-color="amber"] {
+  --tag-color: var(--warn);
+}
+:is(.tag-chip, .tag-group, .tag-ai-group, .tag-swatch)[data-color="rose"] {
+  --tag-color: var(--bad);
+}
+:is(.tag-chip, .tag-group, .tag-ai-group, .tag-swatch)[data-color="slate"] {
+  --tag-color: var(--text-2);
+}
+
+/* ---------- TagChips ---------- */
+
+.tag-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  padding: 3px 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-size: 11.5px;
+  font-weight: 550;
+  line-height: 1.45;
+  white-space: nowrap;
+  transition: background 0.16s var(--ease), border-color 0.16s var(--ease), color 0.16s var(--ease),
+    transform 0.16s var(--ease);
+}
+
+.tag-chip[data-color] {
+  border-color: color-mix(in srgb, var(--tag-color) 26%, var(--line));
+  background: color-mix(in srgb, var(--tag-color) 10%, var(--surface));
+  color: color-mix(in srgb, var(--tag-color) 72%, var(--text));
+}
+
+.tag-chips .tag-chip.is-plain {
+  background: var(--surface-2);
+}
+
+.tag-chip-group {
+  margin-right: 1px;
+  font-size: 10.5px;
+  font-weight: 500;
+  opacity: 0.72;
+}
+
+.tag-chip.is-more {
+  border-style: dashed;
+  background: transparent;
+  color: var(--text-3);
+}
+
+.tag-chip-x {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  margin-right: -4px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  opacity: 0.62;
+  cursor: pointer;
+  transition: background 0.15s var(--ease), opacity 0.15s var(--ease);
+}
+
+.tag-chip-x:hover {
+  opacity: 1;
+  background: color-mix(in srgb, var(--text) 12%, transparent);
+}
+
+/* ---------- TagBoard ---------- */
+
+.tag-board {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.tag-board-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.tag-board-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.tag-board-title {
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.tag-board-sub {
+  color: var(--text-3);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.tag-board-acts {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tag-board-empty {
+  padding: 22px 16px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-card);
+  color: var(--text-3);
+  font-size: 12.5px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.tag-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  align-items: start;
+  gap: 12px;
+}
+
+.tag-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px 14px 14px 16px;
+  border: 1px solid var(--line);
+  border-left: 3px solid color-mix(in srgb, var(--tag-color, var(--line-strong)) 58%, var(--line));
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  transition: border-color 0.18s var(--ease), background 0.18s var(--ease), box-shadow 0.18s var(--ease);
+}
+
+.tag-group:hover {
+  border-color: var(--line-strong);
+  border-left-color: color-mix(in srgb, var(--tag-color, var(--text-2)) 72%, var(--line));
+  box-shadow: var(--shadow-sm);
+}
+
+.tag-group[data-drag-over="true"] {
+  border-color: var(--accent);
+  border-left-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 7%, var(--surface));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.tag-group.is-ungrouped {
+  border-left-style: dashed;
+  background: color-mix(in srgb, var(--surface-2) 42%, var(--surface));
+}
+
+.tag-group-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+}
+
+.tag-group-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--tag-color, var(--text-3));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--tag-color, var(--text-3)) 16%, transparent);
+}
+
+.tag-group-name {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tag-group-num {
+  flex: none;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.tag-group-acts {
+  display: flex;
+  flex: none;
+  gap: 2px;
+  margin-left: 2px;
+  opacity: 0.58;
+  transition: opacity 0.16s var(--ease);
+}
+
+.tag-group:hover .tag-group-acts,
+.tag-group:focus-within .tag-group-acts {
+  opacity: 1;
+}
+
+.tag-icon {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: background 0.15s var(--ease), color 0.15s var(--ease);
+}
+
+.tag-icon:hover {
+  background: var(--surface-3);
+  color: var(--text);
+}
+
+.tag-icon.is-danger:hover {
+  background: var(--bad-soft);
+  color: var(--bad);
+}
+
+.tag-group-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 6px;
+  min-height: 26px;
+}
+
+.tag-group-empty {
+  padding: 10px 8px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 10px;
+  color: var(--text-2);
+  font-size: 11.5px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.tag-group[data-drag-over="true"] .tag-group-empty {
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+
+/* 可拖拽 chip（TagBoard 内） */
+
+.tag-chip.is-draggable {
+  cursor: grab;
+  user-select: none;
+}
+
+.tag-chip.is-draggable:hover {
+  border-color: color-mix(in srgb, var(--tag-color, var(--accent)) 50%, var(--line));
+  background: color-mix(in srgb, var(--tag-color, var(--accent)) 15%, var(--surface));
+  transform: translateY(-1px);
+}
+
+.tag-chip.is-draggable:active {
+  cursor: grabbing;
+}
+
+.tag-chip[data-selected="true"] {
+  border-color: color-mix(in srgb, var(--tag-color, var(--accent)) 62%, var(--line));
+  background: color-mix(in srgb, var(--tag-color, var(--accent)) 20%, var(--surface));
+  color: var(--text);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--tag-color, var(--accent)) 18%, transparent);
+}
+
+.tag-chip[data-dragging="true"] {
+  opacity: 0.42;
+}
+
+.tag-chip[data-moving="true"] {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.tag-chip:focus-visible,
+.tag-icon:focus-visible,
+.tag-swatch:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* 新增 / 重命名对话框 */
+
+.tag-color-field {
+  margin-top: 14px;
+}
+
+.tag-swatches {
+  display: flex;
+  gap: 10px;
+  padding: 2px 0 4px;
+}
+
+.swatch.tag-swatch {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+  background: var(--tag-color, var(--surface-3));
+  box-shadow: 0 0 0 1px var(--line);
+  cursor: pointer;
+  transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+
+.swatch.tag-swatch:hover {
+  transform: scale(1.08);
+}
+
+.swatch.tag-swatch[data-on="true"] {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 1px var(--line-strong);
+}
+
+.tag-dialog-text {
+  margin: 0 0 4px;
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.75;
+}
+
+.tag-alert {
+  margin-top: 12px;
+  padding: 8px 10px;
+  border-radius: var(--radius-control);
+  background: var(--bad-soft);
+  color: var(--bad);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.tag-modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+/* AI 整理 */
+
+.tag-ai-summary {
+  margin-bottom: 10px;
+  color: var(--text-3);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.tag-ai-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 26px 4px;
+  color: var(--text-2);
+  font-size: 12.5px;
+}
+
+.tag-ai-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.tag-ai-error .tag-alert {
+  flex: 1;
+  margin-top: 0;
+}
+
+.tag-ai-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: min(46vh, 360px);
+  margin: 0 -6px 2px;
+  padding: 2px 6px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.tag-ai-row {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) 13px auto auto;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s var(--ease);
+}
+
+.tag-ai-row:hover {
+  background: var(--surface-2);
+}
+
+.tag-ai-row[data-checked="true"] {
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+}
+
+.tag-ai-tag {
+  overflow: hidden;
+  color: var(--text);
+  font-size: 12.5px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tag-ai-arrow {
+  color: var(--text-3);
+}
+
+.tag-ai-group {
+  justify-self: start;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--tag-color, var(--text-2)) 14%, var(--surface));
+  color: color-mix(in srgb, var(--tag-color, var(--text-2)) 72%, var(--text));
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.tag-ai-none {
+  color: var(--text-3);
+  font-size: 11px;
+}
+
+.tag-ai-same {
+  padding: 0 6px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--text-3);
+  font-size: 10px;
+}
+
+.tag-spin {
+  animation: tag-spin 0.9s linear infinite;
+}
+
+@keyframes tag-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 紧凑模式与窄屏 */
+
+.tag-board[data-compact="true"] .tag-board-title {
+  font-size: 13.5px;
+}
+
+.tag-board[data-compact="true"] .tag-groups {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.tag-board[data-compact="true"] .tag-group {
+  gap: 8px;
+  padding: 10px 12px 12px 14px;
+}
+
+@media (max-width: 920px) {
+  .tag-groups {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  .tag-board-acts {
+    width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .tag-groups {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tag-ai-row {
+    grid-template-columns: 18px minmax(0, 1fr) auto;
+  }
+
+  .tag-ai-arrow,
+  .tag-ai-same {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tag-chip,
+  .tag-group,
+  .tag-icon,
+  .tag-swatch,
+  .tag-group-acts {
+    transition: none;
+  }
+
+  .tag-spin {
+    animation: none;
+  }
+}

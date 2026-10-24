@@ -1,0 +1,288 @@
+[shot] 执行 31 步：tools/e2e/steps-interact.mjs
+[shot] 连接已运行的桌面窗口：127.0.0.1:9333
+[shot] 切换路由 #/sets/2/answers
+[shot] 完成 1/31：route
+[shot] 完成 2/31：wait
+[shot] 完成 3/31：eval
+[shot] 完成 4/31：wait
+[shot] 完成 5/31：eval
+[shot] 完成 6/31：eval
+[shot] 完成 7/31：wait
+[shot] 截图 -> org-tag-added（1283x780，246 KB，116ms）
+[shot] 完成 8/31：shot
+[shot] 完成 9/31：eval
+[shot] 切换路由 #/bank
+[shot] 完成 10/31：route
+[shot] 完成 11/31：wait
+[shot] 完成 12/31：eval
+[shot] 完成 13/31：wait
+[shot] 截图 -> bank-tag-math（1283x780，316 KB，136ms）
+[shot] 完成 14/31：shot
+[shot] 完成 15/31：eval
+[shot] 完成 16/31：eval
+[shot] 完成 17/31：wait
+[shot] 截图 -> bank-sets-only（1283x780，310 KB，155ms）
+[shot] 完成 18/31：shot
+[shot] 完成 19/31：eval
+[shot] 完成 20/31：eval
+[shot] 完成 21/31：wait
+[shot] 截图 -> bank-questions-only（1283x780，246 KB，126ms）
+[shot] 完成 22/31：shot
+[shot] 完成 23/31：eval
+[shot] 完成 24/31：eval
+[shot] 完成 25/31：wait
+[shot] 完成 26/31：eval
+[shot] 完成 27/31：eval
+[shot] 完成 28/31：wait
+[shot] 截图 -> custom-exam（1283x780，246 KB，119ms）
+[shot] 完成 29/31：shot,full
+[shot] 完成 30/31：eval
+[shot] 完成 31/31：diag
+{
+  "ok": true,
+  "url": "http://tauri.localhost/#/bank",
+  "title": "Tokeru",
+  "text": "首页\n题库\n练习记录\n错题本\n导入\n设置\n题库\n3 份试卷 · 133 道题 · 筛出 1 份 / 0 道\n清空筛选\n导入题目\n两者\n仅试卷\n仅题目\n题号升序\n题号降序\n添加时间 新→旧\n添加时间 旧→新\n已选 0 题\n开始练习\n筛选\n数学\n清空筛选\n标签\n1 已选\n清除\n单项选择\n73\n英语\n67\n中\n37\n听力\n20\n词汇\n20\n难\n19\n填空\n13\n改错\n10\n完形\n10\n易\n10\n语法\n10\n阅读\n10\n翻译\n7\n简答\n5\n英译汉\n5\n解答题\n5\n非谓语动词\n5\n多项选择\n3\n三角函数\n2\n定语从句\n2\n导数\n2\n汉译英\n2\n真题\n2\n立体几何\n2\n综合\n2\n词性\n2\nE2E验证\n1\nTEM4\n1\n三次函数\n1\n不等式\n1\n两角和\n1\n主谓一致\n1\n二面角\n1\n写作\n1\n决策\n1\n函数交点\n1\n函数最值\n1\n切线\n1\n动词搭配\n1\n参数讨论\n1\n双曲线\n1\n同步测试\n1\n听写\n1\n周期\n1\n命题真假\n1\n圆\n1\n圆锥曲线\n1\n复数\n1\n平面向量\n1\n并列结构\n1\n抛物线\n1\n排列组合\n1\n数列\n1\n数学\n1\n数量积\n1\n新课标Ⅱ卷\n1\n时态语态\n1\n期望\n1\n极值\n1\n棱台\n1\n概率\n1\n正弦定理\n1\n求和\n1\n等差数列\n1\n线面角\n1\n统计\n1\n翻折\n1\n虚拟语气\n1\n解三角形\n1\n计数\n1\n让步状语\n1\n词汇语法\n1\n轨迹方程\n1\n逻辑\n1\n零点\n1\n频数分布\n1\n高考\n1\n试卷\n3\n全部\n清空\nTEM4 2016 真题\n67 题\nUnit 2 同步测试\n47 题\n2024 高考数学新课标Ⅱ卷\n19 题\n文件夹\n2\n新建\n全部试卷\n3\n未归类\n1\nUnit 2 同步测试\n1\n高考数学真题\n1\n没有符合条件的结果\n\n换个标签、清空试卷选择，或者取消文件夹筛选。\n\n清空筛选\n去导入\n选题篮\n0\n0\n题\n0\n分\n还没有选题\n点题目卡上的圆圈即可加入。\n开始练习\n清空",
+  "textLength": 799,
+  "textTruncated": false,
+  "theme": "light",
+  "accent": "violet",
+  "target": "tauri",
+  "viewport": {
+    "w": 1283,
+    "h": 780,
+    "dpr": 1.5
+  },
+  "consoleErrors": [],
+  "warnings": [],
+  "failedRequests": [],
+  "evals": [
+    {
+      "name": "(() => { const b=document.querySelector('.org-tag-add'); if(!b) return 'no add'; b.click(); return 'opened'; })()",
+      "js": "(() => { const b=document.querySelector('.org-tag-add'); if(!b) return 'no add'; b.click(); return 'opened'; })()",
+      "value": "opened"
+    },
+    {
+      "name": "(() => { const i=document.querySelector('.org-tag-input'); if(!i) return 'no input'; const s=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set; s.call(i,'E2E验证'); i.dispatchEvent(new Event('input',{bubbles:true})); return i.value; })()",
+      "js": "(() => { const i=document.querySelector('.org-tag-input'); if(!i) return 'no input'; const s=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set; s.call(i,'E2E验证'); i.dispatchEvent(new Event('input',{bubbles:true})); return i.value; })()",
+      "value": "E2E验证"
+    },
+    {
+      "name": "(() => { const b=document.querySelector('.org-tag-confirm'); if(!b) return 'no confirm'; b.click(); return 'clicked'; })()",
+      "js": "(() => { const b=document.querySelector('.org-tag-confirm'); if(!b) return 'no confirm'; b.click(); return 'clicked'; })()",
+      "value": "clicked"
+    },
+    {
+      "name": "(() => document.querySelector('.org-tags.is-large')?.innerText || 'none')()",
+      "js": "(() => document.querySelector('.org-tags.is-large')?.innerText || 'none')()",
+      "value": "英语\n同步测试\n词汇语法\n改错\n翻译\nE2E验证\n添加标签"
+    },
+    {
+      "name": "(() => { const el=[...document.querySelectorAll(\"button.bk-tag\")].find(x=>(x.innerText||'').includes(\"数学\")); if(!el) return 'not found: 数学'; el.click(); return (el.innerText||'').trim().slice(0,40); })()",
+      "js": "(() => { const el=[...document.querySelectorAll(\"button.bk-tag\")].find(x=>(x.innerText||'').includes(\"数学\")); if(!el) return 'not found: 数学'; el.click(); return (el.innerText||'').trim().slice(0,40); })()",
+      "value": "数学\n1"
+    },
+    {
+      "name": "(() => ({sets:document.querySelectorAll('.bk-set-card').length, questions:document.querySelectorAll('.bk-qcard').length}))()",
+      "js": "(() => ({sets:document.querySelectorAll('.bk-set-card').length, questions:document.querySelectorAll('.bk-qcard').length}))()",
+      "value": {
+        "sets": 1,
+        "questions": 0
+      }
+    },
+    {
+      "name": "(() => { const el=[...document.querySelectorAll(\"button\")].find(x=>(x.innerText||'').includes(\"仅试卷\")); if(!el) return 'not found: 仅试卷'; el.click(); return (el.innerText||'').trim().slice(0,40); })()",
+      "js": "(() => { const el=[...document.querySelectorAll(\"button\")].find(x=>(x.innerText||'').includes(\"仅试卷\")); if(!el) return 'not found: 仅试卷'; el.click(); return (el.innerText||'').trim().slice(0,40); })()",
+      "value": "仅试卷"
+    },
+    {
+      "name": "(() => ({sets:document.querySelectorAll('.bk-set-card').length, questions:document.querySelectorAll('.bk-qcard').length}))()",
+      "js": "(() => ({sets:document.querySelectorAll('.bk-set-card').length, questions:document.querySelectorAll('.bk-qcard').length}))()",
+      "value": {
+        "sets": 1,
+        "questions": 0
+      }
+    },
+    {
+      "name": "(() => { const el=[...document.querySelectorAll(\"button\")].find(x=>(x.innerText||'').includes(\"仅题目\")); if(!el) return 'not found: 仅题目'; el.click(); return (el.innerText||'').trim().slice(0,40); })()",
+      "js": "(() => { const el=[...document.querySelectorAll(\"button\")].find(x=>(x.innerText||'').includes(\"仅题目\")); if(!el) return 'not found: 仅题目'; el.click(); return (el.innerText||'').trim().slice(0,40); })()",
+      "value": "仅题目"
+    },
+    {
+      "name": "(() => ({sets:document.querySelectorAll('.bk-set-card').length, questions:document.querySelectorAll('.bk-qcard').length}))()",
+      "js": "(() => ({sets:document.querySelectorAll('.bk-set-card').length, questions:document.querySelectorAll('.bk-qcard').length}))()",
+      "value": {
+        "sets": 0,
+        "questions": 0
+      }
+    },
+    {
+      "name": "(() => { const c=document.querySelector('.bk-qcard'); if(!c) return 'no card'; c.click(); return 'clicked card'; })()",
+      "js": "(() => { const c=document.querySelector('.bk-qcard'); if(!c) return 'no card'; c.click(); return 'clicked card'; })()",
+      "value": "no card"
+    },
+    {
+      "name": "(() => (document.querySelector('.bk-basket')||{}).innerText || 'no basket')()",
+      "js": "(() => (document.querySelector('.bk-basket')||{}).innerText || 'no basket')()",
+      "value": "选题篮\n0\n0\n题\n0\n分\n还没有选题\n点题目卡上的圆圈即可加入。\n开始练习\n清空"
+    },
+    {
+      "name": "(() => { const b=[...document.querySelectorAll('button')].find(x=>/开始练习/.test(x.innerText||'') && x.closest('.bk-basket')); if(!b) return 'no basket start'; b.click(); return 'started'; })()",
+      "js": "(() => { const b=[...document.querySelectorAll('button')].find(x=>/开始练习/.test(x.innerText||'') && x.closest('.bk-basket')); if(!b) return 'no basket start'; b.click(); return 'started'; })()",
+      "value": "started"
+    },
+    {
+      "name": "(() => ({hash:location.hash, text:document.body.innerText.slice(0,160)}))()",
+      "js": "(() => ({hash:location.hash, text:document.body.innerText.slice(0,160)}))()",
+      "value": {
+        "hash": "#/bank",
+        "text": "首页\n题库\n练习记录\n错题本\n导入\n设置\n题库\n3 份试卷 · 133 道题 · 筛出 1 份 / 0 道\n清空筛选\n导入题目\n两者\n仅试卷\n仅题目\n题号升序\n题号降序\n添加时间 新→旧\n添加时间 旧→新\n已选 0 题\n开始练习\n筛选\n数学\n清空筛选\n标签\n1 已选\n清除\n单项选择\n73\n英语\n67\n中\n37\n听力\n2"
+      }
+    }
+  ],
+  "shots": [
+    {
+      "path": "C:\\Users\\19646\\Desktop\\学习与效率工具\\折腾\\dsh_zone_common\\Tokeru\\org-tag-added",
+      "rel": "org-tag-added",
+      "width": 1283,
+      "height": 780,
+      "bytes": 252238,
+      "full": false,
+      "clipped": false,
+      "theme": "light",
+      "accent": "violet",
+      "ms": 116
+    },
+    {
+      "path": "C:\\Users\\19646\\Desktop\\学习与效率工具\\折腾\\dsh_zone_common\\Tokeru\\bank-tag-math",
+      "rel": "bank-tag-math",
+      "width": 1283,
+      "height": 780,
+      "bytes": 323448,
+      "full": false,
+      "clipped": false,
+      "theme": "light",
+      "accent": "violet",
+      "ms": 136
+    },
+    {
+      "path": "C:\\Users\\19646\\Desktop\\学习与效率工具\\折腾\\dsh_zone_common\\Tokeru\\bank-sets-only",
+      "rel": "bank-sets-only",
+      "width": 1283,
+      "height": 780,
+      "bytes": 317916,
+      "full": false,
+      "clipped": false,
+      "theme": "light",
+      "accent": "violet",
+      "ms": 155
+    },
+    {
+      "path": "C:\\Users\\19646\\Desktop\\学习与效率工具\\折腾\\dsh_zone_common\\Tokeru\\bank-questions-only",
+      "rel": "bank-questions-only",
+      "width": 1283,
+      "height": 780,
+      "bytes": 252352,
+      "full": false,
+      "clipped": false,
+      "theme": "light",
+      "accent": "violet",
+      "ms": 126
+    },
+    {
+      "path": "C:\\Users\\19646\\Desktop\\学习与效率工具\\折腾\\dsh_zone_common\\Tokeru\\custom-exam",
+      "rel": "custom-exam",
+      "width": 1283,
+      "height": 780,
+      "bytes": 252352,
+      "full": false,
+      "clipped": false,
+      "theme": "light",
+      "accent": "violet",
+      "ms": 119
+    }
+  ],
+  "diag": {
+    "url": "http://tauri.localhost/#/bank",
+    "viewport": {
+      "w": 1283,
+      "h": 780,
+      "dpr": 1.5
+    },
+    "doc": {
+      "scrollWidth": 1268,
+      "scrollHeight": 981,
+      "clientWidth": 1268,
+      "clientHeight": 780
+    },
+    "hScroll": false,
+    "vScroll": true,
+    "theme": "light",
+    "accent": "violet",
+    "overflowX": [],
+    "hScrollBoxes": [],
+    "nativeControls": [],
+    "jie": {
+      "count": 2,
+      "at": [
+        {
+          "el": "aside.bk-side > section.panel.bk-filter > div.bk-tags > button.bk-tag > span.bk-tag-name",
+          "text": "解答题"
+        },
+        {
+          "el": "aside.bk-side > section.panel.bk-filter > div.bk-tags > button.bk-tag > span.bk-tag-name",
+          "text": "解三角形"
+        }
+      ]
+    },
+    "inlineColors": [],
+    "errorOverlay": false,
+    "rootChildren": 1,
+    "textLength": 799,
+    "name": "custom-exam"
+  },
+  "diags": [
+    {
+      "url": "http://tauri.localhost/#/bank",
+      "viewport": {
+        "w": 1283,
+        "h": 780,
+        "dpr": 1.5
+      },
+      "doc": {
+        "scrollWidth": 1268,
+        "scrollHeight": 981,
+        "clientWidth": 1268,
+        "clientHeight": 780
+      },
+      "hScroll": false,
+      "vScroll": true,
+      "theme": "light",
+      "accent": "violet",
+      "overflowX": [],
+      "hScrollBoxes": [],
+      "nativeControls": [],
+      "jie": {
+        "count": 2,
+        "at": [
+          {
+            "el": "aside.bk-side > section.panel.bk-filter > div.bk-tags > button.bk-tag > span.bk-tag-name",
+            "text": "解答题"
+          },
+          {
+            "el": "aside.bk-side > section.panel.bk-filter > div.bk-tags > button.bk-tag > span.bk-tag-name",
+            "text": "解三角形"
+          }
+        ]
+      },
+      "inlineColors": [],
+      "errorOverlay": false,
+      "rootChildren": 1,
+      "textLength": 799,
+      "name": "custom-exam"
+    }
+  ],
+  "stepErrors": [],
+  "errorOverlay": false,
+  "elapsedMs": 9745
+}

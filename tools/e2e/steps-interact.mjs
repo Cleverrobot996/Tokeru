@@ -1,0 +1,37 @@
+// 3.2 交互验收：速查与整理打标、题库标签筛选/显示模式/选题开始练习。
+const shot = (n) => "tools/shots/e2e-" + n + ".png";
+const clickText = (sel, text) => "(() => { const el=[...document.querySelectorAll(" + JSON.stringify(sel) + ")].find(x=>(x.innerText||'').includes(" + JSON.stringify(text) + ")); if(!el) return 'not found: " + text + "'; el.click(); return (el.innerText||'').trim().slice(0,40); })()";
+
+export default [
+  { route: "/sets/2/answers" },
+  { wait: 1400 },
+  { eval: "(() => { const b=document.querySelector('.org-tag-add'); if(!b) return 'no add'; b.click(); return 'opened'; })()" },
+  { wait: 250 },
+  { eval: "(() => { const i=document.querySelector('.org-tag-input'); if(!i) return 'no input'; const s=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set; s.call(i,'E2E验证'); i.dispatchEvent(new Event('input',{bubbles:true})); return i.value; })()" },
+  { eval: "(() => { const b=document.querySelector('.org-tag-confirm'); if(!b) return 'no confirm'; b.click(); return 'clicked'; })()" },
+  { wait: 900 },
+  { shot: "org-tag-added" },
+  { eval: "(() => document.querySelector('.org-tags.is-large')?.innerText || 'none')()" },
+  { route: "/bank" },
+  { wait: 1200 },
+  { eval: clickText("button.bk-tag", "数学") },
+  { wait: 800 },
+  { shot: "bank-tag-math" },
+  { eval: "(() => ({sets:document.querySelectorAll('.bk-set-card').length, questions:document.querySelectorAll('.bk-qcard').length}))()" },
+  { eval: clickText("button", "仅试卷") },
+  { wait: 700 },
+  { shot: "bank-sets-only" },
+  { eval: "(() => ({sets:document.querySelectorAll('.bk-set-card').length, questions:document.querySelectorAll('.bk-qcard').length}))()" },
+  { eval: clickText("button", "仅题目") },
+  { wait: 700 },
+  { shot: "bank-questions-only" },
+  { eval: "(() => ({sets:document.querySelectorAll('.bk-set-card').length, questions:document.querySelectorAll('.bk-qcard').length}))()" },
+  { eval: "(() => { const c=document.querySelector('.bk-qcard'); if(!c) return 'no card'; c.click(); return 'clicked card'; })()" },
+  { wait: 500 },
+  { eval: "(() => (document.querySelector('.bk-basket')||{}).innerText || 'no basket')()" },
+  { eval: "(() => { const b=[...document.querySelectorAll('button')].find(x=>/开始练习/.test(x.innerText||'') && x.closest('.bk-basket')); if(!b) return 'no basket start'; b.click(); return 'started'; })()" },
+  { wait: 1800 },
+  { shot: "custom-exam", full: true },
+  { eval: "(() => ({hash:location.hash, text:document.body.innerText.slice(0,160)}))()" },
+  { diag: "custom-exam" },
+];

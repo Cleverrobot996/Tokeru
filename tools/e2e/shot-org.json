@@ -1,0 +1,154 @@
+[shot] 连接已运行的桌面窗口：127.0.0.1:9333
+[shot] tauri 模式沿用窗口实际尺寸（要固定视口请显式传 --w/--h）
+[shot] Git Bash 改写了路由参数（#C:/Users/19646/.dsh/profiles/desktop/node_modules/@dsh-ops/bash-win32-x64/sets/2/answers），已还原为 /sets/2/answers；更稳的写法：--route "#/..." 或 MSYS_NO_PATHCONV=1
+[shot] 切换路由 #/sets/2/answers
+[shot] 截图 -> tools/shots/e2e-desk-organize.png（1283x780，239 KB，118ms）
+{
+  "ok": true,
+  "url": "http://tauri.localhost/#/sets/2/answers",
+  "title": "Tokeru",
+  "text": "首页\n题库\n练习记录\n错题本\n导入\n设置\n返回题库\n/\n速查与整理\nUnit 2 同步测试\n速查与整理\n共 47 题 · 3 个分区 · 56 分\n打印\n整卷练习\n当前试卷\nUnit 2 同步测试\nUnit 2 Why Fiction Is Good for You\n\n词汇语法30题、改错10题、翻译（英译汉5句、汉译英2段）\n\n47\n题目\n3\n分区\n56\n满分\n0\n建议分钟\n试卷标签\n英语\n同步测试\n词汇语法\n改错\n翻译\n添加标签\n回车添加，点 × 删除；保存后可在题库按标签筛选。\n文件夹\n未归类\nUnit 2 同步测试（1）\n高考数学真题（1）\n已归入「Unit 2 同步测试」，该文件夹共 1 份试卷。\n01\nVocabulary and Grammar\n30\n02\nError Correction\n10\n03\nTranslation\n7\n共 47 题\n01\nPart I Vocabulary and Grammar\n30 题\n30 分\n1\n词汇\n单项选择\n易\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nIf fish were  like livestock, the present global fish catch could easily multiply fivefold, or as much as tenfold.\nA\ncultivated\nB\nagitated\nC\ntreated\nD\ncivilized\n正确答案\n单项选择\nA\n2\n词汇\n单项选择\n易\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nPain is described as an  sensory and emotional experience associated with actual or potential tissue damage.\nA\nunusual\nB\nunpleasant\nC\nunfortunate\nD\nunexpected\n正确答案\n单项选择\nB\n3\n词汇\n单项选择\n易\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nWe strongly  terrorism in all its forms and manifestations, committed by whomever, wherever, and for whatever purposes.\nA\nconduct\nB\nconfine\nC\nconfess\nD\ncondemn\n正确答案\n单项选择\nD\n4\n词汇\n单项选择\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nWhatever you believe, you'll experience more in your later life, and you'll also find yourself behaving in ways that are  with your beliefs.\nA\nconducted\nB\ncongruent\nC\ncongregated\nD\ncontended\n正确答案\n单项选择\nB\n5\n词汇\n单项选择\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nExperimentalists in the first half of the 19th century participated in a complex historical process of  the physical sciences.\nA\nretaining\nB\nconducting\nC\nmolding\nD\nobtaining\n正确答案\n单项选择\nC\n6\n词汇\n单项选择\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nAs a climatologist in a geography department it  me that often human activity is seen as an adjunct to the climate system rather than an integral part.\nA\ndismays\nB\nquestions\nC\ndisputes\nD\nembarrasses\n正确答案\n单项选择\nA\n7\n词汇\n单项选择\n易\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nWhether the giant panda belonged to the bear or cat families was a matter of zoological  for years.\nA\nconception\nB\ncomplication\nC\nconvention\nD\ncontroversy\n正确答案\n单项选择\nD\n8\n词汇\n单项选择\n易\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nSome people are very  where food is concerned; they are not willing to try anything out of the ordinary.\nA\nreserved\nB\ninstructive\nC\nconservative\nD\nstraightforward\n正确答案\n单项选择\nC\n9\n词汇\n单项选择\n易\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nHelen got some books out of the library and  herself in Modern Chinese History and Chinese Culture.\nA\nsank\nB\nimmersed\nC\nattracted\nD\ninvolved\n正确答案\n单项选择\nB\n10\n词汇\n单项选择\n易\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nBecause of a lack of proper education, a lot of local people are ; some of them can even write their own names.\nA\nilliterate\nB\nliterary\nC\nliterate\nD\nliteral\n正确答案\n单项选择\nA\n11\n词汇\n单项选择\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nUntil the late 19th century, there was no  system of timekeeping in the United States.\nA\npractical\nB\nflexible\nC\nconsistent\nD\nsubstantial\n正确答案\n单项选择\nC\n12\n词汇\n单项选择\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nMany professors believe that they must first encourage students to think independently and challenge authority, cultivate students'  spirit, and guide a variety of views to cross swords.\nA\npredictable\nB\nskeptical\nC\npowerful\nD\nconstant\n正确答案\n单项选择\nB\n13\n词汇\n单项选择\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nWind farms, solar power, and other sources of renewable energy must now  in the environment policy of all responsible governments.\nA\ninclude\nB\nfeature\nC\nportray\nD\nprompt\n正确答案\n单项选择\nB\n14\n词汇\n单项选择\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nIn order to achieve dramatic improvements and  competitors, a corporation often need to make radical changes.\nA\nincorporate\nB\nexterminate\nC\ndominate\nD\noutperform\n正确答案\n单项选择\nD\n15\n词汇\n单项选择\n易\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nAnne is always encouraging her students to think for themselves and to act morally and .\nA\nethically\nB\nnationally\nC\nracially\nD\nethnically\n正确答案\n单项选择\nA\n16\n词汇\n单项选择\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nThe league prohibits players from  products related to alcohol, tobacco, casinos, or gambling.\nA\nproducing\nB\nexploiting\nC\nillustrating\nD\nendorsing\n正确答案\n单项选择\nD\n17\n词汇\n单项选择\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nThrough mere , the scientist formed a half-baked theory about why the plants weren't growing.\nA\nspeculation\nB\nspecification\nC\nseparation\nD\nspecimen\n正确答案\n单项选择\nA\n18\n词汇\n单项选择\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nPrejudice and discrimination are closely connected; prejudice leads to discrimination, and discrimination  prejudice in a vicious cycle.\nA\nidentifies\nB\nrefines\nC\nreinforces\nD\nverifies\n正确答案\n单项选择\nC\n19\n词汇\n单项选择\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nAs  cyclists ourselves, we are riding and racing all year around, so we know clear what cyclists are looking for and asking for.\nA\nsacred\nB\ncasual\nC\navid\nD\nhumble\n正确答案\n单项选择\nC\n20\n词汇\n单项选择\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nInstead of sending them away without an answer, the system encourages users to  the search.\nA\nutilize\nB\nmeasure\nC\nerase\nD\nmodify\n正确答案\n单项选择\nD\n21\n语法\n单项选择\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nIn order to grow vegetables properly, gardeners must know .\nA\nthat the requirements for each vegetable\nB\nwhat are each vegetable's requirements\nC\nthat is required by each vegetable\nD\nwhat the requirements for each vegetable are\n正确答案\n单项选择\nD\n22\n语法\n单项选择\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nThe fluoroscope makes  for medical doctors to view a silhouette of the bones and internal organs of a patient's body.\nA\nbeing possible\nB\npossibly\nC\nit is possible\nD\nit possible\n正确答案\n单项选择\nD\n23\n语法\n单项选择\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nThe buttocks are  most other parts of the body.\nA\nless likely to cause fatal damage to\nB\nless likely to cause fatal damage than\nC\nlikely less to cause fatal damage than\nD\nlikely less causing fatal damage than\n正确答案\n单项选择\nB\n24\n语法\n单项选择\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nThe higher the standard of living and the greater the national wealth, the .\nA\ngreater the amount of paper used\nB\ngreater amount of paper is used\nC\namount of paper is used is greater\nD\ngreater is the amount of paper is used\n正确答案\n单项选择\nA\n25\n语法\n单项选择\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\n\"Tom wants to stay up and watch an old movie on TV.\" \"Ten o'clock is  for a boy of his age to stay up.\"\nA\na too late hour\nB\nvery much late an hour\nC\ntoo late an hour\nD\na so late hour\n正确答案\n单项选择\nC\n26\n语法\n虚拟语气\n难\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\n there was an epidemic approaching, Mr. Smith  the invitation to visit that area.\nA\nIf he knew...would have declined\nB\nIf he had known...would decline\nC\nHad he known...would decline\nD\nHad he known...would have declined\n正确答案\n单项选择\nD\n27\n语法\n让步状语\n难\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\n we wish him prosperous, we have objections to his ways of obtaining wealth.\nA\nMuch as\nB\nAs much\nC\nMore as\nD\nAs well as\n正确答案\n单项选择\nA\n28\n语法\n非谓语动词\n难\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nJust as the value of a telephone network increases with each new phone  to the system, so does the value of a computer system increase with each program that turns out.\nA\nadding\nB\nadded\nC\nto add\nD\nto have added\n正确答案\n单项选择\nB\n29\n语法\n时态语态\n难\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nBetween 1897 and 1919 at least 29 motion pictures in which artificial beings were portrayed .\nA\nhad produced\nB\nhave been produced\nC\nhad been produced\nD\nwould have produced\n正确答案\n单项选择\nC\n30\n语法\n非谓语动词\n难\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nHow many of us , say, a meeting that is irrelevant to us would be interested in the discussion?\nA\nattended\nB\nattending\nC\nto attend\nD\nhave attended\n正确答案\n单项选择\nB\n02\nPart II Error Correction\n10 题\n10 分\n1\n改错\n动词搭配\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nWe've given him just about everything he asked; whatever else can he want? 错误项为 B（asked），改正为 。\n正确答案\n填空\nasked for\n解析\n答案 B → asked for。ask for 表示「要求得到」，此处需要介词 for 才能接 everything 作宾语。\n2\n改错\n词性\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nRarely has a technological development had such an impact on society as the rapid grow of electronics. 错误项为 D（grow），改正为 。\n正确答案\n填空\ngrowth\n解析\n答案 D → growth。the rapid 后需要名词，grow 是动词，应改为名词 growth。\n3\n改错\n主谓一致\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nThe migration of African Americans from the rural South to the industrial North in the early 1900s were the biggest internal migration in American history. 错误项为 C（were），改正为 。\n正确答案\n填空\nwas\n解析\n答案 C → was。主语中心词是 The migration（单数），谓语应用单数 was。\n4\n改错\n非谓语动词\n难\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nThe Atlantic cable, which began to be operated in 1866, linked the United States to Britain and another cable stretch eastward. 错误项为 D（stretch），改正为 。\n正确答案\n填空\nstretching\n解析\n答案 D → stretching。another cable 与 stretch 之间是主动关系，作后置定语应用现在分词 stretching。\n5\n改错\n定语从句\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nInner sunshine warms not only the heart of the owner, but of all which come in contact with it. 错误项为 C（which），改正为 。\n正确答案\n填空\nwho\n解析\n答案 C → who。先行词 all 指人，且从句谓语 come 为复数，关系代词应用 who。\n6\n改错\n非谓语动词\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nIn films, optical printing can be combined with blue-screen photography for produce such special effects as characters seeming to fly through the air. 错误项为 B（for produce），改正为 。\n正确答案\n填空\nto\n解析\n答案 B → to。表示目的应用不定式 to produce，for 后不能直接接动词原形。\n7\n改错\n非谓语动词\n难\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nShe did not answer immediately, but meditated again, with her eyes fixing on the opposite wall. 错误项为 D（fixing），改正为 。\n正确答案\n填空\nfixed\n解析\n答案 D → fixed。with 复合结构中 eyes 与 fix 是被动关系，应用过去分词 fixed。\n8\n改错\n并列结构\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nAn ideal listener stays both inside and outside the music at the moment it is played and enjoying it almost as much as the composer at the moment he composes. 错误项为 B（enjoying），改正为 。\n正确答案\n填空\nenjoys\n解析\n答案 B → enjoys。and 连接两个并列谓语，与 stays 保持一致，应用第三人称单数 enjoys。\n9\n改错\n定语从句\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nThe reform of the socialist market economic system actually covers many dimensions all of whom have different time horizons. 错误项为 D（all of whom），改正为 。\n正确答案\n填空\nall of which\n解析\n答案 D → all of which。先行词 dimensions 指物，关系代词应用 which 而非 whom。\n10\n改错\n词性\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n1 分\nFirst specializing in industrial photography, Margaret Bourke-White later became a famous news photographer and editorial. 错误项为 D（editorial），改正为 。\n正确答案\n填空\neditor\n解析\n答案 D → editor。与 photographer 并列，指人应用名词 editor，editorial 是形容词或指「社论」。\n03\nPart III Translation\n7 题\n16 分\n41\n翻译\n英译汉\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n2 分\nTranslate the following sentence into Chinese: Adults today are as aware as Wordsworth of the importance of childhood experiences that a cherished and well-behaved child has a better chance of growing into a balanced, loving, and law-abiding adult than an unloved one.\n参考文本\n今天的成年人和华兹华斯一样意识到了孩童时期生活经历的重要性——备受关怀、行为良好的儿童比没有人疼爱的儿童更有机会成长为心态平衡、关心他人和遵纪守法的成年人。\n42\n翻译\n英译汉\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n2 分\nTranslate the following sentence into Chinese: Toward the end of the afternoon, we followed what seemed to be a large movement of chimpanzees into one great open space in the forest, which was relatively clear except for columns of nut trees.\n参考文本\n临近傍晚，我们沿着貌似一大群黑猩猩的活动踪迹进入到森林当中一个空旷的地带，那里除了几排坚果树以外，什么都没有。\n43\n翻译\n英译汉\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n2 分\nTranslate the following sentence into Chinese: Having become more and more sophisticated, a robot can mimic man himself—even to the extent of being able to learn and remember its work assignments.\n参考文本\n机器人已变得日益复杂，它可以模拟人本身，甚至能够学会并记住分配给它的任务。\n44\n翻译\n英译汉\n中\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n2 分\nTranslate the following sentence into Chinese: The scientific method is the systematic pursuit of knowledge involving the identification of a problem, the collection of relevant data through observation and experimentation, and the formulation and testing of hypotheses that aim to solve the problem.\n参考文本\n科学方法是系统地追求知识，包括识别问题、通过观察和实验收集相关数据，以及构建和验证为了解决问题而作的假设。\n45\n翻译\n英译汉\n难\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n2 分\nTranslate the following sentence into Chinese: Every code of etiquette has contained three elements: basic moral duties; practical rules which promote efficiency; and artificial, optional graces such as formal compliments to, say, women on their beauty or superiors on their generosity and importance.\n参考文本\n每一种社会礼仪都包含三个要素：基本的道德责任、实际而有效的日常规则和可选择的客套话——比如对妇女的美貌或显贵人物的慷慨及地位的赞美之辞。\n46\n翻译\n汉译英\n难\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n3 分\nTranslate the following paragraph into English: 世界上有两种人，他们拥有同等的健康、财富以及生活舒适度，结果，一种人是幸运的，另一种却不幸。这是由于他们对物、对人和对事的观点不同，这些不同的观点对他们的思想所产生的影响也不一样。（提示：生活舒适度 the comforts of life）\n参考文本\nThere are two sorts of people in the world, who with equal degrees of health, and wealth, and the other comforts of life, become, the one happy, and the other miserable. This arises very much from the different views in which they consider things, persons, and events; and the effect of those different views upon their own minds.\n47\n翻译\n汉译英\n难\n标签\n单项选择\n多项选择\n填空\n完形填空\n判断\n简答\n写作\n听写\n匹配\n3 分\nTranslate the following paragraph into English: 尽管我们对“学习”的理解不尽完善，然而我们对此已有不少了解。“学习”可以呈现不同的形式，也可以在许多情况下进行。一般来说，“学习”必然会引起行为的变化。“学习”导致人们行为发生变化时，这种变化常能持久。“学习”也许意味着对一系列细小而不相关的行为按新的顺序排列，就好比你在钢琴上学习弹奏一首新的曲子。（提示：在许多情况下进行 to take place under many conditions；持久 long-lasting；细小而不相关的行为 small independent acts）\n参考文本\nAlthough our understanding of learning is still not complete, a great deal is known. Learning has many different forms and takes place under many conditions. In general, it involves a change in behavior. When a change in behavior takes place as a result of learning, the change is usually a long-lasting one. Learning may mean that a number of small independent acts are arranged in a new order, just as you learn to play a new piece on the piano.\nUnit 2 同步测试\n共 47 题 · 答案与解析仅供参考",
+  "textLength": 13597,
+  "textTruncated": false,
+  "theme": "light",
+  "accent": "violet",
+  "target": "tauri",
+  "viewport": {
+    "w": 1283,
+    "h": 780,
+    "dpr": 1.5
+  },
+  "consoleErrors": [],
+  "warnings": [],
+  "failedRequests": [],
+  "evals": [],
+  "shots": [
+    {
+      "path": "C:\\Users\\19646\\Desktop\\学习与效率工具\\折腾\\dsh_zone_common\\Tokeru\\tools\\shots\\e2e-desk-organize.png",
+      "rel": "tools/shots/e2e-desk-organize.png",
+      "width": 1283,
+      "height": 780,
+      "bytes": 244888,
+      "full": false,
+      "clipped": false,
+      "theme": "light",
+      "accent": "violet",
+      "ms": 118
+    }
+  ],
+  "diag": {
+    "url": "http://tauri.localhost/#/sets/2/answers",
+    "viewport": {
+      "w": 1283,
+      "h": 780,
+      "dpr": 1.5
+    },
+    "doc": {
+      "scrollWidth": 1268,
+      "scrollHeight": 17350,
+      "clientWidth": 1268,
+      "clientHeight": 780
+    },
+    "hScroll": false,
+    "vScroll": true,
+    "theme": "light",
+    "accent": "violet",
+    "overflowX": [],
+    "hScrollBoxes": [],
+    "nativeControls": [],
+    "jie": {
+      "count": 14,
+      "at": [
+        {
+          "el": "article#org-q-98 > div.org-qa > section.org-explain > div.org-ans-head > span.org-ans-label",
+          "text": "解析"
+        },
+        {
+          "el": "article#org-q-99 > div.org-qa > section.org-explain > div.org-ans-head > span.org-ans-label",
+          "text": "解析"
+        },
+        {
+          "el": "article#org-q-100 > div.org-qa > section.org-explain > div.org-ans-head > span.org-ans-label",
+          "text": "解析"
+        },
+        {
+          "el": "article#org-q-101 > div.org-qa > section.org-explain > div.org-ans-head > span.org-ans-label",
+          "text": "解析"
+        },
+        {
+          "el": "article#org-q-102 > div.org-qa > section.org-explain > div.org-ans-head > span.org-ans-label",
+          "text": "解析"
+        },
+        {
+          "el": "article#org-q-103 > div.org-qa > section.org-explain > div.org-ans-head > span.org-ans-label",
+          "text": "解析"
+        }
+      ]
+    },
+    "inlineColors": [],
+    "errorOverlay": false,
+    "rootChildren": 1,
+    "textLength": 13597,
+    "name": "tools/shots/e2e-desk-organize.png"
+  },
+  "diags": [
+    {
+      "url": "http://tauri.localhost/#/sets/2/answers",
+      "viewport": {
+        "w": 1283,
+        "h": 780,
+        "dpr": 1.5
+      },
+      "doc": {
+        "scrollWidth": 1268,
+        "scrollHeight": 17350,
+        "clientWidth": 1268,
+        "clientHeight": 780
+      },
+      "hScroll": false,
+      "vScroll": true,
+      "theme": "light",
+      "accent": "violet",
+      "overflowX": [],
+      "hScrollBoxes": [],
+      "nativeControls": [],
+      "jie": {
+        "count": 14,
+        "at": [
+          {
+            "el": "article#org-q-98 > div.org-qa > section.org-explain > div.org-ans-head > span.org-ans-label",
+            "text": "解析"
+          },
+          {
+            "el": "article#org-q-99 > div.org-qa > section.org-explain > div.org-ans-head > span.org-ans-label",
+            "text": "解析"
+          },
+          {
+            "el": "article#org-q-100 > div.org-qa > section.org-explain > div.org-ans-head > span.org-ans-label",
+            "text": "解析"
+          },
+          {
+            "el": "article#org-q-101 > div.org-qa > section.org-explain > div.org-ans-head > span.org-ans-label",
+            "text": "解析"
+          },
+          {
+            "el": "article#org-q-102 > div.org-qa > section.org-explain > div.org-ans-head > span.org-ans-label",
+            "text": "解析"
+          },
+          {
+            "el": "article#org-q-103 > div.org-qa > section.org-explain > div.org-ans-head > span.org-ans-label",
+            "text": "解析"
+          }
+        ]
+      },
+      "inlineColors": [],
+      "errorOverlay": false,
+      "rootChildren": 1,
+      "textLength": 13597,
+      "name": "tools/shots/e2e-desk-organize.png"
+    }
+  ],
+  "stepErrors": [],
+  "errorOverlay": false,
+  "elapsedMs": 2093
+}
