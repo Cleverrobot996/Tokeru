@@ -1,23 +1,23 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Check, Copy, Database, Eye, Globe, KeyRound, Loader2, Palette, Plug, Plus, RefreshCw, Save, ShieldCheck, Sparkles, Timer, Type, X } from "lucide-react";
+import { Check, Copy, Database, Eye, Globe, KeyRound, Loader2, Palette, Plug, Plus, RefreshCw, Save, Sparkles, Timer, Type, X } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "../lib/api";
-import type { AppSettings, McpStatus } from "../lib/types";
+import type { AiProvider, AppSettings, McpStatus } from "../lib/types";
 import { useTheme, type Accent, type ThemeMode } from "../lib/theme";
 import { Button, Chip, Field, Switch } from "../components/ui";
 import { PaperSettings } from "../components/PaperSettings";
 import { loadPaperStyle, savePaperStyle, type PaperStyle } from "../lib/paper";
 
-type Endpoint = "none" | "openai" | "deepseek" | "siliconflow" | "ollama" | "custom";
+type Endpoint = "none" | AiProvider;
 
 const ENDPOINTS: { value: Endpoint; label: string; base: string; model: string }[] = [
   { value: "none", label: "不用 AI", base: "", model: "" },
-  { value: "openai", label: "OpenAI", base: "https://api.openai.com/v1", model: "gpt-4o-mini" },
   { value: "deepseek", label: "DeepSeek", base: "https://api.deepseek.com", model: "deepseek-chat" },
-  { value: "siliconflow", label: "硅基流动", base: "https://api.siliconflow.cn/v1", model: "deepseek-ai/DeepSeek-V3" },
+  { value: "openai", label: "OpenAI 兼容", base: "https://api.openai.com/v1", model: "gpt-4o-mini" },
+  { value: "anthropic", label: "Anthropic 兼容", base: "https://api.anthropic.com", model: "claude-sonnet-4-5" },
   { value: "ollama", label: "本地 Ollama", base: "http://127.0.0.1:11434/v1", model: "qwen2.5:7b" },
-  { value: "custom", label: "自定义", base: "", model: "" },
+  { value: "dashscope", label: "阿里云百炼", base: "https://dashscope.aliyuncs.com/compatible-mode/v1", model: "qwen-plus" },
 ];
 
 const ACCENTS: { value: Accent; label: string }[] = [
@@ -39,9 +39,10 @@ function endpointOf(base: string): Endpoint {
   if (!b) return "none";
   if (b.includes("api.openai.com")) return "openai";
   if (b.includes("deepseek.com")) return "deepseek";
-  if (b.includes("siliconflow.cn")) return "siliconflow";
+  if (b.includes("anthropic.com")) return "anthropic";
+  if (b.includes("dashscope.aliyuncs.com")) return "dashscope";
   if (b.includes("127.0.0.1") || b.includes("localhost") || b.includes("0.0.0.0")) return "ollama";
-  return "custom";
+  return "openai";
 }
 
 function isLocalEndpoint(base: string) {
@@ -64,14 +65,19 @@ export default function SettingsPage() {
     hasKey: false,
     model: "",
     baseUrl: "",
+    provider: "" as AiProvider | "",
     visionModel: "",
     visionBaseUrl: "",
-    thinking: false,
+    thinkingOrganize: false,
+    thinkingVision: false,
+    thinkingExplain: false,
     prompt: "",
     presets: [] as number[],
     defaultTimer: 0,
   });
   const [endpoint, setEndpoint] = useState<Endpoint>("none");
+  const [models, setModels] = useState<{ chat: string[]; vision: string[] }>({ chat: [], vision: [] });
+  const [listing, setListing] = useState<"chat" | "vision" | null>(null);
   const [presetInput, setPresetInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [testing, setTesting] = useState<"chat" | "vision" | null>(null);
@@ -94,20 +100,34 @@ export default function SettingsPage() {
       hasKey: s.has_api_key,
       model: s.model ?? "",
       baseUrl: s.base_url ?? "",
+      provider: s.provider ?? "",
       visionModel: s.vision_model ?? "",
       visionBaseUrl: s.vision_base_url ?? "",
-      thinking: s.thinking,
+      thinkingOrganize: s.thinking_organize ?? false,
+      thinkingVision: s.thinking_vision ?? false,
+      thinkingExplain: s.thinking_explain ?? false,
       prompt: s.custom_prompt ?? "",
       presets: (s.timer_presets ?? []).filter((m) => Number.isFinite(m) && m > 0),
       defaultTimer: s.default_timer ?? 0,
     });
-    setEndpoint(endpointOf(s.base_url ?? ""));
+    setEndpoint(s.provider || endpointOf(s.base_url ?? ""));
   }, [q.data]);
 
   /* 地址、模型或 Key 一改动，上一次的「已连接」就不再可信。 */
   useEffect(() => {
     setTested({ chat: null, vision: null });
-  }, [form.baseUrl, form.model, form.visionBaseUrl, form.visionModel, form.apiKey, form.thinking, endpoint]);
+  }, [
+    form.baseUrl,
+    form.model,
+    form.visionBaseUrl,
+    form.visionModel,
+    form.apiKey,
+    form.provider,
+    form.thinkingOrganize,
+    form.thinkingVision,
+    form.thinkingExplain,
+    endpoint,
+  ]);
   useEffect(() => {
     let alive = true;
     api
@@ -129,10 +149,45 @@ export default function SettingsPage() {
   function pickEndpoint(next: Endpoint) {
     setEndpoint(next);
     const preset = ENDPOINTS.find((e) => e.value === next)!;
+    setModels({ chat: [], vision: [] });
     if (next === "none") {
-      setForm((f) => ({ ...f, model: "", baseUrl: "", thinking: false }));
-    } else if (next !== "custom") {
-      setForm((f) => ({ ...f, baseUrl: preset.base, model: preset.model, thinking: next === "deepseek" ? f.thinking : false }));
+      setForm((f) => ({ ...f, provider: "", model: "", baseUrl: "" }));
+    } else {
+      setForm((f) => ({ ...f, provider: next, baseUrl: preset.base, model: preset.model }));
+    }
+  }
+
+  /* 表单里尚未保存的配置；视觉模型留空时沿用主配置。 */
+  function aiConfig(kind: "chat" | "vision") {
+    const visionBase = form.visionBaseUrl.trim();
+    const baseUrl = kind === "vision" ? visionBase || form.baseUrl.trim() : form.baseUrl.trim();
+    const provider = kind === "vision" && visionBase ? endpointOf(visionBase) : form.provider;
+    return {
+      baseUrl,
+      model: kind === "vision" ? form.visionModel.trim() || form.model.trim() : form.model.trim(),
+      provider: provider === "none" ? "" : provider,
+      apiKey: form.apiKey.trim() || undefined,
+      thinking: kind === "vision" ? form.thinkingVision : form.thinkingExplain,
+    };
+  }
+
+  async function fetchModels(kind: "chat" | "vision") {
+    const cfg = aiConfig(kind);
+    if (!cfg.baseUrl) {
+      toast.error("先填写 API 地址。");
+      return;
+    }
+    if (listing !== null) return;
+    setListing(kind);
+    try {
+      const list = await api.aiModels(cfg, kind);
+      setModels((m) => ({ ...m, [kind]: list }));
+      if (list.length) toast.success("找到 " + list.length + " 个模型");
+      else toast.error("服务没有返回模型列表，可以直接手填模型名。");
+    } catch (e) {
+      toast.error("获取模型失败：" + errText(e), { duration: 10000 });
+    } finally {
+      setListing(null);
     }
   }
 
@@ -144,9 +199,13 @@ export default function SettingsPage() {
         clearKey: form.clearKey,
         model: form.model,
         base_url: form.baseUrl,
+        provider: form.provider,
         vision_model: form.visionModel,
         vision_base_url: form.visionBaseUrl,
-        thinking: form.thinking,
+        thinking: form.thinkingExplain,
+        thinking_organize: form.thinkingOrganize,
+        thinking_vision: form.thinkingVision,
+        thinking_explain: form.thinkingExplain,
         custom_prompt: form.prompt,
         timer_presets: form.presets,
         default_timer: form.defaultTimer,
@@ -165,24 +224,16 @@ export default function SettingsPage() {
 
   /* 用表单里尚未保存的配置直接测；空字段由后端回退到已保存设置，Key 只在这次请求里用。 */
   async function test(kind: "chat" | "vision") {
-    const baseUrl = kind === "vision" ? form.visionBaseUrl.trim() || form.baseUrl.trim() : form.baseUrl.trim();
-    const model = kind === "vision" ? form.visionModel.trim() || form.model.trim() : form.model.trim();
-    if (!baseUrl || !model) {
+    const cfg = aiConfig(kind);
+    const model = cfg.model;
+    if (!cfg.baseUrl || !model) {
       toast.error(kind === "vision" ? "先填写视觉模型名（地址可留空，沿用主地址）。" : "先填写 API 地址和模型名。");
       return;
     }
     if (testing !== null) return;
     setTesting(kind);
     try {
-      const r = await api.aiTest(
-        {
-          baseUrl,
-          model,
-          apiKey: form.apiKey.trim() || undefined,
-          thinking: form.thinking,
-        },
-        kind,
-      );
+      const r = await api.aiTest(cfg, kind);
       if (!r.ok) throw new Error(r.message || "连接测试没有通过。");
       const used = r.model || model;
       setTested((t) => (kind === "vision" ? { ...t, vision: used } : { ...t, chat: used }));
@@ -260,6 +311,23 @@ export default function SettingsPage() {
     }
   }
 
+  function mcpConfigText() {
+    if (!mcp) return "";
+    return JSON.stringify(
+      {
+        mcpServers: {
+          tokeru: {
+            type: "http",
+            url: mcp.url,
+            headers: { Authorization: "Bearer " + mcp.token },
+          },
+        },
+      },
+      null,
+      2,
+    );
+  }
+
   async function copyMcp(value: string, key: string) {
     try {
       await navigator.clipboard.writeText(value);
@@ -305,7 +373,7 @@ export default function SettingsPage() {
 
       <section className="panel panel-pad">
         <div className="panel-head">
-          <div className="panel-title">AI 解释（可选）</div>
+          <div className="panel-title">AI（可选）</div>
           {tested.chat ? (
             <span title={`本次会话测试通过：${tested.chat}`}>
               <Chip tone="ok"><Check size={12} /> 已连接</Chip>
@@ -319,7 +387,7 @@ export default function SettingsPage() {
           )}
         </div>
         <div className="panel-sub settings-lead">
-          用于题目解释与写作自评，任意 OpenAI 兼容端点，Key 只存本机。
+          提问、判卷、整理与分图共用；Key 只存本机。
         </div>
 
         <div className="seg settings-seg" role="group" aria-label="AI 服务">
@@ -353,10 +421,21 @@ export default function SettingsPage() {
               <Field label="模型">
                 <input
                   className="input"
+                  list="ai-model-list"
                   value={form.model}
-                  onChange={(e) => setForm({ ...form, model: e.target.value, })}
+                  onChange={(e) => setForm({ ...form, model: e.target.value })}
                   placeholder="gpt-4o-mini / deepseek-chat / qwen2.5:7b"
                 />
+                <datalist id="ai-model-list">
+                  {models.chat.map((m) => (
+                    <option key={m} value={m} />
+                  ))}
+                </datalist>
+                <div className="form-actions">
+                  <Button size="sm" variant="ghost" onClick={() => void fetchModels("chat")} disabled={listing !== null}>
+                    {listing === "chat" ? <Loader2 size={13} className="spin" /> : <RefreshCw size={13} />} 获取模型
+                  </Button>
+                </div>
               </Field>
               <Field label="API 地址" hint="填到 /v1 为止，末尾不用写 /chat/completions。">
                 <input
@@ -367,14 +446,25 @@ export default function SettingsPage() {
                   spellCheck={false}
                 />
               </Field>
-              <Field label="多模态模型（自动分图）" hint="留空沿用上面的模型；自动分图需要能读图片的模型。">
+              <Field label="多模态模型（自动分图）" hint="留空沿用上面的模型。">
                 <input
                   className="input"
+                  list="ai-vision-list"
                   value={form.visionModel}
                   onChange={(e) => setForm({ ...form, visionModel: e.target.value })}
                   placeholder="例如 gpt-4o / qwen2.5-vl-72b-instruct"
                   spellCheck={false}
                 />
+                <datalist id="ai-vision-list">
+                  {models.vision.map((m) => (
+                    <option key={m} value={m} />
+                  ))}
+                </datalist>
+                <div className="form-actions">
+                  <Button size="sm" variant="ghost" onClick={() => void fetchModels("vision")} disabled={listing !== null}>
+                    {listing === "vision" ? <Loader2 size={13} className="spin" /> : <RefreshCw size={13} />} 获取模型
+                  </Button>
+                </div>
               </Field>
               <Field label="视觉 API 地址（可选）" hint="留空沿用上面的 API 地址；也可以单独指向另一家兼容服务。">
                 <input
@@ -386,10 +476,20 @@ export default function SettingsPage() {
                 />
               </Field>
               <div className="field">
-                <label>思考参数</label>
-                <div className="settings-switch-row">
-                  <Switch on={form.thinking} onChange={(v) => setForm({ ...form, thinking: v })} label="思考参数" />
-                  <span className="small muted">{endpoint === "deepseek" ? "仅 DeepSeek 端点会带上该参数。" : "非 DeepSeek 端点不会发送该参数。"}</span>
+                <label>思考模式</label>
+                <div className="settings-thinking">
+                  <div className="settings-switch-row">
+                    <Switch on={form.thinkingOrganize} onChange={(v) => setForm({ ...form, thinkingOrganize: v })} label="整理" />
+                    <span>整理与判卷</span>
+                  </div>
+                  <div className="settings-switch-row">
+                    <Switch on={form.thinkingVision} onChange={(v) => setForm({ ...form, thinkingVision: v })} label="视觉分图" />
+                    <span>视觉分图</span>
+                  </div>
+                  <div className="settings-switch-row">
+                    <Switch on={form.thinkingExplain} onChange={(v) => setForm({ ...form, thinkingExplain: v })} label="答案讲解" />
+                    <span>答案讲解</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -472,7 +572,6 @@ export default function SettingsPage() {
           <Field label="只读模式" hint="开启后拒绝导入、改题、改名等写操作。">
             <div className="settings-switch-row">
               <Switch on={mcpReadonly} onChange={setMcpReadonly} label="只读模式" />
-              <span className="small muted"><ShieldCheck size={13} /> 建议保持开启。</span>
             </div>
           </Field>
           <div className="field">
@@ -505,9 +604,14 @@ export default function SettingsPage() {
               </Button>
             </div>
             {mcp.lastError ? <div className="small mcp-error">{mcp.lastError}</div> : null}
+            <div className="form-actions">
+              <Button size="sm" variant="ghost" onClick={() => void copyMcp(mcpConfigText(), "config")}>
+                <Copy size={13} /> {mcpCopied === "config" ? "已复制配置" : "复制配置"}
+              </Button>
+            </div>
             <details className="mcp-help">
               <summary>客户端配置示例</summary>
-              <pre>{'{\n  "mcpServers": {\n    "tokeru": {\n      "type": "http",\n      "url": "' + mcp.url + '",\n      "headers": { "Authorization": "Bearer ' + mcp.token + '" }\n    }\n  }\n}'}</pre>
+              <pre>{mcpConfigText()}</pre>
               <div className="small muted">不支持请求头的客户端可以用 <code>{mcp.url + "?token=" + mcp.token}</code>；这个链接含 Token，不要截图或转发。</div>
             </details>
           </div>

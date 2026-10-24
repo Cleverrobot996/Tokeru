@@ -24,19 +24,19 @@
 
 从 [Releases](https://github.com/Cleverrobot996/Tokeru/releases) 下载：
 
-- `Tokeru_0.0.1_x64-setup.exe`
+- `Tokeru_0.1.0_x64-setup.exe`
 - 安装到 `%LOCALAPPDATA%\Tokeru\app-版本号`，不需要管理员权限，不会覆盖已有题库。
 - 安装包未签名；SmartScreen 提示时点「更多信息 → 仍要运行」。
 
 ## 功能
 
-- **导入任意材料**：导入 PDF、图片、Markdown、TXT、JSON ，也可以直接粘贴按导入规范写的文字，或者使用内置提示词帮你清洗材料。
-- **原卷优先**：练习时按试卷原样排版。支持排版，可切换高对比、字号、行高、段距、纸宽与字体。
+- **导入任意材料**：拖入 PDF、Markdown、TXT、JSON 提取文字，或直接粘贴按导入规范写的文字；复制提示词交给任意 AI 或 MCP Agent 清洗。
+- **原卷优先**：练习时按试卷原样排版。支持公式（KaTeX）、表格、题图，可切换高对比、字号、行高、段距、纸宽与字体。
 - **题库与标签**：用标签分类你的题目与试卷，固定「学科 / 题型 / 难度」三栏，可增加自定义标签栏。
 - **练习与判分**：整卷、自选、错题复习、限时练习；客观题本地判分，主观题可自评或让 AI 判卷。
 - **记录与错题**：练习记录按日期归档，可多选写进错题本；错题本支持待复习 / 已掌握 / 全部，也能直接组一套复习练习。
-- **AI 可选**：AI 解释、写作自评、导入清洗、视觉配题图。
-- **MCP 连接**：外部 Agent 可以读题库、校验导入、写入试卷。详见 [docs/MCP.md](docs/MCP.md)。
+- **AI 可选**：答案讲解、写作自评、评分分配、AI 判卷、标签整理、视觉分图；支持 DeepSeek、OpenAI 兼容、Anthropic 兼容、Ollama、阿里云百炼。
+- **MCP 连接**：外部 Agent 可以读题库、导出试卷、校验并写入导入、修改内容；22 个工具，附一键复制的客户端配置。详见 [docs/MCP.md](docs/MCP.md)。
 - **本地数据**：支持备份与恢复。
 
 ## 快速开始
@@ -73,7 +73,7 @@ pnpm tauri build --bundles nsis     # NSIS 安装包
 产物：
 
 - `src-tauri/target/release/tokeru.exe`
-- `src-tauri/target/release/bundle/nsis/Tokeru_0.0.1_x64-setup.exe`
+- `src-tauri/target/release/bundle/nsis/Tokeru_0.1.0_x64-setup.exe`
 
 安装器使用独立版本目录 `%LOCALAPPDATA%\Tokeru\app-版本号`，不会覆盖正在运行的旧 exe；快捷方式会在安装后重定向到新版本。应用本身不要求管理员权限。
 
@@ -82,7 +82,7 @@ pnpm tauri build --bundles nsis     # NSIS 安装包
 1. 打开「导入」，把 PDF / Markdown / TXT / JSON 拖进材料框，或直接粘贴原文。
 2. 若材料不是规范 JSON，点「复制清洗提示词」交给任意 AI，或让连接了MCP的agent清洗。
 3. 在「预览校验」里检查试卷，确认后写入题库。
-4. 内置了一套2024 高考数学新课标Ⅱ卷样例。
+4. 需要样例时，可在仓库的 `data/seed/math_2024.json` 手动导入。
 
 导入格式说明见 [shared/import-spec.md](shared/import-spec.md)。
 
@@ -127,7 +127,7 @@ src-tauri/src/          Rust 后端
   commands.rs           Tauri 命令
   repo.rs / db.rs       SQLite 读写与迁移
   models.rs             数据模型
-  ai.rs                 OpenAI 兼容 AI 调用
+  ai.rs                 多协议 AI 调用（OpenAI / Anthropic / Ollama / DashScope）
   mcp.rs                内嵌 MCP Server
 src-tauri/nsis/         安装器钩子
 shared/import-spec.md   导入规范
@@ -155,7 +155,7 @@ branding/               图标与品牌设计稿
 ## 许可证
 
 **AGPL-3.0**
-分发或衍生请保留 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)，并注明来源：
+分发或衍生请保留 [LICENSE](LICENSE)、[NOTICE](NOTICE) 与 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)，并注明来源：
 
 > Tokeru — https://github.com/Cleverrobot996/Tokeru
 

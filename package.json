@@ -1,7 +1,7 @@
 {
   "name": "tokeru",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "本地优先的试卷练习桌面应用：导入任意材料，按原卷排版练习，记录作答与错题。",
   "license": "AGPL-3.0-only",
   "author": "Cleverrobot996",
@@ -42,6 +42,7 @@
     "@tanstack/react-query": "^5.90.0",
     "@tauri-apps/api": "^2.9.0",
     "clsx": "^2.1.0",
+    "katex": "^0.19.1",
     "lucide-react": "^0.468.0",
     "motion": "^12.23.0",
     "pdfjs-dist": "^6.4.299",

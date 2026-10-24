@@ -6,7 +6,7 @@
 
 Tokeru 是一个 Windows 本地练习应用：导入试卷/材料，生成题目，按原卷排版练习，记录作答与错题。技术栈是 Tauri 2 + React 19 + TypeScript + Rust + SQLite。没有服务端，没有账号系统，数据只在本机。
 
-当前版本 **0.0.1**。这是首个公开版本，功能基线来自内部 4.0；公开文档只描述 0.0.1 的行为。
+当前版本 **0.1.0**。这是首个公开版本，功能基线来自内部 4.0；公开文档只描述 0.1.0 的行为。
 
 ## 先跑起来
 
@@ -56,14 +56,13 @@ cargo check --manifest-path src-tauri/Cargo.toml
 - `src/pages/ExamPage.tsx`：三栏考试工作台、计时、答题卡、交卷。
 - `src/pages/AnswersPage.tsx`：速查与整理、详细/简要、自动分图、分值分配。
 - `src/pages/ResultPage.tsx`：结果、AI 判卷、错题收集。
-- `src/pages/ImportPage.tsx`：材料导入、AI 清洗、结构校验、原卷预览、确认导入。
+- `src/pages/ImportPage.tsx`：材料导入、结构校验、原卷预览、确认导入；不做内置 AI 清洗或分图。
 - `src/pages/SettingsPage.tsx`：AI、MCP、外观、计时、排版、数据备份。
 - `src/lib/api.ts`：所有 Tauri 命令的前端封装；浏览器模式自动切到 mock。
 - `src/lib/types.ts`：前后端共享的数据结构；改 Rust 模型时同步这里。
 - `src/lib/mock.ts`：浏览器预览的假后端；新增命令时要加同名 case。
 - `src/lib/paper.ts` / `src/components/PaperView.tsx`：原卷排版、行内空位、材料题组。
 - `src/lib/importPrompt.ts`：导入清洗提示词与示例。
-- `src/lib/visionImport.ts`：视觉 OCR / 分图的前端解析。
 - `src/lib/richText.ts`：HTML 白名单消毒；题干/材料渲染前必须经过它。
 
 ### 后端
@@ -74,7 +73,7 @@ cargo check --manifest-path src-tauri/Cargo.toml
 - `src-tauri/src/db.rs`：SQLite 打开、建表、迁移。
 - `src-tauri/src/repo.rs`：查询与写入 SQL。
 - `src-tauri/src/grading.rs`：客观题判分。
-- `src-tauri/src/ai.rs`：OpenAI 兼容 Chat Completions（解释、清洗、视觉、判卷）。
+- `src-tauri/src/ai.rs`：OpenAI 兼容 / Anthropic / Ollama 调用（解释、整理、视觉、判卷）。
 - `src-tauri/src/mcp.rs`：内嵌 MCP Server（Streamable HTTP，默认 127.0.0.1:17890）。
 - `src-tauri/src/fonts.rs`：Windows 字体枚举。
 - `src-tauri/nsis/installer-hooks.nsh`：安装器 preinstall/postinstall 钩子。
@@ -118,7 +117,7 @@ MCP 工具走同一套 repo/commands 路径，不复制数据库。`mcp.rs` 默�
 
 ## 已知限制
 
-- 发布包不做代码签名（NotSigned）；Windows 可能提示「未知发布者」。不要用本机自签名证书签发布产物。
+- 本机自签名只改「发行商」显示，不能积累 SmartScreen 信誉；正式发布应使用受信任的代码签名证书。
 - 真实视觉模型需要用户自己的 Key，仓库内没有可用凭据。
 - PDF 矢量图/复杂公式的分图准确率取决于视觉模型；裁剪结果必须让用户确认。
 - 前端只有少量单元测试；主要靠 `tsc`、浏览器截图与手工路径验证。

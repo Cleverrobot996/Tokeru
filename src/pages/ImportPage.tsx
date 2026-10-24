@@ -13,7 +13,6 @@ import {
   FileJson,
   FileText,
   Folder,
-  Image as ImageIcon,
   Loader2,
   RotateCcw,
   Sparkles,
@@ -28,9 +27,7 @@ import type { ImportPreview, Question } from "../lib/types";
 import { PaperDoc } from "../components/PaperView";
 import type { PaperGroup } from "../components/PaperView";
 import { Button, Modal } from "../components/ui";
-import { imageFileToPages, pdfFileToPages, pdfFileToText } from "../lib/pdf";
-import type { PageImage } from "../lib/pdf";
-import { visionCleanPipeline } from "../lib/visionImport";
+import { pdfFileToText } from "../lib/pdf";
 import "../styles/import.css";
 
 const STEPS = [
@@ -58,26 +55,6 @@ const EMPTY_MATERIAL = "【把试卷材料粘贴到这里】";
 const MAX_TEXT_FILE = 8 * 1024 * 1024;
 const MAX_PDF_FILE = 100 * 1024 * 1024;
 const PDF_MAX_PAGES = 50;
-const MAX_AI_MATERIAL = 120000;
-const MAX_AI_MATERIAL_LABEL = "12 万";
-
-const AI_CLEAN_SYSTEM = [
-  "你是 Tokeru 题库的导入清洗助手。只输出一个 JSON 对象，不要 Markdown 代码围栏，不要输出说明文字，不要输出思考过程。",
-  "必须严格符合下面的 Tokeru 导入规范；字段名、qtype、answer.kind 与 materials/sections 的引用都不能改。",
-  "",
-  IMPORT_SPEC,
-].join("\n");
-
-const AI_REVISE_SYSTEM = [
-  "你是 Tokeru 题库的导入 JSON 修订助手。只返回一个完整 JSON 对象，不要 Markdown 代码围栏，不要说明文字，不要思考过程。",
-  "保留未要求修改的字段与内容：字段名、题号、qtype、answer.kind、options、materials/sections 的 key 引用都不能顺手改掉。",
-  "只按用户这次的要求修改；修改后的 JSON 必须仍符合下面的 Tokeru 导入规范。",
-  "",
-  IMPORT_SPEC,
-].join("\n");
-
-type ReviseEntry = { text: string; preview: ImportPreview; note: string };
-
 type MaterialCheck =
   | { kind: "empty" }
   | { kind: "json"; count: number; title: string }
@@ -239,11 +216,6 @@ export default function ImportPage() {
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [reviewTab, setReviewTab] = useState<"table" | "paper">("table");
   const [flashQid, setFlashQid] = useState<number | null>(null);
-  const [revisions, setRevisions] = useState<ReviseEntry[]>([]);
-  const [reviseOpen, setReviseOpen] = useState(false);
-  const [reviseText, setReviseText] = useState("");
-  const [revising, setRevising] = useState(false);
-  const [reviseError, setReviseError] = useState("");
   const [busy, setBusy] = useState(false);
   const [batchId, setBatchId] = useState<number | null>(null);
   const [imported, setImported] = useState(0);
@@ -251,12 +223,7 @@ export default function ImportPage() {
   const [fileInfo, setFileInfo] = useState("");
   const [fileLoading, setFileLoading] = useState(false);
   const [loadingName, setLoadingName] = useState("");
-  const [cleaning, setCleaning] = useState(false);
-  const [cleanError, setCleanError] = useState("");
-  const [sourcePages, setSourcePages] = useState<PageImage[]>([]);
-  const [visionBusy, setVisionBusy] = useState(false);
-  const [visionStatus, setVisionStatus] = useState("");
-  const [visionError, setVisionError] = useState("");
+  const [windowDrag, setWindowDrag] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragDepth = useRef(0);
 
@@ -328,20 +295,12 @@ export default function ImportPage() {
     setFileName("");
     setFileInfo("");
     setPasteBack("");
-    setCleanError("");
-    setSourcePages([]);
-    setVisionError("");
-    setVisionStatus("");
-    setVisionBusy(false);
     setPreview(null);
     setBatchId(null);
     setDragging(false);
+    setWindowDrag(false);
     setReviewTab("table");
     setFlashQid(null);
-    setRevisions([]);
-    setReviseOpen(false);
-    setReviseText("");
-    setReviseError("");
   }
 
   function copyMaterialPrompt() {
@@ -351,36 +310,35 @@ export default function ImportPage() {
   async function loadFile(file?: File) {
     if (!file || fileLoading) return;
     const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
-    const isImage = file.type.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(file.name);
-    if (!isPdf && !isImage && !/\.(json|md|markdown|txt)$/i.test(file.name)) {
-      toast.error("只支持 PDF / 图片 / JSON / Markdown / TXT 文件。");
+    const isText = /\.(json|md|markdown|txt)$/i.test(file.name);
+    if (!isPdf && !isText) {
+      if (file.type.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(file.name)) {
+        toast.error("图片先交给外部 AI 转成 Markdown 或 JSON，再粘贴进来。");
+      } else {
+        toast.error("只支持 PDF / JSON / Markdown / TXT 文件。");
+      }
       return;
     }
-    if ((isPdf || isImage) && file.size > MAX_PDF_FILE) {
-      toast.error((isPdf ? "PDF" : "图片") + "超过 100 MB，先拆分或压缩后再导入。");
+    if (isPdf && file.size > MAX_PDF_FILE) {
+      toast.error("PDF 超过 100 MB，先拆分或压缩后再导入。");
       return;
     }
-    if (!isPdf && !isImage && file.size > MAX_TEXT_FILE) {
+    if (isText && file.size > MAX_TEXT_FILE) {
       toast.error("文件超过 8 MB，先精简后再导入。");
       return;
     }
-    setCleanError("");
-    setSourcePages([]);
-    setVisionError("");
-    setVisionStatus("");
     setPreview(null);
     setBatchId(null);
-    setRevisions([]);
-    setReviseOpen(false);
-    setReviseError("");
     setReviewTab("table");
     setFlashQid(null);
+    setText("");
+    setFileName(file.name);
+    setFileInfo("");
 
-    if (!isPdf && !isImage) {
+    if (!isPdf) {
       try {
         const content = await file.text();
         setText(content);
-        setFileName(file.name);
         setFileInfo(file.name.toLowerCase().endsWith(".json") ? "JSON 文件" : "文本文件");
         if (!content.trim()) toast.error("这个文件是空的。");
       } catch (e) {
@@ -392,95 +350,64 @@ export default function ImportPage() {
     setFileLoading(true);
     setLoadingName(file.name);
     try {
-      if (isImage) {
-        const pages = await imageFileToPages(file);
-        setSourcePages(pages);
-        setText("");
-        setFileName(file.name);
-        setFileInfo("图片 · " + pages.length + " 页");
-        toast.success("已载入图片，可用视觉识别读取题目");
-        return;
-      }
-
-      const [pagesResult, textResult] = await Promise.allSettled([
-        pdfFileToPages(file),
-        pdfFileToText(file, PDF_MAX_PAGES),
-      ]);
-      const pages = pagesResult.status === "fulfilled" ? pagesResult.value : [];
-      setSourcePages(pages);
-      setFileName(file.name);
-      if (pagesResult.status === "rejected") {
-        toast.info("页面渲染失败，仍可只用文字导入。");
-      }
-
-      if (textResult.status === "fulfilled") {
-        const res = textResult.value;
-        setText(res.text);
-        setFileInfo("PDF · " + pages.length + " 页页面 · 已提取文字");
-        if (res.pages < res.totalPages) {
-          toast.info("PDF 共 " + res.totalPages + " 页，只读取前 " + res.pages + " 页；需要更多内容可拆分后分批导入。");
-        } else {
-          toast.success("已读取 PDF 的 " + res.pages + " 页");
-        }
+      const res = await pdfFileToText(file, PDF_MAX_PAGES);
+      setText(res.text);
+      setFileInfo("PDF · 已提取 " + res.pages + " 页文字");
+      if (res.pages < res.totalPages) {
+        toast.info("PDF 共 " + res.totalPages + " 页，只读取前 " + res.pages + " 页；需要更多内容可拆分后分批导入。");
       } else {
-        setText("");
-        if (pages.length > 0) {
-          setFileInfo("PDF · " + pages.length + " 页 · 扫描件，用视觉识别");
-          toast.info("没有提取到文字，可用视觉识别读取题目。");
-        } else {
-          throw textResult.reason;
-        }
+        toast.success("已读取 PDF 的 " + res.pages + " 页文字");
       }
     } catch (e) {
-      const msg = errorText(e);
-      toast.error(msg.includes("扫描件") ? msg : "PDF 读取失败：" + msg);
+      setFileInfo("PDF · 读取失败");
+      toast.error("PDF 读取失败：" + errorText(e));
     } finally {
       setFileLoading(false);
       setLoadingName("");
     }
   }
 
-  async function runVisionClean() {
-    if (visionBusy || cleaning || fileLoading) return;
-    if (!sourcePages.length) return toast.error("先选择 PDF 或图片。");
-    setVisionBusy(true);
-    setVisionError("");
-    setVisionStatus("正在准备页面…");
-    const loading = toast.loading("视觉模型正在识别试卷…");
-    try {
-      const result = await visionCleanPipeline({
-        pages: sourcePages,
-        title: title || undefined,
-        extra: extra || undefined,
-        onProgress: (label, done, total) => {
-          setVisionStatus(total > 1 ? label + "（" + done + "/" + total + "）" : label);
-        },
-      });
-      setText(result.json);
-      setFileName(fileName);
-      setFileInfo("视觉识别结果 · " + result.figures + " 张题图");
-      setPreview(result.preview);
-      setCleanError("");
-      setBatchId(null);
-      setRevisions([]);
-      setReviseOpen(false);
-      setReviseError("");
-      setReviewTab("table");
-      setFlashQid(null);
-      toast.success(
-        "视觉识别完成：" + result.preview.questions.length + " 题" + (result.figures ? "，" + result.figures + " 张题图" : ""),
-        { id: loading },
-      );
-      go(2);
-    } catch (e) {
-      const message = "视觉识别失败：" + errorText(e);
-      setVisionError(message);
-      toast.error(message, { id: loading });
-    } finally {
-      setVisionBusy(false);
-      setVisionStatus("");
+  useEffect(() => {
+    if (step !== 0) {
+      setWindowDrag(false);
+      return;
     }
-  }
+    let depth = 0;
+    const hasFiles = (e: DragEvent) => Array.from(e.dataTransfer?.types ?? []).includes("Files");
+    const onEnter = (e: DragEvent) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+      depth += 1;
+      setWindowDrag(true);
+    };
+    const onOver = (e: DragEvent) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+    };
+    const onLeave = (e: DragEvent) => {
+      if (!hasFiles(e)) return;
+      depth = Math.max(0, depth - 1);
+      if (depth === 0) setWindowDrag(false);
+    };
+    const onDrop = (e: DragEvent) => {
+      if (!hasFiles(e)) return;
+      e.preventDefault();
+      depth = 0;
+      setWindowDrag(false);
+      const file = e.dataTransfer?.files?.[0];
+      if (file) void loadFile(file);
+    };
+    window.addEventListener("dragenter", onEnter);
+    window.addEventListener("dragover", onOver);
+    window.addEventListener("dragleave", onLeave);
+    window.addEventListener("drop", onDrop);
+    return () => {
+      window.removeEventListener("dragenter", onEnter);
+      window.removeEventListener("dragover", onOver);
+      window.removeEventListener("dragleave", onLeave);
+      window.removeEventListener("drop", onDrop);
+    };
+  }, [step, fileLoading]);
 
   async function pasteFromClipboard() {
     if (fileLoading) return toast.error("正在读取 PDF，稍等。");
@@ -490,69 +417,13 @@ export default function ImportPage() {
       setText(t);
       setFileName("");
       setFileInfo("来自剪贴板");
-      setCleanError("");
-      setSourcePages([]);
-      setVisionError("");
-      setVisionStatus("");
       setPreview(null);
       setBatchId(null);
-      setRevisions([]);
-      setReviseOpen(false);
-      setReviseError("");
       setReviewTab("table");
       setFlashQid(null);
       toast.success("已粘贴剪贴板内容");
     } catch {
       toast.error("浏览器没有给剪贴板权限，请手动粘贴到输入框。");
-    }
-  }
-
-  async function cleanWithAi() {
-    const material = text.trim();
-    if (!material) return toast.error("先放入材料。");
-    if (cleaning) return;
-    const clipped = material.length > MAX_AI_MATERIAL;
-    const payload = clipped ? material.slice(0, MAX_AI_MATERIAL) : material;
-    setCleaning(true);
-    setCleanError("");
-    const loading = toast.loading("AI 正在清洗材料…");
-    if (clipped) toast.info(`材料超过 ${MAX_AI_MATERIAL_LABEL}字符，本次只发送前 ${MAX_AI_MATERIAL_LABEL}字符。`);
-    try {
-      const user = [
-        "把下面的材料清洗成 Tokeru 可导入的 JSON。",
-        title ? "导入后标题：" + title + "。" : "",
-        extra ? "额外要求：" + extra + "。" : "",
-        clipped ? `注意：原始材料超过 ${MAX_AI_MATERIAL_LABEL}字符，已截取前 ${MAX_AI_MATERIAL_LABEL}字符。` : "",
-        "材料开始：",
-        payload,
-        "材料结束。",
-      ].filter(Boolean).join("\n");
-      const result = await api.aiComplete(AI_CLEAN_SYSTEM, user);
-      const stripped = stripCodeFence(result.content);
-      const json = outermostJson(stripped);
-      if (!json) throw new Error("AI 没有返回 JSON 对象，请重试或复制提示词手动清洗。");
-      setText(json);
-      setFileName("");
-      setFileInfo("AI 清洗结果");
-      setPreview(null);
-      setBatchId(null);
-      setRevisions([]);
-      setReviseOpen(false);
-      setReviseError("");
-      const ok = await runPreview(json, false);
-      if (ok) {
-        toast.success("AI 清洗完成，已识别到规范 JSON", { id: loading });
-      } else {
-        const msg = "AI 清洗完成，但 JSON 未通过校验；已把结果放进材料框，可修改后重试。";
-        setCleanError(msg);
-        toast.error(msg, { id: loading });
-      }
-    } catch (e) {
-      const msg = "AI 清洗失败：" + errorText(e);
-      setCleanError(msg);
-      toast.error(msg, { id: loading });
-    } finally {
-      setCleaning(false);
     }
   }
 
@@ -566,10 +437,6 @@ export default function ImportPage() {
     try {
       const p = await api.previewImport({ text: input, title: title || undefined, kind: "json" });
       setPreview(p);
-      setCleanError("");
-      setRevisions([]);
-      setReviseOpen(false);
-      setReviseError("");
       setReviewTab("table");
       setFlashQid(null);
       if (!p.questions.length) {
@@ -592,15 +459,8 @@ export default function ImportPage() {
     setText(pasteBack);
     setFileName("");
     setFileInfo("AI 返回的 JSON");
-    setCleanError("");
-    setSourcePages([]);
-    setVisionError("");
-    setVisionStatus("");
     setPreview(null);
     setBatchId(null);
-    setRevisions([]);
-    setReviseOpen(false);
-    setReviseError("");
     setPasteBack("");
     await runPreview(pasteBack);
   }
@@ -614,66 +474,6 @@ export default function ImportPage() {
     window.setTimeout(() => {
       document.getElementById("paper-q-" + target.id)?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 90);
-  }
-
-  async function reviseWithAi() {
-    if (!preview || revising) return;
-    const instruction = reviseText.trim();
-    if (!instruction) return toast.error("先写一条修改要求。");
-    const currentText = text.trim();
-    if (!currentText) return toast.error("当前没有可修改的 JSON。");
-    const currentPreview = preview;
-    setRevising(true);
-    setReviseError("");
-    const loading = toast.loading("AI 正在修改 JSON…");
-    try {
-      const notes = revisions.slice(-4).map((r, i) => i + 1 + ". " + r.note).join("\n");
-      const user = [
-        "当前 Tokeru 导入 JSON：",
-        currentText,
-        notes ? "之前几轮的修改要求（只作为上下文，不要重复执行）：\n" + notes : "",
-        "这次只需要按下面的要求修改，其他内容原样保留：",
-        instruction,
-        "请返回修改后的完整 JSON。",
-      ].filter(Boolean).join("\n\n");
-      const result = await api.aiComplete(AI_REVISE_SYSTEM, user);
-      const json = outermostJson(stripCodeFence(result.content));
-      if (!json) throw new Error("AI 没有返回 JSON 对象，请重试。");
-      const next = await api.previewImport({ text: json, title: title || currentPreview.title, kind: "json" });
-      if (!next.questions.length) throw new Error("修改后的 JSON 没有题目，检查 AI 返回内容。");
-      setRevisions((prev) => [...prev, { text: currentText, preview: currentPreview, note: instruction }]);
-      setText(json);
-      setPreview(next);
-      setFileInfo("AI 修改结果");
-      setCleanError("");
-      setReviewTab("table");
-      setFlashQid(null);
-      setReviseOpen(false);
-      setReviseText("");
-      toast.success("已应用修改，共 " + next.question_count + " 题；可回退上一版", { id: loading });
-    } catch (e) {
-      const msg = "AI 修改失败：" + errorText(e);
-      setReviseError(msg);
-      toast.error(msg, { id: loading });
-    } finally {
-      setRevising(false);
-    }
-  }
-
-  function undoRevision() {
-    if (revising) return;
-    const last = revisions[revisions.length - 1];
-    if (!last) return;
-    setRevisions((prev) => prev.slice(0, -1));
-    setText(last.text);
-    setPreview(last.preview);
-    setFileInfo("AI 修改前的版本");
-    setCleanError("");
-    setReviewTab("table");
-    setFlashQid(null);
-    setReviseOpen(false);
-    setReviseError("");
-    toast.success("已回退到上一版");
   }
 
   async function confirmImport() {
@@ -715,6 +515,13 @@ export default function ImportPage() {
 
   return (
     <main className="page">
+      {windowDrag ? (
+        <div className="import-drop-overlay">
+          <Upload size={30} />
+          <strong>松开导入</strong>
+          <span>PDF / Markdown / TXT / JSON</span>
+        </div>
+      ) : null}
       <div className="page-head">
         <div>
           <h1>导入题目</h1>
@@ -751,7 +558,7 @@ export default function ImportPage() {
           <div className="panel-head import-head">
             <div>
               <div className="panel-title">放入材料</div>
-              <div className="panel-sub">PDF、图片、Markdown、TXT 或 JSON 都行；扫描件可直接走视觉识别。</div>
+              <div className="panel-sub">PDF、Markdown、TXT 或已清洗的 JSON；也可以直接粘贴。</div>
             </div>
             <div className="import-file-actions">
               <label className={"btn btn-soft btn-sm import-file-label" + (fileLoading ? " is-disabled" : "")}>
@@ -760,7 +567,7 @@ export default function ImportPage() {
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept=".pdf,.png,.jpg,.jpeg,.webp,.md,.markdown,.txt,.json"
+                  accept=".pdf,.md,.markdown,.txt,.json"
                   hidden
                   disabled={fileLoading}
                   onChange={(e) => {
@@ -791,13 +598,13 @@ export default function ImportPage() {
             data-on={dragging}
             onDragEnter={(e) => {
               e.preventDefault();
-              if (fileLoading || cleaning || visionBusy) return;
+              if (fileLoading) return;
               dragDepth.current += 1;
               setDragging(true);
             }}
             onDragOver={(e) => {
               e.preventDefault();
-              if (!fileLoading && !cleaning && !visionBusy) setDragging(true);
+              if (!fileLoading) setDragging(true);
             }}
             onDragLeave={(e) => {
               e.preventDefault();
@@ -806,9 +613,10 @@ export default function ImportPage() {
             }}
             onDrop={(e) => {
               e.preventDefault();
+              e.stopPropagation();
               dragDepth.current = 0;
               setDragging(false);
-              if (!fileLoading && !cleaning && !visionBusy) void loadFile(e.dataTransfer.files?.[0]);
+              if (!fileLoading) void loadFile(e.dataTransfer.files?.[0]);
             }}
           >
             {fileLoading ? (
@@ -816,7 +624,7 @@ export default function ImportPage() {
                 <Loader2 size={22} className="spin" />
                 <strong>正在读取文件</strong>
                 <span>{loadingName}</span>
-                <small>同时渲染页面并提取文字，最多前 {PDF_MAX_PAGES} 页。</small>
+                <small>提取前 {PDF_MAX_PAGES} 页文字。</small>
               </div>
             ) : (
               <>
@@ -827,16 +635,11 @@ export default function ImportPage() {
                     setText(e.target.value);
                     setPreview(null);
                     setBatchId(null);
-                    setCleanError("");
-                    setRevisions([]);
-                    setReviseOpen(false);
-                    setReviseError("");
                     setReviewTab("table");
                     setFlashQid(null);
                   }}
-                  placeholder="把试卷原文、Markdown、TXT 或已清洗的 JSON 粘贴到这里，也可以把 PDF 或图片拖进来…"
+                  placeholder="把试卷原文、Markdown、TXT 或已清洗的 JSON 粘贴到这里，也可以把 PDF 拖进来…"
                   spellCheck={false}
-                  disabled={cleaning}
                 />
                 <div className="import-drop-foot">
                   <span className="import-file-name">
@@ -849,79 +652,6 @@ export default function ImportPage() {
             )}
           </div>
 
-          {sourcePages.length > 0 ? (
-            <div>
-              <div className="import-check" data-state="ok">
-                <ImageIcon size={16} />
-                <div className="import-check-text">
-                  <strong>已载入 {sourcePages.length} 页页面</strong>
-                  <span>
-                    {text.trim()
-                      ? "已同时提取文字；视觉识别会重新读图并按规范整理。"
-                      : "没有可提取文字（扫描件或图片），用视觉识别读取题目。"}
-                  </span>
-                </div>
-                <div className="import-check-actions">
-                  <Button
-                    size="sm"
-                    variant="primary"
-                    disabled={visionBusy || cleaning || fileLoading}
-                    onClick={() => void runVisionClean()}
-                  >
-                    {visionBusy ? <Loader2 size={15} className="spin" /> : <Sparkles size={15} />}
-                    {visionBusy ? "识别中…" : "视觉识别并清洗"}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="soft"
-                    disabled={visionBusy || cleaning || fileLoading}
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <Upload size={15} /> 重新上传 / 替换
-                  </Button>
-                </div>
-              </div>
-              <div style={{ display: "flex", gap: 8, overflowX: "auto", padding: "10px 0 2px" }}>
-                {sourcePages.map((page) => (
-                  <img
-                    key={page.page}
-                    src={page.dataUrl}
-                    alt={"第 " + page.page + " 页"}
-                    loading="lazy"
-                    decoding="async"
-                    style={{
-                      width: 88,
-                      height: 116,
-                      objectFit: "contain",
-                      flex: "0 0 auto",
-                      borderRadius: 8,
-                      border: "1px solid var(--line)",
-                      background: "var(--surface-2)",
-                    }}
-                  />
-                ))}
-              </div>
-              {visionBusy && visionStatus ? <div className="import-tip">{visionStatus}</div> : null}
-              {visionError ? (
-                <div className="import-clean-error">
-                  <AlertTriangle size={14} />
-                  <span>{visionError}</span>
-                  <Button
-                    size="sm"
-                    variant="soft"
-                    disabled={visionBusy || cleaning || fileLoading}
-                    onClick={() => void runVisionClean()}
-                  >
-                    {visionBusy ? <Loader2 size={14} className="spin" /> : <RotateCcw size={14} />} 重试
-                  </Button>
-                  <Button size="sm" variant="ghost" onClick={copyMaterialPrompt}>
-                    <Copy size={14} /> 复制提示词
-                  </Button>
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-
           {materialCheck.kind === "json" ? (
             <div className="import-check" data-state="ok">
               <CheckCircle2 size={16} />
@@ -929,7 +659,7 @@ export default function ImportPage() {
                 <strong>识别到规范 JSON · {materialCheck.count} 题</strong>
                 <span>{materialCheck.title ? materialCheck.title + "，可直接预览并校验。" : "结构完整，可直接预览并校验。"}</span>
               </div>
-              <Button size="sm" variant="primary" disabled={busy || cleaning} onClick={() => void runPreview()}>
+              <Button size="sm" variant="primary" disabled={busy} onClick={() => void runPreview()}>
                 {busy ? <Loader2 size={15} className="spin" /> : <ChevronRight size={15} />}
                 预览并校验
               </Button>
@@ -938,46 +668,28 @@ export default function ImportPage() {
             <div className="import-check" data-state="raw">
               <AlertTriangle size={16} />
               <div className="import-check-text">
-                <strong>{materialCheck.jsonish ? "还不是可导入的 JSON" : "这是原始材料，还不是 JSON"}</strong>
-                <span>{materialCheck.reason} 可以直接交给 AI 清洗，或换成已清洗的 JSON。</span>
+                <strong>{materialCheck.jsonish ? "JSON 还没写完" : "原始材料不是 JSON"}</strong>
+                <span>{materialCheck.reason} 复制提示词交给任意 AI，把返回的 JSON 粘回来。</span>
               </div>
               <div className="import-check-actions">
-                <Button size="sm" variant="primary" disabled={cleaning || fileLoading} onClick={() => void cleanWithAi()}>
-                  {cleaning ? <Loader2 size={15} className="spin" /> : <Sparkles size={15} />}
-                  {cleaning ? "清洗中…" : "应用内 AI 清洗"}
-                </Button>
-                <Button size="sm" variant="soft" disabled={cleaning || fileLoading} onClick={() => fileInputRef.current?.click()}>
-                  <Upload size={15} /> 重新上传 / 替换
+                <Button size="sm" variant="primary" onClick={copyMaterialPrompt}>
+                  <Copy size={15} /> 复制清洗提示词
                 </Button>
               </div>
-            </div>
-          ) : null}
-
-          {cleanError ? (
-            <div className="import-clean-error">
-              <AlertTriangle size={14} />
-              <span>{cleanError}</span>
-              <Button size="sm" variant="soft" disabled={cleaning || fileLoading} onClick={() => void cleanWithAi()}>
-                {cleaning ? <Loader2 size={14} className="spin" /> : <Sparkles size={14} />} 重试
-              </Button>
-              <Button size="sm" variant="ghost" onClick={copyMaterialPrompt}>
-                <Copy size={14} /> 复制提示词
-              </Button>
             </div>
           ) : null}
 
           <div className="import-actions">
             <span className="import-tip">
-              {fileLoading ? "正在渲染页面并提取文字…" : "支持 PDF / 图片 / JSON / .md / .txt；PDF 单份不超过 100 MB，最多读取前 50 页。"}
+              {fileLoading ? "正在提取 PDF 文字…" : "PDF 只读取文字；扫描件先 OCR，或交给外部 AI 处理。"}
             </span>
             <span className="spacer" />
-            <Button variant="primary" disabled={!text.trim() || busy || cleaning || fileLoading} onClick={() => go(1)}>
+            <Button variant="primary" disabled={!text.trim() || busy || fileLoading} onClick={() => go(1)}>
               下一步 <ChevronRight size={15} />
             </Button>
           </div>
         </div>
       ) : null}
-
       {step === 1 ? (
         <div className="import-generate">
           <section className="panel panel-pad import-card">
@@ -1287,13 +999,6 @@ export default function ImportPage() {
               <Button variant="ghost" onClick={() => void runPreview()} disabled={busy || !text.trim()}>
                 {busy ? <Loader2 size={15} className="spin" /> : <RotateCcw size={15} />} 重新校验
               </Button>
-              <Button
-                variant="soft"
-                disabled={busy || !preview}
-                onClick={() => { setReviseError(""); setReviseOpen(true); }}
-              >
-                <Wand2 size={15} /> 让 AI 继续修改
-              </Button>
               <span className="spacer" />
               <Button variant="primary" onClick={() => void confirmImport()} disabled={busy || !preview}>
                 {busy ? <Loader2 size={15} className="spin" /> : <Check size={15} />} 确认导入 {preview?.question_count ?? 0} 题
@@ -1350,53 +1055,6 @@ export default function ImportPage() {
           </Button>
         </div>
       </Modal>
-
-      <Modal
-        open={reviseOpen}
-        onClose={() => { if (!revising) setReviseOpen(false); }}
-        title="让 AI 继续修改"
-        width={780}
-      >
-        <div className="field">
-          <label htmlFor="import-revise">修改要求</label>
-          <textarea
-            id="import-revise"
-            className="textarea import-editor-short"
-            value={reviseText}
-            onChange={(e) => setReviseText(e.target.value)}
-            placeholder="例如：把第 3 题的参考答案补一句说明；第 5 题改成多选题。"
-          />
-        </div>
-        <div className="import-prompt-hint">
-          AI 会拿到当前完整 JSON 和最近几轮要求，只返回修改后的完整 JSON；未要求改动的字段保持原样。
-        </div>
-        {revisions.length ? (
-          <div className="import-tip">已保留 {revisions.length} 个可回退版本。</div>
-        ) : null}
-        {reviseError ? (
-          <div className="import-clean-error">
-            <AlertTriangle size={15} />
-            <span>{reviseError}</span>
-          </div>
-        ) : null}
-        <div className="import-actions import-actions-plain">
-          <Button variant="ghost" disabled={revising} onClick={() => setReviseOpen(false)}>取消</Button>
-          <span className="spacer" />
-          {revisions.length ? (
-            <Button variant="soft" disabled={revising} onClick={undoRevision}>
-              <RotateCcw size={15} /> 回退上一版
-            </Button>
-          ) : null}
-          <Button
-            variant="primary"
-            disabled={revising || !reviseText.trim()}
-            onClick={() => void reviseWithAi()}
-          >
-            {revising ? <Loader2 size={15} className="spin" /> : <Wand2 size={15} />} 交给 AI 修改
-          </Button>
-        </div>
-      </Modal>
     </main>
   );
 }
-

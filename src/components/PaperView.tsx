@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import type { ReactNode } from "react";
-import { richMaterialHtml, richStemHtml } from "../lib/richText";
+import { richInlineHtml, richMaterialHtml, richStemHtml, richTextHtml } from "../lib/richText";
 import type { Material, Question, Section } from "../lib/types";
 import "../styles/paper.css";
 
@@ -386,17 +386,17 @@ function materialTextNodes(content: string, questions: Question[], showAnswer: b
 
 function materialHtml(content: string, questions: Question[], showAnswer: boolean) {
   const hits = scanBlanks(content);
-  if (!hits.length) return content;
+  if (!hits.length) return richTextHtml(content, true);
   const map = blankQuestionMap(questions);
   let html = "";
   let cursor = 0;
   for (const hit of hits) {
-    html += content.slice(cursor, hit.start);
+    html += richTextHtml(content.slice(cursor, hit.start), true);
     const question = map.get(blankKey(hit.label));
     html += inlineBlankHtml(hit.label, blankAnswer(question, hit.fallback), showAnswer, true);
     cursor = hit.end;
   }
-  return html + content.slice(cursor);
+  return html + richTextHtml(content.slice(cursor), true);
 }
 
 function stemHtml(text: string, q: Question, showAnswer: boolean) {
@@ -459,7 +459,9 @@ export function MaterialBlock({
   questions = [],
   showAnswer = false,
 }: MaterialBlockProps) {
-  const hasMedia = Boolean(richMaterialHtml(material.content));
+  const richMaterial = richMaterialHtml(material.content);
+  const hasMedia = Boolean(richMaterial);
+  const richMaterialHtmlWithBlanks = hasMedia ? materialHtml(material.content, questions, showAnswer) : null;
   return (
     <div className={cx("paper-material", active && "is-active", className)}>
       {questionIds
@@ -469,7 +471,7 @@ export function MaterialBlock({
       {hasMedia ? (
         <div
           className="paper-material-body"
-          dangerouslySetInnerHTML={{ __html: materialHtml(material.content, questions, showAnswer) }}
+          dangerouslySetInnerHTML={{ __html: richMaterialHtmlWithBlanks ?? "" }}
         />
       ) : (
         <div className="paper-material-body">{materialTextNodes(material.content, questions, showAnswer)}</div>
@@ -505,8 +507,8 @@ export function PaperAnswerKey({
               renderAnswer(q)
             ) : (
               <>
-                <div className="paper-answer-key-value">{answerValue(q)}</div>
-                {q.explanation ? <div className="paper-answer-key-note">{q.explanation}</div> : null}
+                <div className="paper-answer-key-value" dangerouslySetInnerHTML={{ __html: richTextHtml(answerValue(q), true) }} />
+                {q.explanation ? <div className="paper-answer-key-note" dangerouslySetInnerHTML={{ __html: richTextHtml(q.explanation, true) }} /> : null}
               </>
             )}
           </div>
@@ -583,7 +585,7 @@ export function PaperQuestion({
           {options.map((option) => (
             <div className="paper-opt" key={option.key}>
               <b>{option.key}</b>
-              <span>{option.text}</span>
+              <span dangerouslySetInnerHTML={{ __html: richInlineHtml(option.text) }} />
             </div>
           ))}
         </div>

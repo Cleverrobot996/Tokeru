@@ -1149,7 +1149,6 @@
 .bk-paper-block { min-width: 0; }
 .bk-paper { min-width: 0; }
 .bk-paper .paper-sheet {
-  max-width: none;
   margin: 0;
   padding: clamp(20px, 2.6vw, 34px) clamp(20px, 3vw, 40px) 38px;
 }

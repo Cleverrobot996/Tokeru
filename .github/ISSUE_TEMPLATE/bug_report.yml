@@ -8,7 +8,7 @@ body:
     attributes:
       label: Tokeru 版本
       description: 设置页或安装包文件名里的版本号
-      placeholder: "0.0.1"
+      placeholder: "0.1.0"
     validations:
       required: true
   - type: input

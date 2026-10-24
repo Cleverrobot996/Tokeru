@@ -657,6 +657,9 @@
 .settings-page .settings-seg { flex-wrap: wrap; margin-top: 12px; padding: 3px; }
 .settings-page .settings-grid { margin-top: 18px; }
 .settings-page .settings-switch-row { display: flex; align-items: center; gap: 10px; min-height: 42px; font-size: 12px; }
+.settings-thinking { display: grid; gap: 2px; }
+.settings-thinking .settings-switch-row { min-height: 34px; }
+.settings-thinking .settings-switch-row span:last-child { color: var(--text-2); }
 .settings-page .settings-check { margin-top: 12px; }
 .settings-page .settings-prompt { min-height: 84px; }
 .settings-page .settings-off {
@@ -843,4 +846,31 @@
 }
 @media (max-width: 680px) {
   .settings-page .mcp-line { align-items: flex-start; }
+}
+
+.import-drop-overlay {
+  position: fixed;
+  inset: 14px;
+  z-index: 300;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 7px;
+  border: 2px dashed var(--accent);
+  border-radius: 26px;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  backdrop-filter: blur(6px);
+  color: var(--accent-strong);
+  pointer-events: none;
+}
+
+.import-drop-overlay strong {
+  font-family: var(--font-reading);
+  font-size: 25px;
+  color: var(--text);
+}
+
+.import-drop-overlay span {
+  font-size: 12.5px;
+  color: var(--text-3);
 }

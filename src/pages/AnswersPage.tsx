@@ -34,7 +34,7 @@ import { Modal } from "../components/ui";
 import type { Folder, Material, QType, Question, ScorePlanResult, Section, TagInfo } from "../lib/types";
 import { QTYPE_LABEL, acceptText, answerText, qtypeLabel } from "../lib/labels";
 import { loadPaperStyle, paperCssVars, type PaperStyle } from "../lib/paper";
-import { richStemHtml } from "../lib/richText";
+import { richInlineHtml, richStemHtml, richTextHtml } from "../lib/richText";
 
 const SUBJECTIVE = new Set(["short_answer", "writing", "dictation"]);
 const EMPTY_TAGS: string[] = [];
@@ -1346,27 +1346,27 @@ function AnswerNote({ q }: { q: Question }) {
       {longRef ? (
         <details className="org-ansnote-ref">
           <summary>展开参考文本</summary>
-          <div className="org-ansnote-value">{info.correct}</div>
+          <div className="org-ansnote-value" dangerouslySetInnerHTML={{ __html: richTextHtml(info.correct, true) }} />
         </details>
       ) : (
-        <div className={info.subjective ? "org-ansnote-value is-ref" : "org-ansnote-value"}>{info.correct}</div>
+        <div className={info.subjective ? "org-ansnote-value is-ref" : "org-ansnote-value"} dangerouslySetInnerHTML={{ __html: richTextHtml(info.correct, true) }} />
       )}
       {info.accept ? (
         <div className="org-ansnote-accept">
           <span>也可接受</span>
-          <span>{info.accept}</span>
+          <span dangerouslySetInnerHTML={{ __html: richTextHtml(info.accept, true) }} />
         </div>
       ) : null}
       {info.referenceExtra ? (
         <details className="org-ansnote-ref">
           <summary>参考文本</summary>
-          <div className="org-ansnote-value">{info.referenceExtra}</div>
+          <div className="org-ansnote-value" dangerouslySetInnerHTML={{ __html: richTextHtml(info.referenceExtra, true) }} />
         </details>
       ) : null}
       {q.explanation ? (
         <div className="org-ansnote-explain">
           <span className="org-ansnote-explain-label">解析</span>
-          <span>{q.explanation}</span>
+          <span dangerouslySetInnerHTML={{ __html: richTextHtml(q.explanation, true) }} />
         </div>
       ) : null}
     </div>
@@ -1590,17 +1590,17 @@ function AnswerPanel({ q }: { q: Question }) {
           <span className="org-ans-label">{info.label}</span>
           {!info.subjective ? <span className="org-ans-hint">{qtypeLabel(q.qtype)}</span> : null}
         </div>
-        <div className={info.subjective ? "org-ref" : "org-ans-value"}>{info.correct}</div>
+        <div className={info.subjective ? "org-ref" : "org-ans-value"} dangerouslySetInnerHTML={{ __html: richTextHtml(info.correct, true) }} />
         {info.accept ? (
           <div className="org-accept">
             <span className="org-accept-k">也可接受</span>
-            <span className="org-accept-v">{info.accept}</span>
+            <span className="org-accept-v" dangerouslySetInnerHTML={{ __html: richTextHtml(info.accept, true) }} />
           </div>
         ) : null}
         {info.referenceExtra ? (
           <details className="org-ref-extra">
             <summary>参考文本</summary>
-            <div>{info.referenceExtra}</div>
+            <div dangerouslySetInnerHTML={{ __html: richTextHtml(info.referenceExtra, true) }} />
           </details>
         ) : null}
       </section>
@@ -1609,7 +1609,7 @@ function AnswerPanel({ q }: { q: Question }) {
           <div className="org-ans-head">
             <span className="org-ans-label">解析</span>
           </div>
-          <div className="org-explain-body">{q.explanation}</div>
+          <div className="org-explain-body" dangerouslySetInnerHTML={{ __html: richTextHtml(q.explanation, true) }} />
         </section>
       ) : null}
     </div>
@@ -1648,27 +1648,27 @@ function MergedAnswer({
         {longRef ? (
           <details className="org-merged-ref">
             <summary>展开{info.label}</summary>
-            <div className="org-merged-value is-ref">{info.correct}</div>
+            <div className="org-merged-value is-ref" dangerouslySetInnerHTML={{ __html: richTextHtml(info.correct, true) }} />
           </details>
         ) : (
-          <span className={info.subjective ? "org-merged-value is-ref" : "org-merged-value"}>{info.correct}</span>
+          <span className={info.subjective ? "org-merged-value is-ref" : "org-merged-value"} dangerouslySetInnerHTML={{ __html: richTextHtml(info.correct, true) }} />
         )}
         {info.accept ? (
           <span className="org-merged-accept">
             <span>也可接受</span>
-            {info.accept}
+            <span dangerouslySetInnerHTML={{ __html: richTextHtml(info.accept, true) }} />
           </span>
         ) : null}
         {info.referenceExtra ? (
           <details className="org-merged-ref">
             <summary>参考文本</summary>
-            <div className="org-merged-value">{info.referenceExtra}</div>
+            <div className="org-merged-value" dangerouslySetInnerHTML={{ __html: richTextHtml(info.referenceExtra, true) }} />
           </details>
         ) : null}
         {q.explanation ? (
           <div className="org-merged-explain">
             <span>解析</span>
-            <span>{q.explanation}</span>
+            <span dangerouslySetInnerHTML={{ __html: richTextHtml(q.explanation, true) }} />
           </div>
         ) : null}
       </div>
@@ -1781,7 +1781,7 @@ function BriefRow({
                 return (
                   <div className={"org-opt" + (isCorrect ? " is-correct" : "")} key={option.key}>
                     <span className="org-opt-k">{option.key}</span>
-                    <span className="org-opt-t">{option.text}</span>
+                    <span className="org-opt-t" dangerouslySetInnerHTML={{ __html: richInlineHtml(option.text) }} />
                     {isCorrect ? <Check size={14} className="org-opt-check" aria-hidden="true" /> : null}
                   </div>
                 );

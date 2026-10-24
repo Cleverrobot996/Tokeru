@@ -141,12 +141,18 @@ export interface Mistake {
   note: string;
 }
 
+export type AiProvider = "deepseek" | "openai" | "anthropic" | "ollama" | "dashscope";
+
 export interface AppSettings {
   model: string;
   base_url: string;
+  provider: AiProvider | "";
   vision_model: string;
   vision_base_url: string;
   thinking: boolean;
+  thinking_organize: boolean;
+  thinking_vision: boolean;
+  thinking_explain: boolean;
   has_api_key: boolean;
   custom_prompt: string;
   timer_presets: number[];
@@ -185,6 +191,7 @@ export interface AiTestResult {
 export interface AiConfigInput {
   baseUrl: string;
   model: string;
+  provider?: AiProvider | "";
   apiKey?: string;
   thinking?: boolean;
 }

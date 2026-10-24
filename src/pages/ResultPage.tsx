@@ -7,6 +7,7 @@ import { api } from "../lib/api";
 import type { AttemptQuestion } from "../lib/types";
 import { Button, Chip, Markdown } from "../components/ui";
 import { answerText, qtypeLabel } from "../lib/labels";
+import { richInlineHtml, richStemHtml, richTextHtml } from "../lib/richText";
 
 type Filter = "all" | "wrong" | "unanswered" | "pending";
 
@@ -295,7 +296,7 @@ function ResultCard({
         </label>
       </div>
 
-      <div className="q-stem" dangerouslySetInnerHTML={{ __html: stemHtml(q.stem) }} />
+      <div className="q-stem" dangerouslySetInnerHTML={{ __html: richStemHtml(q.stem) }} />
 
       {q.options?.length ? (
         <div className="opts" style={{ margin: "10px 0" }}>
@@ -305,7 +306,7 @@ function ResultCard({
             return (
               <div className={`opt ${right ? "correct" : mine ? "wrong" : ""}`} key={o.key}>
                 <b>{o.key}</b>
-                <span>{o.text}</span>
+                <span dangerouslySetInnerHTML={{ __html: richInlineHtml(o.text) }} />
                 {right ? <span style={{ marginLeft: "auto", display: "flex" }}><CheckCircle2 size={14} /></span> : mine ? <span style={{ marginLeft: "auto", display: "flex" }}><XCircle size={14} /></span> : null}
               </div>
             );
@@ -320,7 +321,7 @@ function ResultCard({
         </div>
         <div className="answer-box correct">
           <div className="label">正确答案</div>
-          <div className="value answer-value">{correct}</div>
+          <div className="value answer-value" dangerouslySetInnerHTML={{ __html: richTextHtml(correct, true) }} />
         </div>
       </div>
 
@@ -348,8 +349,8 @@ function ResultCard({
         </div>
 
         <div className="ai-presets">
-          <button className="ai-chip" type="button" onClick={() => explain("brief")} disabled={aiBusy}>一句话点破</button>
-          <button className="ai-chip" type="button" onClick={() => explain("full")} disabled={aiBusy}>完整解析</button>
+          <button className="ai-chip" type="button" onClick={() => explain("brief")} disabled={aiBusy}>简要解析</button>
+          <button className="ai-chip" type="button" onClick={() => explain("full")} disabled={aiBusy}>详细解析</button>
           {wrong ? (
             <button className="ai-chip" type="button" onClick={() => explain("followup", "只讲我这题错在哪、正确思路该怎么走，不要重复整段解析。")} disabled={aiBusy}>讲清错因</button>
           ) : null}
@@ -372,7 +373,7 @@ function ResultCard({
         {q.explanation ? (
           <details className="ai-seed">
             <summary>题目解析</summary>
-            <div>{q.explanation}</div>
+            <div dangerouslySetInnerHTML={{ __html: richTextHtml(q.explanation, true) }} />
           </details>
         ) : null}
         {aiBusy ? <div className="small muted" style={{ marginTop: 10 }}>思考中…</div> : null}
@@ -426,9 +427,4 @@ function FollowUp({ q, onResult, onError }: { q: AttemptQuestion; onResult: (r: 
       <Button size="sm" variant="primary" onClick={send} disabled={busy || !text.trim()}>追问</Button>
     </div>
   );
-}
-
-function stemHtml(text: string) {
-  const esc = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  return esc.replace(/_{2,}/g, '<span class="blank"></span>');
 }

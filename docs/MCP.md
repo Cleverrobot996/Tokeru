@@ -1,10 +1,10 @@
-# Tokeru MCP 接入说明（0.0.1）
+# Tokeru MCP 接入说明（0.1.0）
 
-> Tokeru 0.0.1 内置一个只监听 127.0.0.1 的 MCP Server（Streamable HTTP，默认 http://127.0.0.1:17890/mcp，共 19 个工具）。外部 Agent 可以读取题库、校验导入并写入试卷；服务默认关闭、默认只读，写操作必须先在「设置 → MCP 连接」关闭只读。
+> Tokeru 0.1.0 内置一个只监听 127.0.0.1 的 MCP Server（Streamable HTTP，默认 http://127.0.0.1:17890/mcp，共 22 个工具）。外部 Agent 可以读取题库、校验导入并写入试卷；服务默认关闭、默认只读，写操作必须先在「设置 → MCP 连接」关闭只读。
 
-本文按当前 0.0.1 源码核对，主要依据：
+本文按当前 0.1.0 源码核对，主要依据：
 
-- [mcp.rs](../src-tauri/src/mcp.rs)：Server 生命周期、鉴权、CORS、19 个工具和 3 个 Tauri 命令。
+- [mcp.rs](../src-tauri/src/mcp.rs)：Server 生命周期、鉴权、CORS、22 个工具和 3 个 Tauri 命令。
 - [commands.rs](../src-tauri/src/commands.rs)：导入预览、确认导入、撤销导入的底层实现。
 - [SettingsPage.tsx](../src/pages/SettingsPage.tsx)：「MCP 连接」卡片的开关、端口、只读和 Token。
 - [import-spec.md](../shared/import-spec.md)：外部 Agent 清洗材料时必须遵循的导入规范。
@@ -24,7 +24,7 @@ Claude Desktop / Cherry Studio / 其他 Agent
 Tokeru 桌面进程（Tauri）
   └─ axum  Router（127.0.0.1:端口）
        └─ rmcp Streamable HTTP Service（/mcp）
-            └─ TokeruMcp：19 个工具
+            └─ TokeruMcp：22 个工具
                  └─ repo / commands
                       └─ SQLite（Tokeru 本机题库）
 ~~~
@@ -34,7 +34,7 @@ Tokeru 桌面进程（Tauri）
 - 只有 Tauri 桌面版会启动 MCP；浏览器里的 http://127.0.0.1:1420 预览使用 mock 数据，不会监听 MCP 端口。
 - 应用退出，MCP 服务随之停止；应用启动时由 <code>mcp::boot</code> 读取设置，若之前启用过就自动重新监听。
 - 只监听回环地址，不暴露到局域网；不做端口转发、也不提供 stdio transport。
-- 19 个工具共享应用自己的数据库读写路径，不额外复制数据。
+- 22 个工具共享应用自己的数据库读写路径，不额外复制数据。
 - 默认关闭、默认只读；关闭只读是显式动作，重启后仍保留。
 
 ## 2. 启用与配置
@@ -187,9 +187,9 @@ http://127.0.0.1:17890/mcp?token=tk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 Tokeru 没有 stdio transport。只支持 stdio 的客户端不能直接通过 command/args 连上 Tokeru；需要支持 Streamable HTTP 的桥接工具，把本地 HTTP 端点转成 stdio。桥接工具本身也要配置 Authorization 头。
 
-## 4. 19 个工具
+## 4. 22 个工具
 
-按用途分三组，合计 19 个。分组只表示用途，不改变权限：真正的权限只有「只读模式」开关。
+按用途分四组，合计 22 个。library / questions 只读；edit 与导入、旧版编辑工具需要关闭只读模式。
 
 ### 4.1 只读查询（10 个）
 
@@ -291,6 +291,22 @@ undo_import 返回：
 - assign_set_folder 的 folder_id 为 null 或省略时是「未分类」，不是删除文件夹。
 - 写工具不保证目标一定存在：update_question 对不存在的 question_id 可能仍返回 updated=true，但没有任何行变化；写前先用 get_question/get_set 确认 id。
 
+### 4.4 领域工具（3 个）
+
+旧工具保持兼容；新接入的 Agent 优先用这三个领域工具，减少来回调用。参数用 action 枚举，返回字段沿旧口径。
+
+| 工具 | action | 用途 |
+| --- | --- | --- |
+| **library** | overview / folders / materials / sections / batches / attempts / mistakes / stats / export_set / export_bank | 一次读取一类题库数据。materials 返回材料原文；sections 返回分区；attempts 含进行中记录；export_set 需要 set_id；export_bank 可带 set_id / folder_id / limit。 |
+| **questions** | list / search / get / batch_get / stats | list/search 复用 list_bank 筛选；get 同时返回题目、分区和共享材料；batch_get 一次最多 100 题；stats 按题型统计。 |
+| **edit** | update_question / update_material / update_section / delete_set | 按领域修改。只传要改的字段；update_material 写材料正文；delete_set 需要 confirm=true，会连带删除该卷练习记录。 |
+
+领域工具的建议：
+
+- 先 library.overview 看全库，再 library.export_set 或 questions.batch_get 取正文。
+- 公式保留原始 TeX，表格保留 GFM 管道表格；不要把 KaTeX 渲染结果写回。
+- edit 只能改已有内容，新增试卷仍走 preview_import → confirm_import。
+
 ## 5. 典型导入工作流
 
 ### 5.1 先决条件
@@ -302,7 +318,7 @@ undo_import 返回：
 
 ### 5.2 推荐顺序
 
-1. **读取规范**：调用 get_import_spec，把返回的 spec 全文交给负责清洗的 AI 或人工。规范当前 784 行，规定了单 JSON、分区、材料、题型、答案和图片规则。
+1. **读取规范**：调用 get_import_spec，把返回的 spec 全文交给负责清洗的 AI 或人工。规范当前约 830 行，规定了单 JSON、分区、材料、题型、答案、公式/表格与图片规则。
 2. **整理材料**：把 PDF 文本、OCR 文本或已有 Markdown 整理成一份 JSON。只输出一个 JSON 对象，不要数组、多份试卷、Markdown 围栏或说明文字；没有答案的题不要编答案。
 3. **预览校验**：调用 preview_import：
 
@@ -468,7 +484,7 @@ curl -sS -o /dev/null -w '%{http_code}\n' -X POST "$BASE" \
 
 预期 202。
 
-3）tools/list，确认 19 个工具：
+3）tools/list，确认 22 个工具：
 
 ~~~bash
 curl -sS -N --max-time 10 -X POST "$BASE" \
@@ -546,7 +562,7 @@ curl -i -X POST "$BASE" \
 
 1. 启动 Tokeru 桌面版，设置 → MCP 连接，确认状态为「运行中」。
 2. 复制地址和 Token，按 7.2 的 initialize 请求；确认 200、text/event-stream、mcp-session-id。
-3. 用同一个 session 调 tools/list；确认 19 个工具名称与第 4 节一致。
+3. 用同一个 session 调 tools/list；确认 22 个工具名称与第 4 节一致。
 4. 不带 Token 调 initialize；确认 401 和固定错误文本。
 5. 保持只读，调用 preview_import；确认只读错误。
 6. 关闭只读并保存，调用 preview_import → confirm_import；再用 get_set 验证 set_id 和题量。
@@ -561,17 +577,17 @@ curl -i -X POST "$BASE" \
 | Bearer 与 ?token= 鉴权 | mcp.rs:146-169 |
 | CORS | mcp.rs:171-188 |
 | 只读错误 | mcp.rs:208-214 |
-| 19 个工具定义 | mcp.rs:398-572 |
+| 22 个工具定义 | mcp.rs 的 tool_router |
 | mcp_status / mcp_configure / mcp_regenerate_token / boot | mcp.rs:583-705 |
 | MCP 管理器注册与启动 | main.rs:8、116、124、175-177 |
 | 设置页卡片与配置示例 | SettingsPage.tsx:438-515 |
 | 前端 API 与类型 | api.ts:75-78、types.ts:166-174 |
 | 导入预览/确认/撤销 | commands.rs:1514-1548 |
-| 导入规范 | shared/import-spec.md，784 行，v1.1 |
+| 导入规范 | shared/import-spec.md，v1.2 |
 
 ### 9.3 验证状态
 
-- 本文按 2026-10-24 的 0.0.1 源码核对；没有修改 src/ 或 src-tauri/。
+- 本文按 2026-10-24 的 0.1.0 源码核对；没有修改 src/ 或 src-tauri/。
 - 项目内已有的 MCP 冒烟记录见 [SOURCE-MAP.md](SOURCE-MAP.md) 第 14.2 节：无 Token 401、Bearer initialize/tools/list 200、只读 preview_import 被拒、关闭只读后 preview→confirm 成功。
 - 本文没有重新执行桌面端 curl/客户端联调；真正的安装包与客户端兼容性仍需在目标机器上验证，尤其是只支持 stdio 的客户端和带大图的导入。
 

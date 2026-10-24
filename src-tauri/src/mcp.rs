@@ -40,6 +40,25 @@ fn err(message: impl Into<String>) -> McpError {
 fn ok(value: impl Serialize) -> Result<Json<Value>, McpError> {
     serde_json::to_value(value).map(Json).map_err(|e| err(format!("序列化失败：{e}")))
 }
+fn clamp_limit(value: Option<i64>, default: i64, max: i64) -> i64 {
+    value.unwrap_or(default).clamp(0, max)
+}
+
+fn count_sql(conn: &rusqlite::Connection, sql: &str) -> Result<i64, String> {
+    conn.query_row(sql, [], |row| row.get(0)).map_err(|e| e.to_string())
+}
+
+fn clean_tags(tags: &[String]) -> Vec<String> {
+    let mut out: Vec<String> = Vec::new();
+    for tag in tags {
+        let tag = tag.trim();
+        if tag.is_empty() || out.iter().any(|existing| existing == tag) {
+            continue;
+        }
+        out.push(tag.to_string());
+    }
+    out
+}
 
 #[derive(Default)]
 struct ManagerState {
@@ -386,6 +405,79 @@ pub struct AssignFolderParams {
     pub folder_id: Option<i64>,
 }
 
+#[derive(Debug, Deserialize, JsonSchema)]
+pub struct LibraryParams {
+    /// overview / folders / materials / sections / batches / attempts / mistakes / stats / export_set / export_bank
+    pub action: String,
+    /// 限定某份试卷（export_set 必填，其他动作可选）。
+    #[serde(default)]
+    pub set_id: Option<i64>,
+    /// 限定某个文件夹。
+    #[serde(default)]
+    pub folder_id: Option<i64>,
+    /// 返回题目上限，1..2000，默认 300；export_bank 为 0 时不返回题目。
+    #[serde(default)]
+    pub limit: Option<i64>,
+}
+
+#[derive(Debug, Deserialize, JsonSchema)]
+pub struct QuestionsParams {
+    /// list / search / get / batch_get / stats
+    pub action: String,
+    /// 关键词，匹配题干或解析。
+    #[serde(default)]
+    pub q: Option<String>,
+    #[serde(default)]
+    pub set_id: Option<i64>,
+    #[serde(default)]
+    pub section_id: Option<i64>,
+    #[serde(default)]
+    pub qtype: Option<String>,
+    #[serde(default)]
+    pub tag: Option<String>,
+    #[serde(default)]
+    pub tags: Option<Vec<String>>,
+    #[serde(default)]
+    pub folder_id: Option<i64>,
+    #[serde(default)]
+    pub limit: Option<i64>,
+    /// get 的题目 id。
+    #[serde(default)]
+    pub question_id: Option<i64>,
+    /// batch_get 的题目 id 列表，最多 100 个。
+    #[serde(default)]
+    pub question_ids: Option<Vec<i64>>,
+}
+
+#[derive(Debug, Deserialize, JsonSchema)]
+pub struct EditParams {
+    /// update_question / update_material / update_section / delete_set
+    pub action: String,
+    #[serde(default)]
+    pub question_id: Option<i64>,
+    #[serde(default)]
+    pub material_id: Option<i64>,
+    #[serde(default)]
+    pub section_id: Option<i64>,
+    #[serde(default)]
+    pub set_id: Option<i64>,
+    #[serde(default)]
+    pub title: Option<String>,
+    #[serde(default)]
+    pub subtitle: Option<String>,
+    #[serde(default)]
+    pub stem: Option<String>,
+    #[serde(default)]
+    pub content: Option<String>,
+    #[serde(default)]
+    pub qtype: Option<String>,
+    #[serde(default)]
+    pub tags: Option<Vec<String>>,
+    /// delete_set 必须显式传 true。
+    #[serde(default)]
+    pub confirm: Option<bool>,
+}
+
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct McpStatus {
@@ -526,6 +618,274 @@ impl TokeruMcp {
         self.write_guard()?;
         self.with_conn(|c| commands::import_undo_db(c, p.batch_id))?;
         ok(json!({ "batch_id": p.batch_id, "deleted": true }))
+    }
+
+    #[tool(name = "library", description = "按领域读取题库：试卷、文件夹、材料、分区、导入批次、练习记录、错题、统计与导出。action=overview/folders/materials/sections/batches/attempts/mistakes/stats/export_set/export_bank。材料与题目正文保留 Markdown/LaTeX/HTML 原文，不回写渲染结果。", annotations(read_only_hint = true, idempotent_hint = true))]
+    async fn library(&self, Parameters(p): Parameters<LibraryParams>) -> Result<Json<Value>, McpError> {
+        let action = p.action.trim().to_ascii_lowercase();
+        match action.as_str() {
+            "overview" => {
+                let sets = self.with_conn(repo::list_set_summaries)?;
+                let tags = self.with_conn(repo::list_tags)?;
+                let groups = self.with_conn(repo::list_tag_groups)?;
+                let folders = self.with_conn(repo::list_folders)?;
+                let stats = self.with_conn(|c| {
+                    Ok(json!({
+                        "sets": count_sql(c, "SELECT COUNT(*) FROM sets")?,
+                        "questions": count_sql(c, "SELECT COUNT(*) FROM questions WHERE archived=0")?,
+                        "materials": count_sql(c, "SELECT COUNT(*) FROM materials")?,
+                        "sections": count_sql(c, "SELECT COUNT(*) FROM sections")?,
+                        "attempts": count_sql(c, "SELECT COUNT(*) FROM attempts")?,
+                        "mistakes": count_sql(c, "SELECT COUNT(*) FROM mistakes")?,
+                    }))
+                })?;
+                ok(json!({ "sets": sets, "tags": tags, "tagGroups": groups, "folders": folders, "stats": stats }))
+            }
+            "folders" => ok(self.with_conn(repo::list_folders)?),
+            "materials" => {
+                let limit = clamp_limit(p.limit, 50, 200);
+                let rows = self.with_conn(|c| {
+                    let mut stmt = c.prepare("SELECT m.id,m.set_id,s.title,m.key,m.title,m.content FROM materials m JOIN sets s ON s.id=m.set_id ORDER BY m.set_id,m.id LIMIT ?1").map_err(|e| e.to_string())?;
+                    let list = stmt.query_map(rusqlite::params![limit], |r| Ok(json!({
+                        "id": r.get::<_,i64>(0)?, "setId": r.get::<_,i64>(1)?, "setTitle": r.get::<_,String>(2)?,
+                        "key": r.get::<_,String>(3)?, "title": r.get::<_,String>(4)?, "content": r.get::<_,String>(5)?,
+                    }))).map_err(|e| e.to_string())?
+                    .collect::<Result<Vec<_>,_>>().map_err(|e| e.to_string())?;
+                    Ok(list)
+                })?;
+                ok(json!({ "materials": rows, "limit": limit }))
+            }
+            "sections" => {
+                let rows = self.with_conn(|c| {
+                    let mut stmt = c.prepare("SELECT id,set_id,key,title,subtitle,kind,position,audio_file,material_id FROM sections ORDER BY set_id,position,id").map_err(|e| e.to_string())?;
+                    let list = stmt.query_map([], |r| Ok(json!({
+                        "id": r.get::<_,i64>(0)?, "setId": r.get::<_,i64>(1)?, "key": r.get::<_,String>(2)?,
+                        "title": r.get::<_,String>(3)?, "subtitle": r.get::<_,String>(4)?, "kind": r.get::<_,String>(5)?,
+                        "position": r.get::<_,i64>(6)?, "audioFile": r.get::<_,Option<String>>(7)?, "materialId": r.get::<_,Option<i64>>(8)?,
+                    }))).map_err(|e| e.to_string())?
+                    .collect::<Result<Vec<_>,_>>().map_err(|e| e.to_string())?;
+                    Ok(list)
+                })?;
+                ok(json!({ "sections": rows }))
+            }
+            "batches" => {
+                let rows = self.with_conn(|c| {
+                    let mut stmt = c.prepare("SELECT b.id,b.set_id,s.title,b.title,b.created_at FROM import_batches b LEFT JOIN sets s ON s.id=b.set_id ORDER BY b.id DESC LIMIT 200").map_err(|e| e.to_string())?;
+                    let list = stmt.query_map([], |r| Ok(json!({
+                        "id": r.get::<_,i64>(0)?, "setId": r.get::<_,i64>(1)?, "setTitle": r.get::<_,Option<String>>(2)?,
+                        "title": r.get::<_,String>(3)?, "createdAt": r.get::<_,String>(4)?,
+                    }))).map_err(|e| e.to_string())?
+                    .collect::<Result<Vec<_>,_>>().map_err(|e| e.to_string())?;
+                    Ok(list)
+                })?;
+                ok(json!({ "batches": rows }))
+            }
+            "attempts" => {
+                let set_id = p.set_id;
+                let rows = self.with_conn(move |c| {
+                    let mut stmt = c.prepare("SELECT a.id,a.set_id,s.title,a.status,a.total_score,a.max_score,a.started_at,a.finished_at,(SELECT COUNT(*) FROM answers WHERE attempt_id=a.id AND TRIM(answer_raw)<>'') FROM attempts a LEFT JOIN sets s ON s.id=a.set_id WHERE (?1 IS NULL OR a.set_id=?1) ORDER BY a.id DESC LIMIT 200").map_err(|e| e.to_string())?;
+                    let list = stmt.query_map(rusqlite::params![set_id], |r| Ok(json!({
+                        "id": r.get::<_,i64>(0)?, "setId": r.get::<_,Option<i64>>(1)?, "setTitle": r.get::<_,Option<String>>(2)?,
+                        "status": r.get::<_,String>(3)?, "totalScore": r.get::<_,Option<i64>>(4)?, "maxScore": r.get::<_,Option<i64>>(5)?,
+                        "startedAt": r.get::<_,String>(6)?, "finishedAt": r.get::<_,Option<String>>(7)?, "answered": r.get::<_,i64>(8)?,
+                    }))).map_err(|e| e.to_string())?
+                    .collect::<Result<Vec<_>,_>>().map_err(|e| e.to_string())?;
+                    Ok(list)
+                })?;
+                ok(json!({ "attempts": rows }))
+            }
+            "mistakes" => ok(json!({ "mistakes": self.with_conn(repo::list_mistakes)? })),
+            "stats" => {
+                let stats = self.with_conn(|c| {
+                    let mut by_type = Vec::new();
+                    let mut stmt = c.prepare("SELECT qtype,COUNT(*),COALESCE(SUM(points),0) FROM questions WHERE archived=0 GROUP BY qtype ORDER BY COUNT(*) DESC").map_err(|e| e.to_string())?;
+                    let rows = stmt.query_map([], |r| Ok(json!({"qtype": r.get::<_,String>(0)?, "count": r.get::<_,i64>(1)?, "points": r.get::<_,i64>(2)?}))).map_err(|e| e.to_string())?;
+                    for row in rows { by_type.push(row.map_err(|e| e.to_string())?); }
+                    Ok(json!({
+                        "sets": count_sql(c, "SELECT COUNT(*) FROM sets")?,
+                        "questions": count_sql(c, "SELECT COUNT(*) FROM questions WHERE archived=0")?,
+                        "attempts": count_sql(c, "SELECT COUNT(*) FROM attempts")?,
+                        "mistakes": count_sql(c, "SELECT COUNT(*) FROM mistakes")?,
+                        "byQtype": by_type,
+                    }))
+                })?;
+                ok(stats)
+            }
+            "export_set" => {
+                let set_id = p.set_id.ok_or_else(|| err("export_set 需要 set_id。"))?;
+                let detail = self.with_conn(|c| repo::get_set_detail(c, Some(set_id)))?;
+                ok(json!({ "set": detail }))
+            }
+            "export_bank" => {
+                let limit = clamp_limit(p.limit, 300, 2000);
+                let sets = self.with_conn(repo::list_set_summaries)?;
+                let tags = self.with_conn(repo::list_tags)?;
+                let groups = self.with_conn(repo::list_tag_groups)?;
+                let folders = self.with_conn(repo::list_folders)?;
+                let questions = if limit > 0 {
+                    let filters = BankFilters {
+                        set_id: p.set_id,
+                        folder_id: p.folder_id,
+                        q: None,
+                        section_id: None,
+                        qtype: None,
+                        tag: None,
+                        tags: None,
+                        set_ids: None,
+                        sort: Some("position".into()),
+                        archived: Some("active".into()),
+                        limit: Some(limit),
+                    };
+                    Some(self.with_conn(|c| repo::list_bank(c, &filters))?)
+                } else {
+                    None
+                };
+                ok(json!({ "sets": sets, "tags": tags, "tagGroups": groups, "folders": folders, "questions": questions }))
+            }
+            other => Err(err(format!("未知的 library action：{other}"))),
+        }
+    }
+
+    #[tool(name = "questions", description = "按领域读取题目：list/search/get/batch_get/stats。get 会同时返回题目、所属分区和共享材料；batch_get 一次最多 100 题。公式保留 TeX 原文。", annotations(read_only_hint = true, idempotent_hint = true))]
+    async fn questions(&self, Parameters(p): Parameters<QuestionsParams>) -> Result<Json<Value>, McpError> {
+        let action = p.action.trim().to_ascii_lowercase();
+        match action.as_str() {
+            "list" | "search" => {
+                if action == "search" && p.q.as_deref().map(str::trim).unwrap_or("").is_empty() {
+                    return Err(err("search 需要 q 关键词。"));
+                }
+                let filters = BankFilters {
+                    set_id: p.set_id,
+                    section_id: p.section_id,
+                    qtype: p.qtype.clone(),
+                    tag: p.tag.clone(),
+                    q: p.q.clone(),
+                    sort: Some("position".into()),
+                    archived: Some("active".into()),
+                    folder_id: p.folder_id,
+                    set_ids: None,
+                    tags: p.tags.clone(),
+                    limit: Some(clamp_limit(p.limit, 100, 2000)),
+                };
+                ok(self.with_conn(|c| repo::list_bank(c, &filters))?)
+            }
+            "get" => {
+                let id = p.question_id.or_else(|| p.question_ids.as_ref().and_then(|v| v.first().copied()))
+                    .ok_or_else(|| err("get 需要 question_id。"))?;
+                let payload = self.with_conn(move |c| {
+                    let question = repo::question_by_id(c, id)?;
+                    let section = c.query_row("SELECT id,set_id,key,title,subtitle,kind,position,audio_file,material_id FROM sections WHERE id=?", rusqlite::params![question.section_id], |r| Ok(json!({
+                        "id": r.get::<_,i64>(0)?, "setId": r.get::<_,i64>(1)?, "key": r.get::<_,String>(2)?, "title": r.get::<_,String>(3)?,
+                        "subtitle": r.get::<_,String>(4)?, "kind": r.get::<_,String>(5)?, "position": r.get::<_,i64>(6)?,
+                        "audioFile": r.get::<_,Option<String>>(7)?, "materialId": r.get::<_,Option<i64>>(8)?,
+                    }))).ok();
+                    let material = match question.material_id {
+                        Some(mid) => c.query_row("SELECT id,set_id,key,title,content FROM materials WHERE id=?", rusqlite::params![mid], |r| Ok(json!({
+                            "id": r.get::<_,i64>(0)?, "setId": r.get::<_,i64>(1)?, "key": r.get::<_,String>(2)?,
+                            "title": r.get::<_,String>(3)?, "content": r.get::<_,String>(4)?,
+                        }))).ok(),
+                        None => None,
+                    };
+                    Ok(json!({ "question": question, "section": section, "material": material }))
+                })?;
+                ok(payload)
+            }
+            "batch_get" => {
+                let ids = p.question_ids.unwrap_or_default();
+                if ids.is_empty() { return Err(err("batch_get 需要 question_ids。")); }
+                if ids.len() > 100 { return Err(err("batch_get 一次最多 100 题。")); }
+                let mut list = Vec::with_capacity(ids.len());
+                for id in ids {
+                    list.push(self.with_conn(move |c| repo::question_by_id(c, id))?);
+                }
+                ok(json!({ "questions": list }))
+            }
+            "stats" => {
+                let stats = self.with_conn(|c| {
+                    let mut by_type = Vec::new();
+                    let mut stmt = c.prepare("SELECT qtype,COUNT(*),COALESCE(SUM(points),0) FROM questions WHERE archived=0 GROUP BY qtype ORDER BY COUNT(*) DESC").map_err(|e| e.to_string())?;
+                    let rows = stmt.query_map([], |r| Ok(json!({"qtype": r.get::<_,String>(0)?, "count": r.get::<_,i64>(1)?, "points": r.get::<_,i64>(2)?}))).map_err(|e| e.to_string())?;
+                    for row in rows { by_type.push(row.map_err(|e| e.to_string())?); }
+                    Ok(json!({
+                        "total": count_sql(c, "SELECT COUNT(*) FROM questions WHERE archived=0")?,
+                        "byQtype": by_type,
+                    }))
+                })?;
+                ok(stats)
+            }
+            other => Err(err(format!("未知的 questions action：{other}"))),
+        }
+    }
+
+    #[tool(name = "edit", description = "按领域修改题库：update_question/update_material/update_section/delete_set。只提交要改的字段；正文必须沿用导入规范的 Markdown/LaTeX/HTML 语法。delete_set 需要 confirm=true。", annotations(read_only_hint = false, idempotent_hint = false))]
+    async fn edit(&self, Parameters(p): Parameters<EditParams>) -> Result<Json<Value>, McpError> {
+        self.write_guard()?;
+        let action = p.action.trim().to_ascii_lowercase();
+        match action.as_str() {
+            "update_question" => {
+                let qid = p.question_id.ok_or_else(|| err("update_question 需要 question_id。"))?;
+                if p.qtype.is_none() && p.tags.is_none() && p.stem.is_none() {
+                    return Err(err("update_question 没有要修改的字段。"));
+                }
+                let result = self.with_conn_mut(move |c| {
+                    let exists: i64 = c.query_row("SELECT COUNT(*) FROM questions WHERE id=?", rusqlite::params![qid], |r| r.get(0)).map_err(|e| e.to_string())?;
+                    if exists == 0 { return Err("题目不存在。".into()); }
+                    if let Some(qtype) = p.qtype.as_deref() {
+                        let qtype = qtype.trim();
+                        if qtype.is_empty() { return Err("题型不能为空。".into()); }
+                        c.execute("UPDATE questions SET qtype=? WHERE id=?", rusqlite::params![qtype, qid]).map_err(|e| e.to_string())?;
+                    }
+                    if let Some(tags) = p.tags.as_ref() {
+                        let tags = clean_tags(tags);
+                        c.execute("UPDATE questions SET tags_json=? WHERE id=?", rusqlite::params![serde_json::to_string(&tags).unwrap_or_else(|_| "[]".into()), qid]).map_err(|e| e.to_string())?;
+                    }
+                    if let Some(stem) = p.stem.as_deref() {
+                        if stem.trim().is_empty() { return Err("题干不能为空。".into()); }
+                        if stem.len() > 8 * 1024 * 1024 { return Err("题干超过 8 MB。".into()); }
+                        c.execute("UPDATE questions SET stem=? WHERE id=?", rusqlite::params![stem, qid]).map_err(|e| e.to_string())?;
+                    }
+                    Ok(json!({ "updated": true, "questionId": qid }))
+                })?;
+                ok(result)
+            }
+            "update_material" => {
+                let mid = p.material_id.ok_or_else(|| err("update_material 需要 material_id。"))?;
+                let content = p.content.as_deref().ok_or_else(|| err("update_material 需要 content。"))?;
+                if content.len() > 8 * 1024 * 1024 { return Err(err("材料超过 8 MB。")); }
+                let result = self.with_conn_mut(move |c| {
+                    let changed = c.execute("UPDATE materials SET content=? WHERE id=?", rusqlite::params![content, mid]).map_err(|e| e.to_string())?;
+                    if changed == 0 { return Err("材料不存在。".into()); }
+                    Ok(json!({ "updated": true, "materialId": mid }))
+                })?;
+                ok(result)
+            }
+            "update_section" => {
+                let sid = p.section_id.ok_or_else(|| err("update_section 需要 section_id。"))?;
+                if p.title.is_none() && p.subtitle.is_none() { return Err(err("update_section 没有要修改的字段。")); }
+                let result = self.with_conn_mut(move |c| {
+                    if let Some(title) = p.title.as_deref() { c.execute("UPDATE sections SET title=? WHERE id=?", rusqlite::params![title, sid]).map_err(|e| e.to_string())?; }
+                    if let Some(subtitle) = p.subtitle.as_deref() { c.execute("UPDATE sections SET subtitle=? WHERE id=?", rusqlite::params![subtitle, sid]).map_err(|e| e.to_string())?; }
+                    Ok(json!({ "updated": true, "sectionId": sid }))
+                })?;
+                ok(result)
+            }
+            "delete_set" => {
+                if p.confirm != Some(true) { return Err(err("删除试卷需要 confirm=true。")); }
+                let set_id = p.set_id.ok_or_else(|| err("delete_set 需要 set_id。"))?;
+                let result = self.with_conn_mut(move |c| {
+                    let tx = c.transaction().map_err(|e| e.to_string())?;
+                    tx.execute("DELETE FROM answers WHERE attempt_id IN (SELECT id FROM attempts WHERE set_id=?)", rusqlite::params![set_id]).map_err(|e| e.to_string())?;
+                    tx.execute("DELETE FROM attempts WHERE set_id=?", rusqlite::params![set_id]).map_err(|e| e.to_string())?;
+                    tx.execute("DELETE FROM import_batches WHERE set_id=?", rusqlite::params![set_id]).map_err(|e| e.to_string())?;
+                    let removed = tx.execute("DELETE FROM sets WHERE id=?", rusqlite::params![set_id]).map_err(|e| e.to_string())?;
+                    if removed == 0 { return Err("试卷不存在，可能已经被删除。".into()); }
+                    tx.commit().map_err(|e| e.to_string())?;
+                    Ok(json!({ "deleted": true, "setId": set_id }))
+                })?;
+                ok(result)
+            }
+            other => Err(err(format!("未知的 edit action：{other}"))),
+        }
     }
 
     #[tool(name = "update_question", description = "修改一道题的题型、标签或题干 HTML。只传需要改的字段。", annotations(read_only_hint = false, destructive_hint = false, idempotent_hint = true))]

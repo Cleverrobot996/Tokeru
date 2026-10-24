@@ -515,6 +515,8 @@ h1, h2, h3 { margin: 0; font-weight: 680; letter-spacing: -0.025em; line-height:
 }
 
 .paper-preview .paper-sheet {
+  width: var(--paper-width, 880px);
+  max-width: none;
   box-shadow: none;
   padding: clamp(18px, 2.4vw, 30px) clamp(18px, 2.6vw, 34px) 30px;
 }

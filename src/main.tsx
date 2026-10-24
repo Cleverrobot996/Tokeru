@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import App from "./App";
 import { ThemeProvider } from "./lib/theme";
 import { restoreCustomFont } from "./lib/paper";
+import "katex/dist/katex.min.css";
 import "./styles/app.css";
 import "./styles/home.css";
 import "./styles/bank.css";

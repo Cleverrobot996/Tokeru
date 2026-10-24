@@ -65,8 +65,10 @@ export const api = {
   getSettings: () => cmd<AppSettings>("get_settings"),
   saveSettings: (settings: Record<string, any>) => cmd<AppSettings>("save_settings", { settings }),
   aiTest: (config: AiConfigInput, kind: "chat" | "vision" = "chat") => cmd<AiTestResult>("ai_test", { config, kind }),
-  aiComplete: (system: string, user: string, config?: AiConfigInput) =>
-    cmd<AiResult>("ai_complete", { system, user, config: config ?? null }),
+  aiModels: (config: AiConfigInput, kind: "chat" | "vision" = "chat") =>
+    cmd<string[]>("ai_models", { config, kind }),
+  aiComplete: (system: string, user: string, config?: AiConfigInput, scene?: string) =>
+    cmd<AiResult>("ai_complete", { system, user, config: config ?? null, scene: scene ?? null }),
   aiExplain: (p: { questionId: number; mode: string; customPrompt?: string; followup?: string; thinking?: boolean }) =>
     cmd<AiResult>("ai_explain", p),
   aiVisionSegment: (pages: string[], questions: { label: string; stem: string }[]) =>

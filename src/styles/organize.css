@@ -1550,7 +1550,6 @@
 }
 
 .org-paper .paper-sheet {
-  max-width: none;
   padding: 28px 30px 34px;
   border-radius: var(--radius-card);
 }
@@ -2390,6 +2389,7 @@
   }
 
   .org-paper .paper-sheet {
+    width: auto;
     max-width: none;
     padding: 0;
     border: 0;

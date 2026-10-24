@@ -123,9 +123,13 @@ const questions: Question[] = (seed.questions as any[]).map((q, index) => {
 const defaultSettings: AppSettings = {
   model: "",
   base_url: "",
+  provider: "",
   vision_model: "",
   vision_base_url: "",
   thinking: false,
+  thinking_organize: false,
+  thinking_vision: false,
+  thinking_explain: false,
   has_api_key: false,
   custom_prompt: "",
   timer_presets: [30, 60, 90, 130],
@@ -961,6 +965,9 @@ export async function mockCommand<T>(name: string, args: Record<string, any> = {
       if (s.clearKey) state.settings.has_api_key = false;
       save(state);
       return clone(state.settings) as T;
+    }
+    case "ai_models": {
+      return ["mock-chat", "mock-vision"] as T;
     }
     case "ai_test": {
       return { ok: true, model: String(args.config?.model || "mock"), elapsed_ms: 12, message: "浏览器预览模式：未真正联网。" } as T;

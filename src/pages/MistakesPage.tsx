@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { api } from "../lib/api";
 import { Button, Chip, Empty } from "../components/ui";
 import { answerText, qtypeLabel } from "../lib/labels";
+import { richTextHtml } from "../lib/richText";
 
 export default function MistakesPage() {
   const nav = useNavigate();
@@ -114,9 +115,9 @@ export default function MistakesPage() {
                   <div className="vstack" style={{ gap: 8, paddingLeft: 30 }}>
                     <div className="answer-box correct">
                       <div className="label">正确答案</div>
-                      <div className="value">{answerText(m.question.answer)}</div>
+                      <div className="value" dangerouslySetInnerHTML={{ __html: richTextHtml(answerText(m.question.answer), true) }} />
                     </div>
-                    {m.question.explanation ? <div className="small" style={{ color: "var(--text-2)", lineHeight: 1.85 }}>{m.question.explanation}</div> : null}
+                    {m.question.explanation ? <div className="small" style={{ color: "var(--text-2)", lineHeight: 1.85 }} dangerouslySetInnerHTML={{ __html: richTextHtml(m.question.explanation, true) }} /> : null}
                   </div>
                 ) : null}
               </div>

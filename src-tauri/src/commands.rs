@@ -163,20 +163,80 @@ fn setting(conn: &rusqlite::Connection, key: &str, default: &str) -> String {
     db::get_setting(conn, key).unwrap_or_else(|| default.to_string())
 }
 
+fn setting_bool(conn: &rusqlite::Connection, key: &str, default: bool) -> bool {
+    db::get_setting(conn, key).map(|v| v == "1").unwrap_or(default)
+}
+
 /// 读取 API Key，兼容旧版本使用的 deepseek_api_key。
 fn api_key(conn: &rusqlite::Connection) -> String {
     let current = setting(conn, "api_key", "");
     if current.trim().is_empty() { setting(conn, "deepseek_api_key", "") } else { current }
 }
 
+/// 从地址推断协议。显式 provider 优先；这个函数只处理旧数据或视觉端点。
+fn provider_from_base(base: &str) -> String {
+    let b = base.trim().to_ascii_lowercase();
+    if b.is_empty() {
+        String::new()
+    } else if b.contains("anthropic") {
+        "anthropic".into()
+    } else if b.contains("dashscope") || b.contains("aliyuncs") {
+        "dashscope".into()
+    } else if b.contains("deepseek") {
+        "deepseek".into()
+    } else if ["127.0.0.1", "localhost", "0.0.0.0", "[::1]"].iter().any(|h| b.contains(h)) {
+        "ollama".into()
+    } else {
+        "openai".into()
+    }
+}
+
+fn normalize_provider(provider: &str, base: &str) -> String {
+    match provider.trim().to_ascii_lowercase().as_str() {
+        "deepseek" | "openai" | "anthropic" | "ollama" | "dashscope" => provider.trim().to_ascii_lowercase(),
+        _ => provider_from_base(base),
+    }
+}
+
+#[derive(Clone)]
+struct AiCall {
+    key: String,
+    base: String,
+    model: String,
+    provider: String,
+    thinking: bool,
+}
+
+impl AiCall {
+    fn ensure_ready(&self) -> R<()> {
+        if self.base.trim().is_empty() || self.model.trim().is_empty() {
+            return Err("未配置 AI 服务，请先到设置页填写 API 地址与模型。".into());
+        }
+        if self.key.trim().is_empty() && !is_local_base(&self.base) {
+            return Err("还没有配置 API Key，请先到设置页填写。".into());
+        }
+        Ok(())
+    }
+}
+
+fn is_local_base(base: &str) -> bool {
+    ["127.0.0.1", "localhost", "0.0.0.0", "[::1]"].iter().any(|h| base.contains(h))
+}
+
 #[tauri::command]
 pub fn get_settings(state: State<'_, Db>) -> R<AppSettings> {
     let conn = lock(&state);
     let presets: Vec<i64> = serde_json::from_str(&setting(&conn, "timer_presets", "[30,60,90,130]")).unwrap_or_else(|_| vec![30, 60, 90, 130]);
+    let base_url = setting(&conn, "base_url", "");
+    let provider = if base_url.trim().is_empty() { String::new() } else { normalize_provider(&setting(&conn, "provider", ""), &base_url) };
     Ok(AppSettings {
+        provider,
         model: setting(&conn, "model", ""),
-        base_url: setting(&conn, "base_url", ""),
-        thinking: setting(&conn, "thinking", "0") == "1",
+        base_url,
+        thinking: setting_bool(&conn, "thinking", false),
+        thinking_organize: setting_bool(&conn, "thinking_organize", setting_bool(&conn, "thinking", false)),
+        thinking_vision: setting_bool(&conn, "thinking_vision", setting_bool(&conn, "thinking", false)),
+        thinking_explain: setting_bool(&conn, "thinking_explain", setting_bool(&conn, "thinking", false)),
         has_api_key: !api_key(&conn).trim().is_empty(),
         custom_prompt: setting(&conn, "custom_prompt", ""),
         timer_presets: presets,
@@ -196,6 +256,7 @@ pub fn save_settings(state: State<'_, Db>, settings: Value) -> R<AppSettings> {
         let key = match k.as_str() {
             "apiKey" => "api_key",
             "clearKey" => continue,
+            "provider" => "provider",
             "base_url" => "base_url",
             "custom_prompt" => "custom_prompt",
             "timer_presets" => "timer_presets",
@@ -203,6 +264,9 @@ pub fn save_settings(state: State<'_, Db>, settings: Value) -> R<AppSettings> {
             "accent" => "accent",
             "theme" => "theme",
             "thinking" => "thinking",
+            "thinking_organize" => "thinking_organize",
+            "thinking_vision" => "thinking_vision",
+            "thinking_explain" => "thinking_explain",
             "model" => "model",
             "vision_model" => "vision_model",
             "vision_base_url" => "vision_base_url",
@@ -227,13 +291,9 @@ pub fn save_settings(state: State<'_, Db>, settings: Value) -> R<AppSettings> {
     get_settings(state)
 }
 
-fn is_local_base(base: &str) -> bool {
-    ["127.0.0.1", "localhost", "0.0.0.0", "[::1]"].iter().any(|h| base.contains(h))
-}
-
 /// 临时配置优先（设置页未保存的表单值），空字段回退到已保存设置。
 /// Key 只在本次调用中使用，不写数据库，也不出现在日志里。
-fn resolve_ai_config(conn: &rusqlite::Connection, cfg: Option<&AiConfigInput>) -> (String, String, String, bool) {
+fn resolve_ai(conn: &rusqlite::Connection, cfg: Option<&AiConfigInput>, scene: &str) -> AiCall {
     let base = cfg
         .map(|c| c.base_url.trim().to_string())
         .filter(|s| !s.is_empty())
@@ -247,31 +307,54 @@ fn resolve_ai_config(conn: &rusqlite::Connection, cfg: Option<&AiConfigInput>) -
         .map(|k| k.trim().to_string())
         .filter(|k| !k.is_empty())
         .unwrap_or_else(|| api_key(conn));
-    let thinking = cfg
-        .and_then(|c| c.thinking)
-        .unwrap_or_else(|| setting(conn, "thinking", "0") == "1");
-    (key, base, model, thinking)
+    let explicit = cfg.and_then(|c| c.provider.clone()).unwrap_or_else(|| setting(conn, "provider", ""));
+    let provider = normalize_provider(&explicit, &base);
+    let fallback = setting_bool(conn, "thinking", false);
+    let scene_thinking = setting_bool(conn, &format!("thinking_{scene}"), fallback);
+    let thinking = cfg.and_then(|c| c.thinking).unwrap_or(scene_thinking);
+    AiCall { key, base, model, provider, thinking }
+}
+
+/// 视觉端点可以单独指向另一家兼容服务；未单独填写时沿用主配置。
+fn resolve_vision(conn: &rusqlite::Connection) -> AiCall {
+    let vision_base = setting(conn, "vision_base_url", "");
+    let vision_model = setting(conn, "vision_model", "");
+    let base = if vision_base.trim().is_empty() { setting(conn, "base_url", "") } else { vision_base };
+    let model = if vision_model.trim().is_empty() { setting(conn, "model", "") } else { vision_model };
+    let provider = if setting(conn, "vision_base_url", "").trim().is_empty() {
+        normalize_provider(&setting(conn, "provider", ""), &base)
+    } else {
+        provider_from_base(&base)
+    };
+    AiCall {
+        key: api_key(conn),
+        base,
+        model,
+        provider,
+        thinking: setting_bool(conn, "thinking_vision", setting_bool(conn, "thinking", false)),
+    }
 }
 
 /// 测试连接：只用配置本身发一句最短的请求，不依赖题库里有没有题目。
 /// 成功会返回实际模型名和耗时；失败把服务端原文带回设置页，避免只显示“测试失败”。
 #[tauri::command]
 pub async fn ai_test(state: State<'_, Db>, config: AiConfigInput, kind: Option<String>) -> R<AiTestResult> {
-    let (key, base, model, thinking) = {
+    let vision = kind.as_deref() == Some("vision");
+    let call = {
         let conn = lock(&state);
-        resolve_ai_config(&conn, Some(&config))
+        resolve_ai(&conn, Some(&config), if vision { "vision" } else { "explain" })
     };
-    if base.trim().is_empty() || model.trim().is_empty() {
+    if call.base.trim().is_empty() || call.model.trim().is_empty() {
         return Err("请先填写 API 地址和模型名。".into());
     }
-    if key.trim().is_empty() && !is_local_base(&base) {
+    if call.key.trim().is_empty() && !is_local_base(&call.base) {
         return Err("还没有填写 API Key。".into());
     }
     let started = std::time::Instant::now();
-    let result = if kind.as_deref() == Some("vision") {
-        ai::vision_test(&key, &base, &model, thinking).await?
+    let result = if vision {
+        ai::vision_test(&call.key, &call.base, &call.model, &call.provider, call.thinking).await?
     } else {
-        ai::complete("你是连接测试助手。只回复 OK，不要解释。", "请回复 OK。", &key, &base, &model, thinking).await?
+        ai::complete("你是连接测试助手。只回复 OK，不要解释。", "请回复 OK。", &call.key, &call.base, &call.model, &call.provider, call.thinking).await?
     };
     Ok(AiTestResult {
         ok: true,
@@ -281,47 +364,51 @@ pub async fn ai_test(state: State<'_, Db>, config: AiConfigInput, kind: Option<S
     })
 }
 
+/// 获取模型列表：用表单里的地址和 Key 直接查询，不必先保存。
+#[tauri::command]
+pub async fn ai_models(state: State<'_, Db>, config: AiConfigInput, kind: Option<String>) -> R<Vec<String>> {
+    let vision = kind.as_deref() == Some("vision");
+    let call = {
+        let conn = lock(&state);
+        resolve_ai(&conn, Some(&config), if vision { "vision" } else { "organize" })
+    };
+    if call.base.trim().is_empty() {
+        return Err("请先填写 API 地址。".into());
+    }
+    if call.key.trim().is_empty() && !is_local_base(&call.base) {
+        return Err("还没有填写 API Key。".into());
+    }
+    ai::list_models(&call.key, &call.base, &call.provider).await
+}
+
 /// 通用补全：导入材料清洗、标签整理等场景直接复用已保存的 AI 配置。
 #[tauri::command]
-pub async fn ai_complete(state: State<'_, Db>, system: String, user: String, config: Option<AiConfigInput>) -> R<AiResult> {
+pub async fn ai_complete(state: State<'_, Db>, system: String, user: String, config: Option<AiConfigInput>, scene: Option<String>) -> R<AiResult> {
     if user.trim().is_empty() {
         return Err("没有要发送给 AI 的内容。".into());
     }
-    let (key, base, model, thinking) = {
+    let call = {
         let conn = lock(&state);
-        resolve_ai_config(&conn, config.as_ref())
+        resolve_ai(&conn, config.as_ref(), scene.as_deref().unwrap_or("organize"))
     };
-    if base.trim().is_empty() || model.trim().is_empty() {
-        return Err("未配置 AI 服务，请先到设置页填写 API 地址与模型。".into());
-    }
-    if key.trim().is_empty() && !is_local_base(&base) {
-        return Err("还没有配置 API Key，请先到设置页填写。".into());
-    }
-    ai::complete(&system, &user, &key, &base, &model, thinking).await
+    call.ensure_ready()?;
+    ai::complete(&system, &user, &call.key, &call.base, &call.model, &call.provider, call.thinking).await
 }
 
 #[tauri::command]
 pub async fn ai_explain(state: State<'_, Db>, question_id: i64, mode: Option<String>, custom_prompt: Option<String>, followup: Option<String>, thinking: Option<bool>) -> R<AiResult> {
-    let (question, key, base, model, prompt_setting, req_thinking) = {
+    let (question, mut call, prompt_setting) = {
         let conn = lock(&state);
         let q = repo::question_by_id(&conn, question_id)?;
-        let key = api_key(&conn);
-        let base = setting(&conn, "base_url", "");
-        let model = setting(&conn, "model", "");
+        let call = resolve_ai(&conn, None, "explain");
         let prompt = setting(&conn, "custom_prompt", "");
-        let th = thinking.unwrap_or_else(|| setting(&conn, "thinking", "0") == "1");
-        (q, key, base, model, prompt, th)
+        (q, call, prompt)
     };
-    if base.trim().is_empty() || model.trim().is_empty() {
-        return Err("未配置 AI 服务，请先到设置页选择服务并填写 API 地址与模型。".into());
-    }
-    let local = ["127.0.0.1", "localhost", "0.0.0.0", "[::1]"].iter().any(|h| base.contains(h));
-    if key.trim().is_empty() && !local {
-        return Err("还没有配置 API Key，请先到设置页填写。".into());
-    }
+    if let Some(th) = thinking { call.thinking = th; }
+    call.ensure_ready()?;
     let mode = mode.unwrap_or_else(|| "explain".into());
     let custom = custom_prompt.unwrap_or(prompt_setting);
-    let content = ai::explain(&question, &mode, &custom, followup.as_deref(), &key, &base, &model, req_thinking).await?;
+    let content = ai::explain(&question, &mode, &custom, followup.as_deref(), &call.key, &call.base, &call.model, &call.provider, call.thinking).await?;
     Ok(content)
 }
 
@@ -338,23 +425,15 @@ pub async fn ai_vision_segment(state: State<'_, Db>, pages: Vec<String>, questio
     if questions.is_empty() {
         return Err("这份试卷还没有题目。".into());
     }
-    let (key, base, model) = {
+    let call = {
         let conn = lock(&state);
-        let key = api_key(&conn);
-        let vision_base = setting(&conn, "vision_base_url", "");
-        let vision_model = setting(&conn, "vision_model", "");
-        let base = if vision_base.trim().is_empty() { setting(&conn, "base_url", "") } else { vision_base };
-        let model = if vision_model.trim().is_empty() { setting(&conn, "model", "") } else { vision_model };
-        (key, base, model)
+        resolve_vision(&conn)
     };
-    if base.trim().is_empty() || model.trim().is_empty() {
+    if call.base.trim().is_empty() || call.model.trim().is_empty() {
         return Err("未配置视觉模型。请到设置页填写「多模态模型」和端点，或沿用上面的 AI 服务。".into());
     }
-    let local = ["127.0.0.1", "localhost", "0.0.0.0", "[::1]"].iter().any(|h| base.contains(h));
-    if key.trim().is_empty() && !local {
-        return Err("还没有配置 API Key，请先到设置页填写。".into());
-    }
-    ai::vision_segment(&pages, &questions, &key, &base, &model).await
+    call.ensure_ready()?;
+    ai::vision_segment(&pages, &questions, &call.key, &call.base, &call.model, &call.provider, call.thinking).await
 }
 
 #[tauri::command]
@@ -365,23 +444,15 @@ pub async fn ai_vision_ocr(state: State<'_, Db>, pages: Vec<String>) -> R<AiResu
     if pages.len() > 8 {
         return Err("单次最多识别 8 页，请分批处理。".into());
     }
-    let (key, base, model) = {
+    let call = {
         let conn = lock(&state);
-        let key = api_key(&conn);
-        let vision_base = setting(&conn, "vision_base_url", "");
-        let vision_model = setting(&conn, "vision_model", "");
-        let base = if vision_base.trim().is_empty() { setting(&conn, "base_url", "") } else { vision_base };
-        let model = if vision_model.trim().is_empty() { setting(&conn, "model", "") } else { vision_model };
-        (key, base, model)
+        resolve_vision(&conn)
     };
-    if base.trim().is_empty() || model.trim().is_empty() {
+    if call.base.trim().is_empty() || call.model.trim().is_empty() {
         return Err("未配置视觉模型。请到设置页填写「多模态模型」和端点，或沿用上面的 AI 服务。".into());
     }
-    let local = ["127.0.0.1", "localhost", "0.0.0.0", "[::1]"].iter().any(|h| base.contains(h));
-    if key.trim().is_empty() && !local {
-        return Err("还没有配置 API Key，请先到设置页填写。".into());
-    }
-    ai::vision_ocr(&pages, &key, &base, &model).await
+    call.ensure_ready()?;
+    ai::vision_ocr(&pages, &call.key, &call.base, &call.model, &call.provider, call.thinking).await
 }
 
 fn ai_object(raw: &str) -> R<Value> {
@@ -432,21 +503,16 @@ pub async fn ai_plan_scores(state: State<'_, Db>, set_id: i64, total: i64, instr
     if !(1..=10000).contains(&total) {
         return Err("目标总分需要在 1 到 10000 之间。".into());
     }
-    let (set_title, questions, key, base, model, thinking) = {
+    let (set_title, questions, call) = {
         let conn = lock(&state);
         let detail = repo::get_set_detail(&conn, Some(set_id))?;
-        let (key, base, model, thinking) = resolve_ai_config(&conn, None);
-        (detail.summary.title, detail.questions, key, base, model, thinking)
+        let call = resolve_ai(&conn, None, "organize");
+        (detail.summary.title, detail.questions, call)
     };
     if questions.is_empty() {
         return Err("这份试卷还没有题目。".into());
     }
-    if base.trim().is_empty() || model.trim().is_empty() {
-        return Err("未配置 AI 服务，请先到设置页填写 API 地址与模型。".into());
-    }
-    if key.trim().is_empty() && !is_local_base(&base) {
-        return Err("还没有配置 API Key，请先到设置页填写。".into());
-    }
+    call.ensure_ready()?;
     let mut list = String::new();
     for q in &questions {
         let stem = q.stem.chars().take(300).collect::<String>().replace(['\n', '\r'], " ");
@@ -470,10 +536,11 @@ pub async fn ai_plan_scores(state: State<'_, Db>, set_id: i64, total: i64, instr
     let result = ai::complete(
         "你是考试命题与评分助手。你只输出 JSON，不输出解释或 Markdown。分值必须是正整数或 0，且总和严格等于用户要求的总分。",
         &user,
-        &key,
-        &base,
-        &model,
-        thinking,
+        &call.key,
+        &call.base,
+        &call.model,
+        &call.provider,
+        call.thinking,
     )
     .await?;
     let value = ai_object(&result.content)?;
@@ -571,18 +638,13 @@ pub fn apply_score_plan(state: State<'_, Db>, set_id: i64, items: Vec<ScoreItem>
 #[tauri::command]
 pub async fn ai_grade_attempt(state: State<'_, Db>, attempt_id: i64, only_pending: Option<bool>) -> R<GradeAttemptResult> {
     let only_pending = only_pending.unwrap_or(true);
-    let (detail, key, base, model, thinking) = {
+    let (detail, call) = {
         let conn = lock(&state);
         let detail = repo::get_attempt_detail(&conn, attempt_id)?;
-        let (key, base, model, thinking) = resolve_ai_config(&conn, None);
-        (detail, key, base, model, thinking)
+        let call = resolve_ai(&conn, None, "explain");
+        (detail, call)
     };
-    if base.trim().is_empty() || model.trim().is_empty() {
-        return Err("未配置 AI 服务，请先到设置页填写 API 地址与模型。".into());
-    }
-    if key.trim().is_empty() && !is_local_base(&base) {
-        return Err("还没有配置 API Key，请先到设置页填写。".into());
-    }
+    call.ensure_ready()?;
     let targets: Vec<&AttemptQuestion> = detail
         .questions
         .iter()
@@ -637,10 +699,11 @@ pub async fn ai_grade_attempt(state: State<'_, Db>, attempt_id: i64, only_pendin
     let result = ai::complete(
         "你是严格但公平的阅卷老师。只输出 JSON，不输出 Markdown 或解释。你必须按参考答案判分，不能因为字迹或表达偏好随意扣分。",
         &user,
-        &key,
-        &base,
-        &model,
-        thinking,
+        &call.key,
+        &call.base,
+        &call.model,
+        &call.provider,
+        call.thinking,
     )
     .await?;
     let value = ai_object(&result.content)?;
@@ -963,22 +1026,17 @@ fn parse_tag_suggestions(content: &str, allowed_groups: &[String]) -> Vec<TagSug
 
 #[tauri::command]
 pub async fn ai_organize_tags(state: State<'_, Db>) -> R<Vec<TagSuggestion>> {
-    let (tags, groups, key, base, model, thinking) = {
+    let (tags, groups, call) = {
         let conn = lock(&state);
         let tags = repo::list_tags(&conn)?;
         let groups = repo::list_tag_groups(&conn)?;
-        let (key, base, model, thinking) = resolve_ai_config(&conn, None);
-        (tags, groups, key, base, model, thinking)
+        let call = resolve_ai(&conn, None, "organize");
+        (tags, groups, call)
     };
     if tags.is_empty() {
         return Ok(vec![]);
     }
-    if base.trim().is_empty() || model.trim().is_empty() {
-        return Err("未配置 AI 服务，请先到设置页填写 API 地址与模型。".into());
-    }
-    if key.trim().is_empty() && !is_local_base(&base) {
-        return Err("还没有配置 API Key，请先到设置页填写。".into());
-    }
+    call.ensure_ready()?;
     let group_names = groups.iter().map(|g| g.name.clone()).collect::<Vec<_>>();
     let tag_lines = tags
         .iter()
@@ -996,7 +1054,7 @@ pub async fn ai_organize_tags(state: State<'_, Db>) -> R<Vec<TagSuggestion>> {
         example
     );
     let system = "你是题库标签整理助手。你只做标签分类，不改变标签名，不新建标签栏。只输出 JSON，不要解释。";
-    let result = ai::complete(system, &user, &key, &base, &model, thinking).await?;
+    let result = ai::complete(system, &user, &call.key, &call.base, &call.model, &call.provider, call.thinking).await?;
     let mut suggestions = parse_tag_suggestions(&result.content, &group_names);
     /* 模型漏掉的标签也返回一条“未归类”，让预览完整可勾选。 */
     for tag in &tags {

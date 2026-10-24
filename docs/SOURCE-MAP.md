@@ -1,6 +1,6 @@
-# Tokeru 源码地图（0.0.1）
+# Tokeru 源码地图（0.1.0）
 
-> 0.0.1 是首个公开版本，功能基线来自内部 4.0：内嵌 MCP Server、PDF 50 页 / 单文件 100 MB、导入时视觉 OCR 与按 bbox 分图、HTML5 拖拽修复。第 1–12 节按当前代码更新；3.4 与 4.0 的增量地图作为历史记录保留在第 13–14 节。
+> 0.1.0 在 0.0.1 上加入 KaTeX 公式、GFM 表格、单入口导入、五家 AI 提供商/MCP 领域工具与纸宽修复。第 1–12 节按当前代码更新；3.4 与 4.0 的增量地图作为历史记录保留在第 13–14 节。
 
 这份文档给接手的人 / 子智能体一个**不必先翻遍全仓**的入口：每个文件负责什么、数据怎么流、命令怎么对应、哪里容易踩坑。源码报告见 `archive/SOURCE-REPORT.md`。
 
@@ -38,12 +38,11 @@ Tokeru/
 │  │  ├─ api.ts                 # invoke 封装；isTauri=false 时走 mock
 │  │  ├─ mock.ts                # 浏览器预览假数据（不写 SQLite）
 │  │  ├─ types.ts               # 前后端共享 TS 类型
-│  │  ├─ pdf.ts                 # PDF/图片→页面图、裁剪
+│  │  ├─ pdf.ts                 # PDF 文本提取；自动分图的页面渲染/裁剪
 │  │  ├─ importPrompt.ts        # 从 shared/import-spec.md 读取的 9 题型清洗提示词
-│  │  ├─ visionImport.ts        # 视觉 OCR→Markdown→AI 清洗→bbox 裁图→导入流水线
 │  │  ├─ labels.ts              # 题型/状态中文标签
 │  │  ├─ paper.ts               # 排版配置、字体注册、localStorage
-│  │  ├─ richText.ts            # 题干富文本/图片清洗
+│  │  ├─ richText.ts            # 题干富文本：KaTeX/GFM 表格/图片白名单
 │  │  └─ theme.tsx              # 主题色/明暗
 │  └─ styles/                   # tokens.css + 按页面拆分的 CSS
 ├─ src-tauri/
@@ -54,8 +53,8 @@ Tokeru/
 │  │  ├─ repo.rs                # 查询/映射（set、bank、attempt、mistake、folder）
 │  │  ├─ models.rs              # Rust 数据结构 + serde
 │  │  ├─ grading.rs             # 客观题判分/归一化
-│  │  ├─ ai.rs                  # OpenAI 兼容 chat/completions（含视觉）
-│  │  ├─ mcp.rs                 # 内嵌 MCP Server（Streamable HTTP，19 个工具）
+│  │  ├─ ai.rs                  # 多协议 chat：OpenAI / Anthropic / Ollama / DashScope
+│  │  ├─ mcp.rs                 # 内嵌 MCP Server（Streamable HTTP，22 个工具）
 │  │  └─ fonts.rs               # Windows GDI 字体枚举
 │  ├─ nsis/installer-hooks.nsh  # 安装到独立 app-版本目录；写测试失败只提示，Abort 由安装器处理
 │  ├─ tauri.conf.json           # 版本、窗口、bundle（NSIS hook / WebView2 skip）
@@ -106,9 +105,9 @@ Tokeru/
 - 记录/错题：`list_records`、`delete_attempt`、`list_mistakes`、`collect_mistakes`、`set_mistake_status`
 - 设置/备份：`get_settings`、`save_settings`、`backup_now`、`restore_backup`
 - 标签栏：`list_tag_groups`、`create_tag_group`、`rename_tag_group`、`delete_tag_group`、`assign_tag_group`、`assign_tags_group`
-- AI：`ai_test`、`ai_complete`、`ai_explain`、`ai_vision_segment`、`ai_vision_ocr`、`ai_organize_tags`、`apply_tag_suggestions`、`ai_plan_scores`、`apply_score_plan`、`ai_grade_attempt`；`ai_classify` 是本地规则桩（不发请求、不改题型/标签），不是真模型调用
+- AI：`ai_test`、`ai_models`、`ai_complete`、`ai_explain`、`ai_vision_segment`、`ai_vision_ocr`、`ai_organize_tags`、`apply_tag_suggestions`、`ai_plan_scores`、`apply_score_plan`、`ai_grade_attempt`；`ai_classify` 是本地规则桩（不发请求、不改题型/标签），不是真模型调用
 - 导入：`preview_import`、`confirm_import`、`undo_import`
-- MCP（`mcp.rs`）：`mcp_status`、`mcp_configure`、`mcp_regenerate_token`；真正的 19 个 MCP 工具走 `POST /mcp`，不是 Tauri invoke
+- MCP（`mcp.rs`）：`mcp_status`、`mcp_configure`、`mcp_regenerate_token`；真正的 22 个 MCP 工具走 `POST /mcp`，不是 Tauri invoke
 
 `ai_test` 用表单未保存的 baseUrl/model/apiKey；`ai_complete` 供导入清洗和标签整理共用；`delete_set` 在事务里删 answers→attempts→import_batches→sets（分区/材料/题/错题级联）。
 
@@ -122,8 +121,8 @@ Tokeru/
 - **ExamPage**：路由 `/sets/:setId/exam`（新建）或 `/exam/:attemptId`（继续）；`get_attempt` 拿题与作答；`save_answer` 自动保存；`submit_attempt` 判分并跳结果；三栏宽度可拖、左右可收起；计时器支持预设/自定义/不限时。中栏用 `PaperDoc`，材料题组只渲染一次材料/词库；右栏仍是答题卡。
 - **AnswersPage**：`get_set` 拿整卷；详细/简要切换（sessionStorage `tokeru.answers.mode`）；详细用 `PaperDoc` 原卷 + `.paper-answer-key` 答案条，简要为分区题目列表点击展开；题号索引、标签/题型/文件夹编辑、加入错题本、打印、整卷练习；顶部「自动分图」挂 `AutoFigures`；每题右侧「添加题图」走单图上传。
 - **ResultPage**：`get_attempt` + 题号总览 + 你的答案/正确答案对照 + 自评 + AI 讲解；批量收错题。
-- **ImportPage**：第 1 步支持拖入/选择 PDF/MD/TXT/JSON 或粘贴 Markdown，材料旁常驻「复制提示词」；本地 `inspectMaterial` 判断是否规范，非规范给「重新上传 / 应用内 AI 清洗 / 复制提示词」；清洗走 `ai_complete`；后续 `preview_import` 校验、`confirm_import` 写库、`undo_import(batchId)` 撤销。
-- **SettingsPage**：AI 端点/Key/模型/多模态模型/视觉地址；「测试连接」「测试视觉模型」直接用未保存表单值调 `ai_test`；「MCP 连接」卡片控制开关/端口/只读/Token，并给客户端配置；主题色 5 套、明暗、计时预设、排版、备份。
+- **ImportPage**：单一程序入口，支持拖入/选择 PDF/MD/TXT/JSON 或粘贴 Markdown，材料旁常驻「复制提示词」；非规范材料只提示重新上传或把提示词交给外部 AI/MCP Agent，不再在应用内清洗；后续 `preview_import` 校验、`confirm_import` 写库、`undo_import(batchId)` 撤销。
+- **SettingsPage**：AI 提供商/Key/模型/多模态模型/视觉地址/获取模型；三个场景分别控制思考模式；「测试连接」「测试视觉模型」直接用未保存表单值调 `ai_test`；「MCP 连接」卡片控制开关/端口/只读/Token，并可复制客户端 JSON；主题色 5 套、明暗、计时预设、排版、备份。
 
 ## 6. 自动分图（速查页保留）
 
@@ -136,23 +135,22 @@ Tokeru/
    bbox 是 0..1 归一化坐标；返回原始文本，不在后端解析。
 6. 前端 `parseFigures` 做宽松解析（代码围栏/数组/对象/百分数/x1y1x2y2），`cropPage` 用 canvas 裁图，用户勾选后 `update_question` 把 `<figure class="q-figure">` 追加到题干。
 7. 视觉模型必须支持图片输入；自动化验证用本地 mock 端点验证“解析→裁剪→写题干”链路，真实模型准确率未验收。
-8. 导入页还有一条独立的 **视觉 OCR → AI 清洗 → 分图** 流水线，见 `src/lib/visionImport.ts` 与第 8 节；它不依赖程序提取 PDF 文字。
 
 ## 7. AI 解释
 
 - `commands::ai_explain` 取 `api_key/base_url/model/custom_prompt/thinking`；base 为空或未配置 Key（且非本地端点）时报「未配置 AI 服务」。
 - `ai::explain` 构造 system + user 文本消息，POST `{base}/chat/completions`，Bearer Key；DeepSeek 端点额外带 `thinking`；解析 `choices[0].message.content` 与 `reasoning_content`。
-- 结果页有「一句话点破 / 完整解析 / 易错点 / 追问」入口；Key 只存本机，不回显。
+- 结果页有「简要解析 / 详细解析 / 易错点 / 追问」入口；Key 只存本机，不回显。
 
 ## 8. 导入与判分
 
-- 导入规范只有一份：`shared/import-spec.md`（784 行，9 种题型、一层 set/分区/题、答案结构、标签/文件夹、图片规则）。前端 `src/lib/importPrompt.ts` 用 `?raw` 引入，后端 MCP 用 `include_str!` 提供 `get_import_spec`，不要复制成两份。
-- `ImportPage` 第一步支持拖入/选择 PDF/MD/TXT/JSON 或粘贴 Markdown；PDF 上限 **100 MB / 50 页**，渲染 1400px JPEG；复制/预览提示词即使材料为空也启用。
-- 视觉导入 `src/lib/visionImport.ts`：把页面压到 300 KB、按 4 页/8 MB 分批调 `ai_vision_ocr`；后端每批最多 8 页，提示词要求返回每页 Markdown + figures（id/bbox/caption），图片占位用 `[[FIG:id]]`；合并后转 `{{fig:id}}`，再交给 `aiComplete` 清洗成规范 JSON；最后按 bbox 用 `cropPage` 裁图（不把整页图当题图），替换为 `<figure class="q-figure"><img ...></figure>`。无 bbox 的图保留「（原题有图，见原卷）」提示。
-- `aiComplete` 的材料上限是 **120000 字符**，超出会截断并显式提示；50 页 OCR Markdown 不应再被 24000 截断。
+- 导入规范只有一份：`shared/import-spec.md`（约 830 行，9 种题型、一层 set/分区/题、答案结构、标签/文件夹、KaTeX 公式、GFM 表格、图片规则）。前端 `src/lib/importPrompt.ts` 用 `?raw` 引入，后端 MCP 用 `include_str!` 提供 `get_import_spec`，不要复制成两份。
+- `ImportPage` 是单一程序入口：拖入/选择 PDF/MD/TXT/JSON 或粘贴 Markdown；PDF 只提取文本（上限 **100 MB / 50 页**），不渲染页面、不做视觉识别；复制/预览提示词即使材料为空也启用。
+- 非规范材料只提示重新上传或把提示词交给外部 AI/MCP Agent；内置 AI 不参与导入清洗。
 - `preview_import` 在 Rust 里解析 JSON、校验题型/答案/分区、生成 warning；`confirm_import` 事务写库并记 `import_batches`；`undo_import` 按批次撤销。
 - `grading.rs` 负责选择题多选/填空归一化（大小写、标点、空格）；主观题可 `self_grade`，也可走 `ai_plan_scores` / `ai_grade_attempt`。
 - `repo::list_bank` 支持关键词、标签多选、试卷、文件夹、题型、显示模式等筛选；返回 `BankResult`。
+- `src/lib/richText.ts` 是唯一渲染入口：原始 TeX 走 KaTeX（`$...$`、`$$...$$`、`\(...\)`、`\[...\]`），GFM 管道表格转 `<table>`，图片只允许 `data:image/...` 的 `<figure>`；KaTeX 结果不写回数据库，长公式横向滚动。
 
 ## 9. 构建、安装与便携包
 
@@ -182,8 +180,8 @@ pnpm tauri build --bundles nsis
 
 ## 11. 已知限制 / 易踩坑
 
-- 前端有 8 个单元测试（`src/lib/visionImport.test.ts`，`pnpm test` 运行）；目前只覆盖视觉导入解析，页面与裁剪仍靠手动验证。
-- 自动分图的真实视觉模型未做验收；mock 只验证链路。
+- 前端有 6 个单元测试（`src/lib/richText.test.ts`，`pnpm test` 运行），覆盖行内/块级公式、GFM 表格、单元格公式与纯数字公式；页面与裁剪仍靠手动验证。
+- 自动分图（速查与整理）的真实视觉模型未做验收；mock 只验证链路。
 - 题库详细模式中，合并后的材料题组没有逐题选择圈，可用「全选本卷/分区全选」或切到简要模式逐题选。
 - 速查/题库在 1024px 宽度下左侧题号栏会变成横向条，内部可横向滚动。
 - PDF 矢量图（公式/几何）本质是矢量绘制，视觉模型给框的准确率取决于模型；扫描件也可，但慢。

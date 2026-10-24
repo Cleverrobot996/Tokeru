@@ -168,6 +168,7 @@ pub fn run() {
             commands::get_settings,
             commands::save_settings,
             commands::ai_test,
+            commands::ai_models,
             commands::ai_complete,
             commands::ai_explain,
             commands::ai_vision_segment,

@@ -194,9 +194,13 @@ pub struct Folder {
 
 #[derive(Serialize, Clone)]
 pub struct AppSettings {
+    pub provider: String,
     pub model: String,
     pub base_url: String,
     pub thinking: bool,
+    pub thinking_organize: bool,
+    pub thinking_vision: bool,
+    pub thinking_explain: bool,
     pub has_api_key: bool,
     pub custom_prompt: String,
     pub timer_presets: Vec<i64>,
@@ -233,6 +237,7 @@ pub struct AiConfigInput {
     pub base_url: String,
     pub model: String,
     pub api_key: Option<String>,
+    pub provider: Option<String>,
     pub thinking: Option<bool>,
 }
 
