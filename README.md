@@ -149,9 +149,7 @@ branding/               图标与品牌设计稿
 | [docs/MCP.md](docs/MCP.md) | MCP 工具、鉴权与客户端配置 |
 | [shared/import-spec.md](shared/import-spec.md) | 导入 JSON / Markdown 规范 |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | 开发、提交与 PR 约定 |
-| [SECURITY.md](SECURITY.md) | 漏洞报告与敏感数据处理 |
 | [CHANGELOG.md](CHANGELOG.md) | 版本变更记录 |
-| [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | 协作行为准则 |
 | [docs/archive/README.md](docs/archive/README.md) | 3.1–4.0 内部构建记录（仅追溯） |
 
 

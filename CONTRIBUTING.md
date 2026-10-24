@@ -55,7 +55,6 @@ fix: 修复导入预览空材料报错
 
 - Bug 用 [Bug 报告](https://github.com/Cleverrobot996/Tokeru/issues/new?template=bug_report.yml)。
 - 功能建议用 [功能建议](https://github.com/Cleverrobot996/Tokeru/issues/new?template=feature_request.yml)。
-- 安全问题不要公开开 Issue，按 [SECURITY.md](SECURITY.md) 私下报告。
 
 ## 许可证
 
