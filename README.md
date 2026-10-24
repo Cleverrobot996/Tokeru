@@ -1,4 +1,4 @@
-<p align="center">
+<img width="1469" height="961" alt="PixPin_2026-10-24_15-41-35" src="https://github.com/user-attachments/assets/4ed4a732-27cf-4acb-bfb2-9a64b2c89f3f" /><p align="center">
   <img src="branding/icon-d1-dark.svg" width="112" height="112" alt="Tokeru">
 </p>
 
@@ -30,16 +30,19 @@
 
 ## 功能
 
-- **导入任意材料**：PDF、图片、Markdown、TXT、JSON 都可以拖进「导入」，也可以直接粘贴按导入规范写的文字。PDF 单文件上限 100 MB、最多读取 50 页；扫描件可走视觉 OCR。
-- **原卷优先**：详细模式按试卷原样排版，材料题只出现一次共享材料，题干支持 `{{blank:31}}` 行内空位；完形、听写、阅读这类题不会被拆成一张张孤立的答题卡。排版可切换高对比、字号、行高、段距、纸宽与字体。
-- **题库与标签**：固定「学科 / 题型 / 难度」三栏，可增加自定义标签栏；同栏多选是 OR，不同栏之间是 AND。标签可拖放归类、删除；试卷与题目都能打标签。
-- **练习与判分**：整卷、自选、错题复习、限时练习；客观题本地判分，主观题可自评或让 AI 判卷并写评语。没有分值的练习可以自定义总分，让 AI 重新分配每题分值。
+- **导入任意材料**：导入 PDF、图片、Markdown、TXT、JSON ，也可以直接粘贴按导入规范写的文字，或者使用内置提示词帮你清洗材料。
+- **原卷优先**：练习时按试卷原样排版。支持排版，可切换高对比、字号、行高、段距、纸宽与字体。
+- **题库与标签**：用标签分类你的题目与试卷，固定「学科 / 题型 / 难度」三栏，可增加自定义标签栏。
+- **练习与判分**：整卷、自选、错题复习、限时练习；客观题本地判分，主观题可自评或让 AI 判卷。
 - **记录与错题**：练习记录按日期归档，可多选写进错题本；错题本支持待复习 / 已掌握 / 全部，也能直接组一套复习练习。
-- **AI 可选**：AI 解释、写作自评、导入清洗、视觉 OCR、自动分图、AI 判卷都走 OpenAI 兼容接口；默认关闭，Key 只存本机。
-- **MCP 连接**：桌面版内置只监听 `127.0.0.1` 的 MCP Server（Streamable HTTP，默认 17890 端口，19 个工具）。外部 Agent 可以读题库、校验导入、写入试卷；默认关闭、默认只读。详见 [docs/MCP.md](docs/MCP.md)。
-- **本地数据**：SQLite 单文件，支持立即备份与恢复；换机器时复制数据目录即可。
+- **AI 可选**：AI 解释、写作自评、导入清洗、视觉配题图。
+- **MCP 连接**：外部 Agent 可以读题库、校验导入、写入试卷。详见 [docs/MCP.md](docs/MCP.md)。
+- **本地数据**：支持备份与恢复。
 
 ## 快速开始
+
+### 从release下载windows桌面端：[releases](https://github.com/Cleverrobot996/Tokeru/releases)。
+
 
 ### 从源码运行
 
@@ -80,9 +83,9 @@ pnpm tauri build --bundles nsis     # NSIS 安装包
 ### 导入第一份材料
 
 1. 打开「导入」，把 PDF / Markdown / TXT / JSON 拖进材料框，或直接粘贴原文。
-2. 若材料不是规范 JSON，点「复制清洗提示词」交给任意 AI，或使用应用内 AI 清洗。
-3. 在「预览校验」里检查结构、警告、题型分布和原卷预览，确认后写入题库。
-4. 想先跑通流程，可导入 [data/seed/math_2024.json](data/seed/math_2024.json)：2024 高考数学新课标Ⅱ卷，19 题。
+2. 若材料不是规范 JSON，点「复制清洗提示词」交给任意 AI，或让连接了MCP的agent清洗。
+3. 在「预览校验」里检查试卷，确认后写入题库。
+4. 内置了一套2024 高考数学新课标Ⅱ卷样例。
 
 导入格式说明见 [shared/import-spec.md](shared/import-spec.md)。
 
@@ -103,7 +106,6 @@ $env:TOKERU_DATA_DIR = "$PWD\.smoke-run"
 .\src-tauri\target\release\tokeru.exe
 ```
 
-AI 默认「不用 AI」。在「设置 → AI 解释」里选择 OpenAI / DeepSeek / 硅基流动 / 本地 Ollama / 自定义，填写 API Key 与地址即可。地址填到 `/v1` 为止，不要带 `/chat/completions`。自动分图、视觉 OCR 需要另填支持 `image_url` 的多模态模型。测试连接会直接使用当前填写的地址、模型与 Key，不必先保存；Key 只写入本机 SQLite，不回显、不上传。
 
 ## MCP
 
