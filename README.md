@@ -154,15 +154,10 @@ branding/               图标与品牌设计稿
 | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) | 协作行为准则 |
 | [docs/archive/README.md](docs/archive/README.md) | 3.1–4.0 内部构建记录（仅追溯） |
 
-## 参与贡献
-
-- 先读 [CONTRIBUTING.md](CONTRIBUTING.md) 与 [AGENTS.md](AGENTS.md)。
-- Bug 或功能建议走 [Issues](https://github.com/Cleverrobot996/Tokeru/issues)；改动开 Pull Request，附验证命令与截图。
-- 安全问题不要公开开 Issue，按 [SECURITY.md](SECURITY.md) 私下报告。
 
 ## 许可证
 
-代码与图标以 **Apache License 2.0** 发布，允许商用、修改与再分发。分发或衍生作品请保留 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)，并注明来源：
+分发或衍生请保留 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)，并注明来源：
 
 > Tokeru — https://github.com/Cleverrobot996/Tokeru
 
