@@ -1,6 +1,3 @@
-<img width="1469" height="961" alt="PixPin_2026-10-24_15-41-35" src="https://github.com/user-attachments/assets/4ed4a732-27cf-4acb-bfb2-9a64b2c89f3f" /><p align="center">
-  <img src="branding/icon-d1-dark.svg" width="112" height="112" alt="Tokeru">
-</p>
 
 <h1 align="center">Tokeru</h1>
 
