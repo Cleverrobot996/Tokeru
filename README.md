@@ -3,8 +3,6 @@
 
 <p align="center">与AI协作，把任意试卷、讲义或题库变成可练的题目，同时保留原卷的阅读体验。</p>
 
-<p align="center">与AI协作，把任意试卷、讲义或题库变成可练的题目，同时保留原卷的阅读体验。</p>
-
 <p align="center">
   <a href="https://github.com/Cleverrobot996/Tokeru/releases"><img src="https://img.shields.io/github/v/release/Cleverrobot996/Tokeru?style=flat-square" alt="Release"></a>
   <a href="https://github.com/Cleverrobot996/Tokeru/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Cleverrobot996/Tokeru?style=flat-square" alt="License"></a>
