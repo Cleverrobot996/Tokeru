@@ -13,9 +13,6 @@
   <img src="https://img.shields.io/badge/platform-Windows%2010%2F11-5c6bc0?style=flat-square" alt="Windows 10/11">
 </p>
 
-> Windows 桌面版，Tauri 2 + React 19 + Rust + SQLite。题目、作答、错题与设置只存本机；AI 默认关闭，不绑定厂商。
->
-> **0.0.1** 是首个公开版本，仍在快速迭代；安装包未签名。
 
 ![首页](docs/screenshots/home.png)
 
