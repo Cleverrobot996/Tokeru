@@ -33,7 +33,7 @@ Tokeru/
 │  │  ├─ RecordsPage.tsx        # 练习记录
 │  │  ├─ MistakesPage.tsx       # 错题本
 │  │  ├─ ImportPage.tsx         # 材料→JSON→预览→导入/撤销
-│  │  └─ SettingsPage.tsx       # AI / 外观 / 计时 / 排版 / 备份
+│  │  └─ SettingsPage.tsx       # AI / 外观 / 计时 / 排版 / 备份与恢复
 │  ├─ lib/
 │  │  ├─ api.ts                 # invoke 封装；isTauri=false 时走 mock
 │  │  ├─ mock.ts                # 浏览器预览假数据（不写 SQLite）
@@ -101,9 +101,9 @@ Tokeru/
 ## 4. Tauri 命令分组（`commands.rs` / `mcp.rs` / `main.rs`，共 54 个）
 
 - 题库/首页：`list_sets`、`get_set`、`list_bank`、`list_tags`、`rename_set`、`update_set_tags`、`delete_set`、`list_folders`、`create_folder`、`rename_folder`、`delete_folder`、`assign_folder`、`update_question`、`list_system_fonts`、`media_path`
-- 练习：`create_attempt`、`resume_attempt`、`get_attempt`、`save_answer`、`submit_attempt`、`self_grade`
+- 练习：`create_attempt`、`resume_attempt`（按 mode 恢复）、`get_attempt`、`save_answer`、`submit_attempt`、`self_grade`
 - 记录/错题：`list_records`、`delete_attempt`、`list_mistakes`、`collect_mistakes`、`set_mistake_status`
-- 设置/备份：`get_settings`、`save_settings`、`backup_now`、`restore_backup`
+- 设置/备份：`get_settings`、`save_settings`、`backup_now`、`list_backups`、`restore_backup`
 - 标签栏：`list_tag_groups`、`create_tag_group`、`rename_tag_group`、`delete_tag_group`、`assign_tag_group`、`assign_tags_group`
 - AI：`ai_test`、`ai_models`、`ai_complete`、`ai_explain`、`ai_vision_segment`、`ai_vision_ocr`、`ai_organize_tags`、`apply_tag_suggestions`、`ai_plan_scores`、`apply_score_plan`、`ai_grade_attempt`；`ai_classify` 是本地规则桩（不发请求、不改题型/标签），不是真模型调用
 - 导入：`preview_import`、`confirm_import`、`undo_import`
@@ -122,7 +122,7 @@ Tokeru/
 - **AnswersPage**：`get_set` 拿整卷；详细/简要切换（sessionStorage `tokeru.answers.mode`）；详细用 `PaperDoc` 原卷 + `.paper-answer-key` 答案条，简要为分区题目列表点击展开；题号索引、标签/题型/文件夹编辑、加入错题本、打印、整卷练习；顶部「自动分图」挂 `AutoFigures`；每题右侧「添加题图」走单图上传。
 - **ResultPage**：`get_attempt` + 题号总览 + 你的答案/正确答案对照 + 自评 + AI 讲解；批量收错题。
 - **ImportPage**：单一程序入口，支持拖入/选择 PDF/MD/TXT/JSON 或粘贴 Markdown，材料旁常驻「复制提示词」；非规范材料只提示重新上传或把提示词交给外部 AI/MCP Agent，不再在应用内清洗；后续 `preview_import` 校验、`confirm_import` 写库、`undo_import(batchId)` 撤销。
-- **SettingsPage**：AI 提供商/Key/模型/多模态模型/视觉地址/获取模型；三个场景分别控制思考模式；「测试连接」「测试视觉模型」直接用未保存表单值调 `ai_test`；「MCP 连接」卡片控制开关/端口/只读/Token，并可复制客户端 JSON；主题色 5 套、明暗、计时预设、排版、备份。
+- **SettingsPage**：AI 提供商/Key/模型/多模态模型/视觉地址/获取模型；三个场景分别控制思考模式；「测试连接」「测试视觉模型」直接用未保存表单值调 `ai_test`；「MCP 连接」卡片控制开关/端口/只读/Token，并可复制客户端 JSON；主题色 5 套、明暗、计时预设、排版、备份与恢复；备份列表可恢复 13 张表，备份文件不含 Key/Token。
 
 ## 6. 自动分图（速查页保留）
 
@@ -148,7 +148,7 @@ Tokeru/
 - `ImportPage` 是单一程序入口：拖入/选择 PDF/MD/TXT/JSON 或粘贴 Markdown；PDF 只提取文本（上限 **100 MB / 50 页**），不渲染页面、不做视觉识别；复制/预览提示词即使材料为空也启用。
 - 非规范材料只提示重新上传或把提示词交给外部 AI/MCP Agent；内置 AI 不参与导入清洗。
 - `preview_import` 在 Rust 里解析 JSON、校验题型/答案/分区、生成 warning；`confirm_import` 事务写库并记 `import_batches`；`undo_import` 按批次撤销。
-- `grading.rs` 负责选择题多选/填空归一化（大小写、标点、空格）；主观题可 `self_grade`，也可走 `ai_plan_scores` / `ai_grade_attempt`。
+- `grading.rs` 负责选项/判断题归一化：`"ACD"`、`"A,C"` 拆成独立选项，对/错/√/×/true/false 统一成 T/F；填空折叠大小写、标点、空格。主观题可 `self_grade`，也可走 `ai_plan_scores` / `ai_grade_attempt`；AI 判卷按题目 ID 匹配，部分得分不再记为答错。
 - `repo::list_bank` 支持关键词、标签多选、试卷、文件夹、题型、显示模式等筛选；返回 `BankResult`。
 - `src/lib/richText.ts` 是唯一渲染入口：原始 TeX 走 KaTeX（`$...$`、`$$...$$`、`\(...\)`、`\[...\]`），GFM 管道表格转 `<table>`，图片只允许 `data:image/...` 的 `<figure>`；KaTeX 结果不写回数据库，长公式横向滚动。
 

@@ -1061,6 +1061,9 @@ export async function mockCommand<T>(name: string, args: Record<string, any> = {
     case "backup_now": {
       return "mock-backup" as T;
     }
+    case "list_backups": {
+      return ["mock-backup.db"] as T;
+    }
     case "list_folders": {
       return clone(state.folders) as T;
     }

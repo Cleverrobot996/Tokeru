@@ -1,6 +1,6 @@
 [package]
 name = "tokeru"
-version = "0.1.1"
+version = "0.1.2"
 description = "Tokeru - 纸面优先的本地练习应用"
 authors = ["Cleverrobot996"]
 license = "AGPL-3.0-only"

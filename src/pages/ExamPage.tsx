@@ -64,7 +64,7 @@ export default function ExamPage() {
     creating.current = true;
     const sid = Number(setId);
     api
-      .resumeAttempt(sid)
+      .resumeAttempt(sid, "exam")
       .then((existing) => (existing ? existing : api.createAttempt({ setId: sid, mode: "exam", timeLimit: 0 })))
       .then((id) => {
         setAttemptId(id);

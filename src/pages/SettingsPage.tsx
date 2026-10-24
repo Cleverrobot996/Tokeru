@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, ChevronDown, Copy, Database, Eye, Globe, KeyRound, Loader2, Palette, Plug, Plus, RefreshCw, Save, Sparkles, Timer, Type, X } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "../lib/api";
 import type { AiProvider, AppSettings, McpStatus } from "../lib/types";
 import { useTheme, type Accent, type ThemeMode } from "../lib/theme";
-import { Button, Chip, Field, Switch } from "../components/ui";
+import { Button, Chip, Field, Modal, Switch } from "../components/ui";
 import { PaperSettings } from "../components/PaperSettings";
 import { loadPaperStyle, savePaperStyle, type PaperStyle } from "../lib/paper";
 
@@ -59,6 +59,7 @@ function errText(e: unknown) {
 export default function SettingsPage() {
   const { theme, accent, setAccent, setTheme } = useTheme();
   const q = useQuery({ queryKey: ["settings"], queryFn: api.getSettings });
+  const qc = useQueryClient();
   const [form, setForm] = useState({
     apiKey: "",
     clearKey: false,
@@ -85,6 +86,10 @@ export default function SettingsPage() {
   /* 仅限本次会话：记录刚测试通过的模型名，不落库。 */
   const [tested, setTested] = useState<{ chat: string | null; vision: string | null }>({ chat: null, vision: null });
   const [backing, setBacking] = useState(false);
+  const [restoreOpen, setRestoreOpen] = useState(false);
+  const [backups, setBackups] = useState<string[]>([]);
+  const [backupsBusy, setBackupsBusy] = useState(false);
+  const [restoring, setRestoring] = useState<string | null>(null);
   const [paper, setPaper] = useState<PaperStyle>(() => loadPaperStyle());
   const [mcp, setMcp] = useState<McpStatus | null>(null);
   const [mcpPort, setMcpPort] = useState("17890");
@@ -350,6 +355,43 @@ export default function SettingsPage() {
       toast.error(`备份失败：${e}`);
     } finally {
       setBacking(false);
+    }
+  }
+
+  async function openRestore() {
+    setRestoreOpen(true);
+    setBackupsBusy(true);
+    try {
+      setBackups(await api.listBackups());
+    } catch (e) {
+      toast.error(`读取备份失败：${errText(e)}`);
+    } finally {
+      setBackupsBusy(false);
+    }
+  }
+
+  async function restore(name: string) {
+    setRestoring(name);
+    try {
+      await api.restoreBackup(name);
+      setRestoreOpen(false);
+      toast.success("已恢复备份");
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: ["sets"] }),
+        qc.invalidateQueries({ queryKey: ["set"] }),
+        qc.invalidateQueries({ queryKey: ["bank"] }),
+        qc.invalidateQueries({ queryKey: ["tags"] }),
+        qc.invalidateQueries({ queryKey: ["tagGroups"] }),
+        qc.invalidateQueries({ queryKey: ["folders"] }),
+        qc.invalidateQueries({ queryKey: ["records"] }),
+        qc.invalidateQueries({ queryKey: ["attempt"] }),
+        qc.invalidateQueries({ queryKey: ["mistakes"] }),
+        qc.invalidateQueries({ queryKey: ["settings"] }),
+      ]);
+    } catch (e) {
+      toast.error(`恢复失败：${errText(e)}`);
+    } finally {
+      setRestoring(null);
     }
   }
 
@@ -744,8 +786,31 @@ export default function SettingsPage() {
           <Button onClick={() => void backup()} disabled={backing}>
             {backing ? <Loader2 size={15} className="spin" /> : <Database size={15} />} 立即备份
           </Button>
+          <Button variant="soft" onClick={() => void openRestore()} disabled={backing}>
+            恢复备份
+          </Button>
         </div>
       </section>
+
+      <Modal open={restoreOpen} onClose={() => setRestoreOpen(false)} title="恢复备份" width={520}>
+        <div className="panel-sub">恢复会覆盖当前题库、练习记录与错题；本机 AI Key 和 MCP Token 会保留。</div>
+        {backupsBusy ? (
+          <div className="small muted backup-empty"><Loader2 size={15} className="spin" /> 正在读取备份…</div>
+        ) : backups.length === 0 ? (
+          <div className="small muted backup-empty">还没有备份。</div>
+        ) : (
+          <div className="backup-list">
+            {backups.map((name) => (
+              <div className="backup-row" key={name}>
+                <span>{name}</span>
+                <Button size="sm" variant="soft" onClick={() => void restore(name)} disabled={!!restoring}>
+                  {restoring === name ? <Loader2 size={14} className="spin" /> : null} 恢复
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
+      </Modal>
     </main>
   );
 }

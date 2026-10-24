@@ -682,6 +682,10 @@
   background: transparent; color: var(--text); text-align: left; font-size: 13px; cursor: pointer;
 }
 .model-option:hover { background: var(--accent-soft); }
+.settings-page .form-actions { flex-wrap: wrap; }
+.backup-list { display: grid; gap: 6px; margin-top: 12px; max-height: 320px; overflow-y: auto; }
+.backup-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 10px; border: 1px solid var(--line); border-radius: var(--radius-control); background: var(--surface-2); font-size: 13px; }
+.backup-empty { display: flex; align-items: center; gap: 6px; margin-top: 12px; }
 .settings-page .settings-check { margin-top: 12px; }
 .settings-page .settings-prompt { min-height: 84px; }
 .settings-page .settings-off {

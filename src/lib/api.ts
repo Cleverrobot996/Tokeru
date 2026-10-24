@@ -52,7 +52,7 @@ export const api = {
   deleteSet: (setId: number) => cmd<null>("delete_set", { setId }),
   createAttempt: (p: { setId?: number | null; questionIds?: number[]; mode?: string; title?: string; timeLimit?: number }) =>
     cmd<number>("create_attempt", p),
-  resumeAttempt: (setId: number) => cmd<number | null>("resume_attempt", { setId }),
+  resumeAttempt: (setId: number, mode = "exam") => cmd<number | null>("resume_attempt", { setId, mode }),
   getAttempt: (attemptId: number) => cmd<AttemptDetail>("get_attempt", { attemptId }),
   saveAnswer: (attemptId: number, questionId: number, raw: string) => cmd<null>("save_answer", { attemptId, questionId, raw }),
   submitAttempt: (attemptId: number) => cmd<number>("submit_attempt", { attemptId }),
@@ -88,6 +88,7 @@ export const api = {
   confirmImport: (p: { text: string; title?: string }) => cmd<number>("confirm_import", p),
   undoImport: (batchId: number) => cmd<null>("undo_import", { batchId }),
   backupNow: () => cmd<string>("backup_now"),
+  listBackups: () => cmd<string[]>("list_backups"),
   restoreBackup: (path: string) => cmd<null>("restore_backup", { path }),
   listFolders: () => cmd<Folder[]>("list_folders"),
   createFolder: (name: string, parentId?: number | null) => cmd<number>("create_folder", { name, parentId: parentId ?? null }),

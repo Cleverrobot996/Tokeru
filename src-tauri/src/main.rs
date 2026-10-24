@@ -201,6 +201,7 @@ pub fn run() {
             commands::delete_folder,
             commands::assign_folder,
             commands::backup_now,
+            commands::list_backups,
             commands::restore_backup,
             commands::preview_import,
             commands::confirm_import,

@@ -3,9 +3,10 @@ use crate::db::{self, now, put_setting, Db};
 use crate::grading;
 use crate::models::*;
 use crate::repo;
-use rusqlite::{params, OptionalExtension};
+use rusqlite::{params, Connection, OptionalExtension};
 use serde_json::{json, Value};
 use std::fs;
+use std::path::{Path, PathBuf};
 use tauri::State;
 
 type R<T> = Result<T, String>;
@@ -61,11 +62,13 @@ pub fn create_attempt(state: State<'_, Db>, set_id: Option<i64>, question_ids: O
 
 /* 同一份试卷如果还有没交卷的整卷练习，就直接接着做，避免每次进页面都新建一条空记录。 */
 #[tauri::command]
-pub fn resume_attempt(state: State<'_, Db>, set_id: i64) -> R<Option<i64>> {
+pub fn resume_attempt(state: State<'_, Db>, set_id: i64, mode: Option<String>) -> R<Option<i64>> {
     let conn = lock(&state);
+    // 整卷入口只接整卷练习；自选题/错题复习各有自己的 mode，不能混用同一条未完成记录。
+    let mode = mode.unwrap_or_else(|| "exam".into());
     conn.query_row(
-        "SELECT id FROM attempts WHERE status='in_progress' AND set_id=? ORDER BY id DESC LIMIT 1",
-        params![set_id],
+        "SELECT id FROM attempts WHERE status='in_progress' AND set_id=? AND mode=? ORDER BY id DESC LIMIT 1",
+        params![set_id, mode],
         |r| r.get::<_, i64>(0),
     )
     .optional()
@@ -113,9 +116,10 @@ pub fn self_grade(state: State<'_, Db>, attempt_id: i64, question_id: i64, score
     let conn = lock(&state);
     let max: i64 = conn.query_row("SELECT points FROM questions WHERE id=?", params![question_id], |r| r.get(0)).map_err(|e| e.to_string())?;
     let score = score.clamp(0, max);
+    let is_correct = if score >= max { 1 } else if score > 0 { -1 } else { 0 };
     conn.execute(
         "UPDATE answers SET score=?,is_correct=?,graded_by='self',updated_at=? WHERE attempt_id=? AND question_id=?",
-        params![score, if score >= max { 1 } else { 0 }, now(), attempt_id, question_id],
+        params![score, is_correct, now(), attempt_id, question_id],
     ).map_err(|e| e.to_string())?;
     let total: i64 = conn.query_row("SELECT COALESCE(SUM(score),0) FROM answers WHERE attempt_id=?", params![attempt_id], |r| r.get(0)).map_err(|e| e.to_string())?;
     conn.execute("UPDATE attempts SET total_score=? WHERE id=?", params![total, attempt_id]).map_err(|e| e.to_string())?;
@@ -677,6 +681,7 @@ pub async fn ai_grade_attempt(state: State<'_, Db>, attempt_id: i64, only_pendin
         .map(|aq| {
             let reference = serde_json::to_string(&aq.question.answer).unwrap_or_default();
             json!({
+                "id": aq.question.id,
                 "number": aq.question.number,
                 "label": aq.question.label,
                 "qtype": aq.question.qtype,
@@ -691,8 +696,8 @@ pub async fn ai_grade_attempt(state: State<'_, Db>, attempt_id: i64, only_pendin
     let user = format!(
         "试卷：{}\n请逐题判分。分数必须是 0 到该题满分之间的整数；按参考答案和评分点给分，允许部分分。\n\
          评语用简体中文，60 字内，指出得分点和最需要改的一处，不要重复题干。\n\
-         题号必须使用输入里的 number，不要漏题。\n\
-         只输出 JSON：{{\"items\":[{{\"number\":1,\"score\":3,\"comment\":\"...\"}}]}}\n\n题目与作答：\n{}",
+         必须使用输入里的 id 定位题目，不要漏题；number 只作参考。\n\
+         只输出 JSON：{{\"items\":[{{\"id\":123,\"score\":3,\"comment\":\"...\"}}]}}\n\n题目与作答：\n{}",
         detail.summary.title,
         serde_json::to_string_pretty(&payload).unwrap_or_default()
     );
@@ -713,17 +718,24 @@ pub async fn ai_grade_attempt(state: State<'_, Db>, attempt_id: i64, only_pendin
         .or_else(|| value.get("questions"))
         .and_then(Value::as_array)
         .ok_or("AI 没有返回 items 数组。")?;
-    let mut grades: std::collections::HashMap<i64, (i64, String)> = std::collections::HashMap::new();
+    let target_ids: std::collections::HashSet<i64> = targets.iter().map(|aq| aq.question.id).collect();
+    let mut by_id: std::collections::HashMap<i64, (i64, String)> = std::collections::HashMap::new();
+    let mut by_number: std::collections::HashMap<i64, Vec<(i64, String)>> = std::collections::HashMap::new();
     for it in arr {
+        let id = import_i64(it, &["id", "question_id", "questionId"], -1);
         let number = import_i64(it, &["number", "no", "题号", "label"], -1);
         let score = import_i64(it, &["score", "points", "得分"], -1);
-        if number < 0 || score < 0 {
+        if score < 0 || (id < 0 && number < 0) {
             continue;
         }
-        let comment = import_text(it, &["comment", "comments", "reason", "评语", "反馈"]);
-        grades.insert(number, (score, comment.chars().take(500).collect()));
+        let comment: String = import_text(it, &["comment", "comments", "reason", "评语", "反馈"]).chars().take(500).collect();
+        if id >= 0 && target_ids.contains(&id) {
+            by_id.insert(id, (score, comment));
+        } else if number >= 0 {
+            by_number.entry(number).or_default().push((score, comment));
+        }
     }
-    if grades.is_empty() {
+    if by_id.is_empty() && by_number.is_empty() {
         return Err("AI 没有返回可用的判分结果，请重试。".into());
     }
     let mut conn = lock(&state);
@@ -731,13 +743,21 @@ pub async fn ai_grade_attempt(state: State<'_, Db>, attempt_id: i64, only_pendin
     let mut items: Vec<GradeItemResult> = Vec::new();
     let mut missing: Vec<i64> = Vec::new();
     for aq in &targets {
-        let Some((raw_score, comment)) = grades.get(&aq.question.number).cloned() else {
+        // 优先按题目 id 匹配；旧模型只回题号时，只有题号在本次练习里唯一才采用，避免跨卷串题。
+        let found = by_id.get(&aq.question.id).cloned().or_else(|| {
+            by_number
+                .get(&aq.question.number)
+                .filter(|list| list.len() == 1)
+                .and_then(|list| list.first().cloned())
+        });
+        let Some((raw_score, comment)) = found else {
             missing.push(aq.question.number);
             continue;
         };
         let max_score = aq.question.points.max(1);
         let score = raw_score.clamp(0, max_score);
-        let is_correct = if score >= max_score { 1 } else { 0 };
+        // 部分分不当成答错：-1 表示已判但有失分，界面显示为 AI 已判/警告色。
+        let is_correct = if score >= max_score { 1 } else if score > 0 { -1 } else { 0 };
         tx.execute(
             "INSERT INTO answers(attempt_id,question_id,raw,is_correct,score,max_score,graded_by,comment,updated_at)
              VALUES(?,?,?,?,?,?, 'ai', ?,?)
@@ -1123,6 +1143,9 @@ pub fn assign_folder(state: State<'_, Db>, folder_id: Option<i64>, set_id: Optio
     Ok(())
 }
 
+/// 备份会随文件被复制、发给别人，API Key / MCP Token 不能留在里面。
+const SECRET_SETTING_KEYS: [&str; 3] = ["api_key", "deepseek_api_key", "mcp_token"];
+
 #[tauri::command]
 pub fn backup_now(state: State<'_, Db>) -> R<String> {
     let dir = state.data_dir.join("backups");
@@ -1131,18 +1154,116 @@ pub fn backup_now(state: State<'_, Db>) -> R<String> {
     let target = dir.join(&name);
     let conn = lock(&state);
     conn.execute("VACUUM INTO ?", params![target.to_string_lossy().to_string()]).map_err(|e| e.to_string())?;
+    drop(conn);
+    // VACUUM INTO 会连 settings 一起复制；打开副本删掉密钥，备份才可安全外传。
+    let backup = Connection::open(&target).map_err(|e| format!("打开备份文件失败：{e}"))?;
+    for key in SECRET_SETTING_KEYS {
+        backup.execute("DELETE FROM settings WHERE key=?", params![key]).map_err(|e| format!("清理备份密钥失败：{e}"))?;
+    }
+    drop(backup);
     Ok(name)
 }
 
 #[tauri::command]
+pub fn list_backups(state: State<'_, Db>) -> R<Vec<String>> {
+    let dir = state.data_dir.join("backups");
+    fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
+    let mut names: Vec<String> = fs::read_dir(&dir)
+        .map_err(|e| e.to_string())?
+        .filter_map(|entry| entry.ok())
+        .filter_map(|entry| {
+            let path = entry.path();
+            (path.is_file() && path.extension().and_then(|x| x.to_str()) == Some("db"))
+                .then(|| entry.file_name().to_string_lossy().to_string())
+        })
+        .collect();
+    names.sort_by(|a, b| b.cmp(a));
+    Ok(names)
+}
+
+/// 只允许恢复 backups 目录里的 .db，避免绝对路径或 .. 把任意文件 ATTACH 进来。
+fn backup_source(data_dir: &Path, raw: &str) -> R<PathBuf> {
+    let dir = data_dir.join("backups");
+    let candidate = if Path::new(raw).is_absolute() { PathBuf::from(raw) } else { dir.join(raw) };
+    let root = fs::canonicalize(&dir).map_err(|e| format!("备份目录不可用：{e}"))?;
+    let source = fs::canonicalize(&candidate).map_err(|_| "备份文件不存在。".to_string())?;
+    if !source.starts_with(&root) {
+        return Err("只能恢复 backups 目录里的备份。".into());
+    }
+    if source.extension().and_then(|x| x.to_str()) != Some("db") {
+        return Err("只能恢复 .db 备份文件。".into());
+    }
+    Ok(source)
+}
+
+/// 恢复时按列名复制，不依赖表内列顺序；表清单必须覆盖所有带外键的表。
+const RESTORE_TABLES: [(&str, &str); 13] = [
+    ("settings", "key,value"),
+    ("tag_groups", "id,name,color,position,created_at"),
+    ("folders", "id,name,parent_id,sort,created_at"),
+    ("sets", "id,title,subtitle,year,duration_minutes,source,audio_file,description,tags_json,created_at,folder_id"),
+    ("materials", "id,set_id,key,title,content"),
+    ("sections", "id,set_id,key,title,subtitle,kind,position,audio_file,material_id"),
+    ("questions", "id,set_id,section_id,material_id,number,label,qtype,stem,options_json,answer_json,explanation,points,position,source,tags_json,archived,folder_id,created_at"),
+    ("import_batches", "id,set_id,title,created_at"),
+    ("attempts", "id,set_id,title,mode,status,started_at,finished_at,time_limit,total_score,max_score,question_ids_json,paper_answers_json"),
+    ("answers", "id,attempt_id,question_id,raw,is_correct,score,max_score,graded_by,updated_at,comment"),
+    ("mistakes", "id,question_id,origin,wrong_count,correct_streak,last_wrong_at,last_correct_at,status,due_at,note"),
+    ("ai_runs", "id,question_id,mode,model,custom_prompt,prompt_summary,response_html,reasoning_html,created_at"),
+    ("tag_assignments", "tag,group_id"),
+];
+
+#[tauri::command]
 pub fn restore_backup(state: State<'_, Db>, path: String) -> R<()> {
+    let src = backup_source(&state.data_dir, &path)?;
     let conn = lock(&state);
-    let src = state.data_dir.join("backups").join(path);
-    if !src.exists() { return Err("备份文件不存在。".into()); }
-    conn.execute("ATTACH DATABASE ? AS bak", params![src.to_string_lossy().to_string()]).map_err(|e| e.to_string())?;
-    for table in ["settings", "sets", "sections", "materials", "questions", "folders", "attempts", "answers", "mistakes", "ai_runs"] {
-        let _ = conn.execute(&format!("DELETE FROM main.{table}"), []);
-        let _ = conn.execute(&format!("INSERT INTO main.{table} SELECT * FROM bak.{table}"), []);
+    // 先检查备份完整性，避免删到一半才发现表缺失。
+    conn.execute("ATTACH DATABASE ? AS bak", params![src.to_string_lossy().to_string()])
+        .map_err(|e| format!("无法读取备份：{e}"))?;
+    let check = (|| -> R<()> {
+        for (table, _) in RESTORE_TABLES {
+            let exists: i64 = conn
+                .query_row("SELECT COUNT(*) FROM bak.sqlite_master WHERE type='table' AND name=?", params![table], |r| r.get(0))
+                .map_err(|e| e.to_string())?;
+            if exists == 0 {
+                return Err(format!("备份不完整：缺少 {table} 表，可能是旧版本或文件已损坏。"));
+            }
+        }
+        Ok(())
+    })();
+    if let Err(err) = check {
+        let _ = conn.execute("DETACH DATABASE bak", []);
+        return Err(err);
+    }
+    // 备份里的密钥已被清理；恢复后保留本机当前密钥，不因回滚备份而清空。
+    let kept_secrets: Vec<(&str, String)> = SECRET_SETTING_KEYS
+        .iter()
+        .map(|key| (*key, setting(&conn, key, "")))
+        .collect();
+    let restore = (|| -> R<()> {
+        conn.execute_batch("BEGIN IMMEDIATE").map_err(|e| e.to_string())?;
+        for table in [
+            "answers", "mistakes", "attempts", "questions", "sections", "materials", "import_batches",
+            "sets", "tag_assignments", "tag_groups", "folders", "ai_runs", "settings",
+        ] {
+            conn.execute(&format!("DELETE FROM main.{table}"), []).map_err(|e| format!("清空 {table} 失败：{e}"))?;
+        }
+        for (table, columns) in RESTORE_TABLES {
+            conn.execute(&format!("INSERT INTO main.{table}({columns}) SELECT {columns} FROM bak.{table}"), [])
+                .map_err(|e| format!("恢复 {table} 失败：{e}"))?;
+        }
+        for (key, value) in &kept_secrets {
+            if !value.trim().is_empty() {
+                put_setting(&conn, key, value);
+            }
+        }
+        conn.execute_batch("COMMIT").map_err(|e| e.to_string())?;
+        Ok(())
+    })();
+    if let Err(err) = restore {
+        let _ = conn.execute_batch("ROLLBACK");
+        let _ = conn.execute("DETACH DATABASE bak", []);
+        return Err(err);
     }
     conn.execute("DETACH DATABASE bak", []).map_err(|e| e.to_string())?;
     Ok(())
@@ -1263,6 +1384,32 @@ fn import_string_list(v: Option<&Value>) -> Vec<String> {
     out
 }
 
+/// 选项题的答案统一存成数组，兼容 "ACD"、"A,C"、["ACD"] 这些写法；
+/// 判断题把 对/错/√/×/true/false 统一成 T/F，避免本地判分和 AI 判分各读各的。
+fn import_choice_tokens(value: &Value, qtype: &str) -> Vec<String> {
+    let raw: Vec<String> = match value {
+        Value::Array(items) => items
+            .iter()
+            .map(|item| match item {
+                Value::String(s) => s.clone(),
+                other => json_text(other),
+            })
+            .collect(),
+        Value::String(s) => vec![s.clone()],
+        other => vec![json_text(other)],
+    };
+    let mut out: Vec<String> = Vec::new();
+    for item in raw {
+        for token in grading::tokens_for_choice(&item, qtype) {
+            let token = grading::normalize_choice_token(&token, qtype);
+            if !token.is_empty() && !out.iter().any(|x| x == &token) {
+                out.push(token);
+            }
+        }
+    }
+    out
+}
+
 fn import_answer(raw: Option<&Value>, qtype: &str) -> Value {
     let choice = matches!(qtype, "choice_single" | "choice_multi" | "true_false" | "matching");
     match raw {
@@ -1272,11 +1419,21 @@ fn import_answer(raw: Option<&Value>, qtype: &str) -> Value {
                     return import_answer(Some(inner), qtype);
                 }
             }
-            Value::Object(o.clone())
+            let mut object = o.clone();
+            if let Some(correct) = o.get("correct") {
+                if choice {
+                    let tokens = import_choice_tokens(correct, qtype);
+                    if !tokens.is_empty() {
+                        object.insert("correct".into(), Value::Array(tokens.into_iter().map(Value::String).collect()));
+                    }
+                }
+            }
+            Value::Object(object)
         }
         Some(Value::Array(items)) => {
             if choice {
-                serde_json::json!({ "kind": "choice", "correct": items })
+                let tokens = import_choice_tokens(&Value::Array(items.clone()), qtype);
+                serde_json::json!({ "kind": "choice", "correct": tokens })
             } else {
                 serde_json::json!({ "kind": "text", "accept": items })
             }
@@ -1285,9 +1442,17 @@ fn import_answer(raw: Option<&Value>, qtype: &str) -> Value {
             if s.trim().is_empty() {
                 serde_json::json!({})
             } else if choice {
-                serde_json::json!({ "kind": "choice", "correct": [s.trim()] })
+                let tokens = import_choice_tokens(&Value::String(s.clone()), qtype);
+                serde_json::json!({ "kind": "choice", "correct": tokens })
             } else {
                 serde_json::json!({ "kind": "text", "accept": [s.trim()] })
+            }
+        }
+        Some(Value::Bool(b)) => {
+            if choice {
+                serde_json::json!({ "kind": "choice", "correct": [if *b { "T" } else { "F" }] })
+            } else {
+                serde_json::json!({ "kind": "text", "accept": [if *b { "true" } else { "false" }] })
             }
         }
         Some(other) => serde_json::json!({ "kind": "text", "accept": [json_text(other)] }),
@@ -1765,6 +1930,25 @@ mod import_tests {
             conn.execute("DELETE FROM import_batches WHERE id=?", params![batch]).unwrap();
         }
         let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn normalizes_choice_and_true_false_answers() {
+        let multi = import_answer(Some(&serde_json::json!("ACD")), "choice_multi");
+        assert_eq!(multi["correct"], serde_json::json!(["A", "C", "D"]));
+        let multi = import_answer(Some(&serde_json::json!("A,C")), "choice_multi");
+        assert_eq!(multi["correct"], serde_json::json!(["A", "C"]));
+        let tf = import_answer(Some(&serde_json::json!("对")), "true_false");
+        assert_eq!(tf["correct"], serde_json::json!(["T"]));
+        let tf = import_answer(Some(&serde_json::json!(false)), "true_false");
+        assert_eq!(tf["correct"], serde_json::json!(["F"]));
+    }
+
+    #[test]
+    fn parses_compact_choice_answer_into_tokens() {
+        let text = r#"{"questions":[{"number":1,"qtype":"choice_multi","stem":"选","answer":{"kind":"choice","correct":"ACD"}}]}"#;
+        let p = parse_import(text, None).unwrap();
+        assert_eq!(p.questions[0].answer["correct"], serde_json::json!(["A", "C", "D"]));
     }
 }
 
