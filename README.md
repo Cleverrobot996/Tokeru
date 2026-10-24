@@ -1,4 +1,4 @@
-  <img src="branding/icon-d1-dark.svg" width="112" height="112" alt="Tokeru">
+ <img src="branding/icon-d1-dark.svg" width="112" height="112" alt="Tokeru">
 </p>
 <h1 align="center">Tokeru</h1>
 
