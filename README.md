@@ -72,7 +72,6 @@ pnpm tauri build --bundles nsis     # NSIS 安装包
 - `src-tauri/target/release/tokeru.exe`
 - `src-tauri/target/release/bundle/nsis/Tokeru_0.1.2_x64-setup.exe`
 
-安装器使用独立版本目录 `%LOCALAPPDATA%\Tokeru\app-版本号`，不会覆盖正在运行的旧 exe；快捷方式会在安装后重定向到新版本。应用本身不要求管理员权限。
 
 ### 导入第一份材料
 
