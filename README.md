@@ -41,9 +41,6 @@
 
 ## 快速开始
 
-### 从release下载windows桌面端：[releases](https://github.com/Cleverrobot996/Tokeru/releases)。
-
-
 ### 从源码运行
 
 需要 Windows 10/11、WebView2 Runtime、Node.js 22+、pnpm 10+、Rust stable，以及带 C++ 桌面开发负载的 Visual Studio Build Tools。
