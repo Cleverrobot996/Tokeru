@@ -1,4 +1,5 @@
-
+  <img src="branding/icon-d1-dark.svg" width="112" height="112" alt="Tokeru">
+</p>
 <h1 align="center">Tokeru</h1>
 
 <p align="center">与AI协作，把任意试卷、讲义或题库变成可练的题目，同时保留原卷的阅读体验。</p>
