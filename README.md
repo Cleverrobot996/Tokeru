@@ -157,7 +157,7 @@ branding/               图标与品牌设计稿
 
 ## 许可证
 
-分发或衍生请保留 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)，并注明来源：
+本项目以 **GNU Affero General Public License v3.0（AGPL-3.0）** 发布。分发或衍生请保留 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)，并注明来源：
 
 > Tokeru — https://github.com/Cleverrobot996/Tokeru
 

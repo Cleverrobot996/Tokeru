@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "description": "本地优先的试卷练习桌面应用：导入任意材料，按原卷排版练习，记录作答与错题。",
-  "license": "Apache-2.0",
+  "license": "AGPL-3.0-only",
   "author": "Cleverrobot996",
   "repository": {
     "type": "git",

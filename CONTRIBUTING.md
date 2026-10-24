@@ -59,4 +59,4 @@ fix: 修复导入预览空材料报错
 
 ## 许可证
 
-贡献的代码与文档按 [Apache License 2.0](LICENSE) 授权。
+贡献的代码与文档按 [GNU Affero General Public License v3.0](LICENSE) 授权。
