@@ -1,8 +1,8 @@
-# Tokeru MCP 接入说明（4.0.0）
+# Tokeru MCP 接入说明（0.0.1）
 
-> Tokeru 4.0.0 内置一个只监听 127.0.0.1 的 MCP Server（Streamable HTTP，默认 http://127.0.0.1:17890/mcp，共 19 个工具）。外部 Agent 可以读取题库、校验导入并写入试卷；服务默认关闭、默认只读，写操作必须先在「设置 → MCP 连接」关闭只读。
+> Tokeru 0.0.1 内置一个只监听 127.0.0.1 的 MCP Server（Streamable HTTP，默认 http://127.0.0.1:17890/mcp，共 19 个工具）。外部 Agent 可以读取题库、校验导入并写入试卷；服务默认关闭、默认只读，写操作必须先在「设置 → MCP 连接」关闭只读。
 
-本文按当前 4.0.0 源码核对，主要依据：
+本文按当前 0.0.1 源码核对，主要依据：
 
 - [mcp.rs](../src-tauri/src/mcp.rs)：Server 生命周期、鉴权、CORS、19 个工具和 3 个 Tauri 命令。
 - [commands.rs](../src-tauri/src/commands.rs)：导入预览、确认导入、撤销导入的底层实现。
@@ -571,8 +571,8 @@ curl -i -X POST "$BASE" \
 
 ### 9.3 验证状态
 
-- 本文按 2026-10-24 的 4.0.0 源码核对；没有修改 src/ 或 src-tauri/。
-- 项目内已有的 4.0 MCP 冒烟记录见 [SOURCE-MAP.md](SOURCE-MAP.md) 第 14.2 节：无 Token 401、Bearer initialize/tools/list 200、只读 preview_import 被拒、关闭只读后 preview→confirm 成功。
+- 本文按 2026-10-24 的 0.0.1 源码核对；没有修改 src/ 或 src-tauri/。
+- 项目内已有的 MCP 冒烟记录见 [SOURCE-MAP.md](SOURCE-MAP.md) 第 14.2 节：无 Token 401、Bearer initialize/tools/list 200、只读 preview_import 被拒、关闭只读后 preview→confirm 成功。
 - 本文没有重新执行桌面端 curl/客户端联调；真正的安装包与客户端兼容性仍需在目标机器上验证，尤其是只支持 stdio 的客户端和带大图的导入。
 
 ### 9.4 修改这里的代码时

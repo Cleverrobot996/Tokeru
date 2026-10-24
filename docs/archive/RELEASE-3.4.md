@@ -92,6 +92,6 @@
 ## 10. 相关文档
 
 - `README.md`：功能入口与运行方式
-- `docs/SOURCE-MAP.md`：3.4 源码地图
-- `docs/SOURCE-REPORT.md`：3.4 源码报告
-- `docs/RELEASE-3.3.md`：上一版安装器与自动分图说明
+- `../SOURCE-MAP.md`：3.4 源码地图
+- `SOURCE-REPORT.md`：3.4 源码报告
+- `RELEASE-3.3.md`：上一版安装器与自动分图说明

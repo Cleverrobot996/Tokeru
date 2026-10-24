@@ -15,7 +15,7 @@
 | 3 | 拖 PDF 到导入窗口无法预加载 | Rust 关闭 Tauri 自带 drag-drop 拦截，HTML5 dataTransfer 恢复 |
 | 4 | 导入窗口无内容时不能复制提示词 | 两步的复制/预览提示词只受「文件加载中」限制 |
 | 5 | 添加 MCP 连接 | 内嵌 Streamable HTTP MCP Server，19 个工具，默认只读、本机回环、Token |
-| 6 | 调研安装包为何要管理员 | 只调研不改安装器，见 `docs/INSTALLER-ADMIN-RESEARCH.md` |
+| 6 | 调研安装包为何要管理员 | 只调研不改安装器，见 `INSTALLER-ADMIN-RESEARCH.md` |
 
 ## 2. 导入：从材料到试卷
 
@@ -69,11 +69,11 @@ Tokeru 内置一个 Streamable HTTP MCP Server：
 - 请求体上限 16 MiB；只接受 JSON，不接受 multipart。
 - 不返回 API Key，不暴露设置里的密钥。
 
-配置入口：设置 → MCP 连接（开关 / 端口 / 只读 / 保存并应用 / 重置 Token / 地址与 Token 复制 / 客户端 JSON 示例）。完整说明见 `docs/MCP.md`，生态调研见 `docs/MCP-RESEARCH.md`。
+配置入口：设置 → MCP 连接（开关 / 端口 / 只读 / 保存并应用 / 重置 Token / 地址与 Token 复制 / 客户端 JSON 示例）。完整说明见 `../MCP.md`，生态调研见 `MCP-RESEARCH.md`。
 
 ## 5. 安装包调研
 
-`docs/INSTALLER-ADMIN-RESEARCH.md` 记录了本轮对 3.5.0 安装包的核查：
+`INSTALLER-ADMIN-RESEARCH.md` 记录了本轮对 3.5.0 安装包的核查：
 
 - setup manifest 为 `asInvoker`，NSIS `INSTALLMODE "currentUser"`、`RequestExecutionLevel user`。
 - 安装只写 `%LOCALAPPDATA%\Tokeru`、HKCU 与当前用户快捷方式。

@@ -2,6 +2,28 @@
   "name": "tokeru",
   "private": true,
   "version": "0.0.1",
+  "description": "本地优先的试卷练习桌面应用：导入任意材料，按原卷排版练习，记录作答与错题。",
+  "license": "Apache-2.0",
+  "author": "Cleverrobot996",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cleverrobot996/Tokeru.git"
+  },
+  "homepage": "https://github.com/Cleverrobot996/Tokeru#readme",
+  "bugs": {
+    "url": "https://github.com/Cleverrobot996/Tokeru/issues"
+  },
+  "keywords": [
+    "tauri",
+    "react",
+    "rust",
+    "sqlite",
+    "education",
+    "exam"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",

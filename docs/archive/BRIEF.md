@@ -99,12 +99,12 @@ Tokeru 是一个 Tauri 2 + React 19 + Rust + SQLite 的**本地桌面英语刷�
 ## 6. 文件归属（**只改自己的文件**，越界会被 Lead 回滚）
 | 所有者 | 文件 |
 |---|---|
-| lead | `src/styles/app.css`、`src/styles/tokens.css`、`src/main.tsx`、`src/App.tsx`、`src/components/ui.tsx`、`src/pages/{ResultPage,RecordsPage,MistakesPage,AnswersPage}.tsx`、`docs/BRIEF.md` |
+| lead | `src/styles/app.css`、`src/styles/tokens.css`、`src/main.tsx`、`src/App.tsx`、`src/components/ui.tsx`、`src/pages/{ResultPage,RecordsPage,MistakesPage,AnswersPage}.tsx`、`BRIEF.md` |
 | bank-ui | `src/pages/BankPage.tsx`、`src/styles/bank.css` |
 | exam-ui | `src/pages/ExamPage.tsx`、`src/styles/exam.css` |
 | shell-home | `src/components/Shell.tsx`、`src/pages/HomePage.tsx`、`src/styles/home.css` |
 | ai-import | `src/pages/SettingsPage.tsx`、`src/pages/ImportPage.tsx`、`src/lib/importPrompt.ts`(新建)、`src/lib/{types,api,mock}.ts`、`src-tauri/src/{ai.rs,commands.rs,db.rs}`、`src/styles/import.css` |
-| qa-shot | `tools/**`、`docs/qa/**` |
+| qa-shot | `tools/**`、`qa/**` |
 需要跨文件的公共能力（新组件、新令牌）→ **发消息给 lead**，不要自己改别人的文件。
 
 ## 7. 验证方法（不验证等于没做）

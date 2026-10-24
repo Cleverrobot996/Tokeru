@@ -26,6 +26,14 @@ custom-exam*
 org-tag-added
 *.log
 
+# Local secrets
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+
 # Local tooling (portable CLI downloads, login logs)
 .tools/
 

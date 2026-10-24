@@ -1,7 +1,7 @@
 # Tokeru MCP 调研：从 4.0.0 到下一版的协议、安全与生态对照
 
 > 调研对象：Tokeru 4.0.0 的内置 MCP Server，以及 2026-10-24 时可访问的 MCP 官方规范、同类产品与客户端文档。
-> 事实来源：文末「来源清单」中的链接，均为 2026-10-24 访问；Tokeru 侧事实优先引用 [MCP.md](MCP.md) 与源码。
+> 事实来源：文末「来源清单」中的链接，均为 2026-10-24 访问；Tokeru 侧事实优先引用 [MCP.md](../MCP.md) 与源码。
 > 区分口径：标「事实」的内容可在来源中直接核对；标「判断」的是基于事实的推断，落地前需要产品/安全评审。
 > 不涉及：安装包构建、真实客户端联调、对 4.0.0 源码的修改。
 
@@ -10,15 +10,15 @@
 > - **confirm_import 已复查 2 小时 TTL**，过期返回明确错误。
 > - **MCP 请求体上限已从 4 MiB 调到 16 MiB**，覆盖导入规范 8 MB 图片预算。
 > - **写工具目标校验仍未修**（`update_question` 等对不存在 id 仍可能返回成功），仍列为 P0-2。
-> 下文相关段落保留调研时原貌，具体以 [MCP.md](MCP.md) 与当前源码为准。
+> 下文相关段落保留调研时原貌，具体以 [MCP.md](../MCP.md) 与当前源码为准。
 
 ---
 
 ## 1. 结论摘要
 
-**事实：Tokeru 4.0.0 的基础方向是对的。** 它把 MCP 做成桌面进程内的 Streamable HTTP 服务，只绑定 127.0.0.1，默认关闭、默认只读，写操作必须由用户在设置页显式关闭只读；19 个工具覆盖读题库、导入预览/确认/撤销、改题、改标签和整理文件夹。相比把数据库直接暴露给外部进程，这是一个更容易解释和收口的边界。详见 [MCP.md](MCP.md) 第 1、2、6 节。
+**事实：Tokeru 4.0.0 的基础方向是对的。** 它把 MCP 做成桌面进程内的 Streamable HTTP 服务，只绑定 127.0.0.1，默认关闭、默认只读，写操作必须由用户在设置页显式关闭只读；19 个工具覆盖读题库、导入预览/确认/撤销、改题、改标签和整理文件夹。相比把数据库直接暴露给外部进程，这是一个更容易解释和收口的边界。详见 [MCP.md](../MCP.md) 第 1、2、6 节。
 
-**事实：它仍然是一个「单 Token + 单只读开关」的本地服务。** Token 明文存 SQLite，支持 Bearer 和 <code>?token=</code>；CORS 返回 <code>*</code>；鉴权是普通字符串比较；没有速率限制、失败锁定或来源 IP 白名单；只读是工具层检查，不是数据库权限隔离。见 [MCP.md](MCP.md) 第 6.2、6.3 节。
+**事实：它仍然是一个「单 Token + 单只读开关」的本地服务。** Token 明文存 SQLite，支持 Bearer 和 <code>?token=</code>；CORS 返回 <code>*</code>；鉴权是普通字符串比较；没有速率限制、失败锁定或来源 IP 白名单；只读是工具层检查，不是数据库权限隔离。见 [MCP.md](../MCP.md) 第 6.2、6.3 节。
 
 **事实：官方规范在 2026-07-28 版把协议描述为 stateless、self-contained requests、per-request capability negotiation，并明确工具 annotations 不可信，除非来自可信 server。** 这意味着 <code>mcp-session-id</code> 不能当鉴权，工具注解不能当权限；真正的授权仍要由 host/server 自己完成。见 [MCP 规范概览](https://modelcontextprotocol.io/specification/latest) 与 [Tools](https://modelcontextprotocol.io/specification/2026-07-28/server/tools)。
 
@@ -59,14 +59,14 @@
 1. MCP 官方规范：概览、传输、工具、安全最佳实践（2026-07-28 版）。
 2. 同类产品的 MCP 实现：SiYuan、Obsidian、Logseq、Anytype、Notion。
 3. 客户端配置方式：Claude Desktop、Cline、Continue、AnythingLLM。
-4. Tokeru 4.0.0 的实现边界：以 [MCP.md](MCP.md) 为主，关键结论回查 <code>src-tauri/src/mcp.rs</code> 与前端渲染代码。
+4. Tokeru 4.0.0 的实现边界：以 [MCP.md](../MCP.md) 为主，关键结论回查 <code>src-tauri/src/mcp.rs</code> 与前端渲染代码。
 
 ### 2.2 方法
 
 - 官方规范逐页读取，只把页面明确写出的要求标为「事实」；把「这对 Tokeru 意味着什么」标为「判断」。
 - 同类产品优先看官方文档/官方仓库；安全结论优先看 GitHub Advisory 原文，而不是二手转述。
 - 客户端配置以各项目文档中的字段名为准；不同版本文档可能变化，文末给出访问日期。
-- Tokeru 侧引用 [MCP.md](MCP.md) 的章节，避免重复它已经写清楚的工具表、curl 示例和排错表。
+- Tokeru 侧引用 [MCP.md](../MCP.md) 的章节，避免重复它已经写清楚的工具表、curl 示例和排错表。
 
 ### 2.3 局限
 
@@ -97,7 +97,7 @@
 
 **判断：** Tokeru 只提供 Streamable HTTP，不提供 stdio，这个选择对桌面应用是合理的：它不需要让客户端启动 Tokeru 子进程，也不会把 Token 放进 command/args。但它也意味着只支持 stdio 的客户端必须桥接，配置成本比「复制一段 command」高。
 
-**事实：** [MCP.md](MCP.md) 第 3.5、7.3 节已经说明 Tokeru 没有 stdio transport，并给出桥接进程需要做的四件事：initialize、保存 session、带 Authorization、把 SSE 转成 stdio 消息。
+**事实：** [MCP.md](../MCP.md) 第 3.5、7.3 节已经说明 Tokeru 没有 stdio transport，并给出桥接进程需要做的四件事：initialize、保存 session、带 Authorization、把 SSE 转成 stdio 消息。
 
 **判断：** 短期不需要新增 stdio。更划算的是把桥接配置写清楚，并在设置页提供「复制给 Cline/Continue/AnythingLLM 的配置」按钮；桥接工具本身也要带 Authorization 头，不能只转 URL。
 
@@ -123,7 +123,7 @@
 - 如果用户把 Tokeru 的 MCP 地址/Token 粘贴给不可信网页或脚本，CORS <code>*</code> 会让浏览器请求更容易发出；Origin 校验和「不要把 Token 注入网页环境」是现实的缓解。
 - 规范在同一章节还强调对 HTTP 暴露面使用鉴权或受限 IPC，并建议把 stdio 限制为仅 MCP client 访问。Tokeru 没有 stdio，因此重点是 Token、Origin、回环绑定和最小权限。
 
-**事实：** [MCP.md](MCP.md) 第 6.3 节已经指出 CORS <code>*</code>、Token 明文、普通字符串比较、查询参数会进 URL 等边界。
+**事实：** [MCP.md](../MCP.md) 第 6.3 节已经指出 CORS <code>*</code>、Token 明文、普通字符串比较、查询参数会进 URL 等边界。
 
 **判断：** 这些不是「马上会被远程攻破」的漏洞，因为服务只绑定回环；但它们会把「本机某网页/某脚本拿到 Token」的后果放大。鉴权硬化应作为 P1，而不是等出现事故再补。
 
@@ -135,7 +135,7 @@
 
 **对 Tokeru 的具体含义：**
 
-- 保持 Token 只用于 MCP；工具结果不返回 AI API Key（[MCP.md](MCP.md) 第 3.1 节已说明）。
+- 保持 Token 只用于 MCP；工具结果不返回 AI API Key（[MCP.md](../MCP.md) 第 3.1 节已说明）。
 - 如果未来接入远程模型/云端服务，不要把 MCP Token 传给对方；应使用独立的服务凭据。
 - 会话 ID 不作为第二因素；应用重启后旧 session 失效是预期行为。
 
@@ -221,7 +221,7 @@
 
 ### 5.1 Claude Desktop
 
-**事实：** [MCP.md](MCP.md) 第 3.2 节给出 Claude Desktop 的配置：<code>type</code> 为 <code>http</code>，<code>url</code> 指向 <code>http://127.0.0.1:17890/mcp</code>，<code>headers.Authorization</code> 放 Bearer Token。若当前版本只支持 stdio，需要用 <code>mcp-remote</code> 一类桥接，桥接本身也要带 Authorization 头。
+**事实：** [MCP.md](../MCP.md) 第 3.2 节给出 Claude Desktop 的配置：<code>type</code> 为 <code>http</code>，<code>url</code> 指向 <code>http://127.0.0.1:17890/mcp</code>，<code>headers.Authorization</code> 放 Bearer Token。若当前版本只支持 stdio，需要用 <code>mcp-remote</code> 一类桥接，桥接本身也要带 Authorization 头。
 
 **判断：** Claude Desktop 的坑主要在「版本差异」和「改完要完全退出重启」。文档应给出「先测 401，再测 initialize」的顺序，而不是让用户直接粘贴配置后猜。
 
@@ -229,7 +229,7 @@
 
 **事实：** [Cline MCP 文档](https://docs.cline.bot/mcp/mcp-overview) 说明远程 MCP 必须显式写 <code>"type": "streamableHttp"</code>；省略 <code>type</code> 会按 legacy SSE 处理。它支持 headers/OAuth、<code>autoApprove</code>、<code>disabled</code>，也提供 <code>cline mcp add ... --transport http --header ...</code> 的 CLI。
 
-**判断：** 这是最容易配错的一个：用户可能只写 <code>url</code> 和 <code>headers</code>，结果客户端按 SSE 连接，表现为超时或 404。Tokeru 的设置页示例目前只有 <code>url</code> 和 <code>headers</code>（[MCP.md](MCP.md) 第 8 节第 4 条也提到这一点），应该补上 Cline 的显式 <code>type</code> 示例。
+**判断：** 这是最容易配错的一个：用户可能只写 <code>url</code> 和 <code>headers</code>，结果客户端按 SSE 连接，表现为超时或 404。Tokeru 的设置页示例目前只有 <code>url</code> 和 <code>headers</code>（[MCP.md](../MCP.md) 第 8 节第 4 条也提到这一点），应该补上 Cline 的显式 <code>type</code> 示例。
 
 ### 5.3 Continue
 
@@ -262,7 +262,7 @@
 
 ### 6.1 架构与生命周期
 
-**事实：** Tokeru 的 MCP Server 是 Tauri 进程内的 axum/rmcp 路由，Streamable HTTP，默认 <code>http://127.0.0.1:17890/mcp</code>，19 个工具；只监听回环；默认关闭、默认只读；应用退出即停止；浏览器 mock 不启动；没有 stdio。见 [MCP.md](MCP.md) 第 1 节。
+**事实：** Tokeru 的 MCP Server 是 Tauri 进程内的 axum/rmcp 路由，Streamable HTTP，默认 <code>http://127.0.0.1:17890/mcp</code>，19 个工具；只监听回环；默认关闭、默认只读；应用退出即停止；浏览器 mock 不启动；没有 stdio。见 [MCP.md](../MCP.md) 第 1 节。
 
 **判断：** 这个架构适合桌面单用户产品：不需要额外进程、不需要 IPC 权限、不需要把数据库暴露给外部。它的代价是「应用没开就连不上」和「只支持 HTTP 客户端」，但这两点在文档里已经说清楚，属于可接受的产品取舍。
 
@@ -270,13 +270,13 @@
 
 **事实：** 19 个工具中，源码里有 11 个标了 <code>read_only_hint=true</code>：<code>get_import_spec</code>、<code>list_sets</code>、<code>get_set</code>、<code>list_bank</code>、<code>search_questions</code>、<code>get_question</code>、<code>list_tags</code>、<code>list_tag_groups</code>、<code>bank_stats</code>、<code>list_records</code>、<code>get_attempt</code>；其余 8 个是写/导入工具。这个统计来自 <code>src-tauri/src/mcp.rs</code> 的 <code>#[tool(...)]</code> 注解。
 
-**事实：** [MCP.md](MCP.md) 第 4.1 节把「只读查询」写成 10 个，<code>get_import_spec</code> 放在 4.2「导入与制卷」并注明它只读。两种口径都不算错，但对外文档最好统一：要么按「是否受只读保护」分组，要么按「是否写库」分组，并明确 <code>preview_import</code> 不写库但受只读保护。
+**事实：** [MCP.md](../MCP.md) 第 4.1 节把「只读查询」写成 10 个，<code>get_import_spec</code> 放在 4.2「导入与制卷」并注明它只读。两种口径都不算错，但对外文档最好统一：要么按「是否受只读保护」分组，要么按「是否写库」分组，并明确 <code>preview_import</code> 不写库但受只读保护。
 
 **判断：** annotations 与文档口径不一致会增加客户端误判。建议在工具表增加一列「只读保护 / 是否写库 / destructive」，并在发布检查中对比 <code>#[tool]</code> 注解。
 
 ### 6.3 鉴权与传输
 
-**事实：** 鉴权中间件接受 <code>Authorization: Bearer</code> 或 <code>?token=</code>；OPTIONS 直接 204；失败返回 401 纯文本；Token 明文存 SQLite；CORS 返回 <code>*</code>，允许 <code>authorization, content-type, mcp-session-id, mcp-protocol-version</code>；没有 Origin 校验、速率限制、失败锁定或 IP 白名单；Token 比较是普通字符串比较。见 <code>src-tauri/src/mcp.rs:162-204</code> 与 [MCP.md](MCP.md) 第 6.3 节。
+**事实：** 鉴权中间件接受 <code>Authorization: Bearer</code> 或 <code>?token=</code>；OPTIONS 直接 204；失败返回 401 纯文本；Token 明文存 SQLite；CORS 返回 <code>*</code>，允许 <code>authorization, content-type, mcp-session-id, mcp-protocol-version</code>；没有 Origin 校验、速率限制、失败锁定或 IP 白名单；Token 比较是普通字符串比较。见 <code>src-tauri/src/mcp.rs:162-204</code> 与 [MCP.md](../MCP.md) 第 6.3 节。
 
 **判断：** 这些设计对「本机单用户 + 回环」是够用的，但不应被描述成强安全边界。最现实的风险不是远程扫描，而是：
 
@@ -288,7 +288,7 @@
 
 ### 6.4 写工具的安全边界
 
-**事实：** 所有写工具入口调用 <code>write_guard</code>，只读时返回固定中文错误；<code>preview_import</code> 也受这个检查。写工具不保证目标存在：<code>update_question</code> 对不存在的 <code>question_id</code> 可能返回 <code>updated=true</code>；<code>undo_import</code> 会删除整份试卷及练习记录，没有 dry-run；<code>confirm_import</code> 不复查 2 小时 TTL。见 [MCP.md](MCP.md) 第 4.2、4.3、8 节。
+**事实：** 所有写工具入口调用 <code>write_guard</code>，只读时返回固定中文错误；<code>preview_import</code> 也受这个检查。写工具不保证目标存在：<code>update_question</code> 对不存在的 <code>question_id</code> 可能返回 <code>updated=true</code>；<code>undo_import</code> 会删除整份试卷及练习记录，没有 dry-run；<code>confirm_import</code> 不复查 2 小时 TTL。见 [MCP.md](../MCP.md) 第 4.2、4.3、8 节。
 
 **判断：** 「默认只读」是很好的第一道门，但它不能替代目标校验和可逆性设计。一个 Agent 在关闭只读后，仍可能因为 id 拼错、预览过期、批量操作而改错/删错。建议：
 
@@ -299,7 +299,7 @@
 
 ### 6.5 请求体与图片上限
 
-**事实：** rmcp 默认请求体上限 4 MiB，而导入规范允许整卷图片预算到 8 MB；带多张 data URL 题图的 JSON 可能先被 413 拒绝，而不是进入 <code>preview_import</code>。见 [MCP.md](MCP.md) 第 6.5、8 节。
+**事实：** rmcp 默认请求体上限 4 MiB，而导入规范允许整卷图片预算到 8 MB；带多张 data URL 题图的 JSON 可能先被 413 拒绝，而不是进入 <code>preview_import</code>。见 [MCP.md](../MCP.md) 第 6.5、8 节。
 
 **判断：** 这是「文档承诺与运行时限制不一致」的典型。两个方向都可以：把请求体上限调到覆盖 8 MB 图片预算（并评估内存/滥用风险），或把导入规范的图片预算降到 4 MiB 以内并给出压缩建议。无论选哪个，413 的响应都应包含可操作提示，而不是只给状态码。
 
@@ -320,7 +320,7 @@
 
 ### 6.7 数据暴露
 
-**事实：** <code>get_set</code>、<code>get_question</code>、<code>get_attempt</code> 会返回答案、解析和 AI 评语；MCP 不返回 AI API Key，但会返回题库数据、练习记录和错题信息。见 [MCP.md](MCP.md) 第 6.6 节。
+**事实：** <code>get_set</code>、<code>get_question</code>、<code>get_attempt</code> 会返回答案、解析和 AI 评语；MCP 不返回 AI API Key，但会返回题库数据、练习记录和错题信息。见 [MCP.md](../MCP.md) 第 6.6 节。
 
 **判断：** 这是产品功能，不是漏洞；但需要在客户端配置页提醒：外部 Agent 可能把工具结果上传到云端。对「正在做题的人」，答案泄露是产品风险；对「把 Tokeru 当第二大脑」的用户，练习记录是隐私数据。建议在设置页加一句「连接前确认客户端的数据处理方式」。
 
@@ -481,15 +481,15 @@
 
 **Tokeru 内部**
 
-- [MCP.md](MCP.md)：4.0.0 的权威接入说明，含工具表、鉴权、CORS、排错与实现边界。
+- [MCP.md](../MCP.md)：4.0.0 的权威接入说明，含工具表、鉴权、CORS、排错与实现边界。
 - <code>src-tauri/src/mcp.rs</code>：鉴权、CORS、写保护、19 个工具与 annotations。
 - <code>src/lib/richText.ts</code>：题干/材料的富文本渲染规则。
 - <code>src/components/PaperView.tsx</code>、<code>src/pages/AnswersPage.tsx</code>、<code>src/pages/ResultPage.tsx</code>：富文本的渲染入口。
 
 ### 8.5 维护方式
 
-- 改工具名、参数或 annotations：同步本文第 6.2 节与 [MCP.md](MCP.md) 第 4 节。
-- 改鉴权、CORS、Token：同步本文第 6.3、7.4 节与 [MCP.md](MCP.md) 第 6.3 节。
+- 改工具名、参数或 annotations：同步本文第 6.2 节与 [MCP.md](../MCP.md) 第 4 节。
+- 改鉴权、CORS、Token：同步本文第 6.3、7.4 节与 [MCP.md](../MCP.md) 第 6.3 节。
 - 改富文本渲染：同步本文第 6.6、7.2 节，并补一条 XSS 回归用例。
-- 改请求体/图片上限：同步本文第 6.5、7.7 节与 [MCP.md](MCP.md) 第 6.5、8 节。
+- 改请求体/图片上限：同步本文第 6.5、7.7 节与 [MCP.md](../MCP.md) 第 6.5、8 节。
 - 每次发布前重新访问来源清单；规范版本、客户端字段和同类产品工具数都可能变化。

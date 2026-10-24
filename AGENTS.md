@@ -6,7 +6,7 @@
 
 Tokeru 是一个 Windows 本地练习应用：导入试卷/材料，生成题目，按原卷排版练习，记录作答与错题。技术栈是 Tauri 2 + React 19 + TypeScript + Rust + SQLite。没有服务端，没有账号系统，数据只在本机。
 
-当前版本 **0.0.1**。这是首个公开版本，功能基线来自内部 4.0 构建。
+当前版本 **0.0.1**。这是首个公开版本，功能基线来自内部 4.0；公开文档只描述 0.0.1 的行为。
 
 ## 先跑起来
 
@@ -69,7 +69,7 @@ cargo check --manifest-path src-tauri/Cargo.toml
 ### 后端
 
 - `src-tauri/src/main.rs`：应用启动、数据目录回退、窗口、命令注册（`generate_handler!`）。
-- `src-tauri/src/commands.rs`：Tauri 命令与业务逻辑；约 51 个命令。
+- `src-tauri/src/commands.rs`：Tauri 命令与业务逻辑；51 个业务命令，加 3 个 MCP 管理命令共 54 个。
 - `src-tauri/src/models.rs`：Rust 数据模型与序列化结构。
 - `src-tauri/src/db.rs`：SQLite 打开、建表、迁移。
 - `src-tauri/src/repo.rs`：查询与写入 SQL。

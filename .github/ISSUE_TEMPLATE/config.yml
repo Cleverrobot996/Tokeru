@@ -1,5 +1,11 @@
 blank_issues_enabled: true
 contact_links:
+  - name: 贡献指南
+    url: https://github.com/Cleverrobot996/Tokeru/blob/main/CONTRIBUTING.md
+    about: 开发环境、提交前检查与 PR 约定。
+  - name: 安全报告
+    url: https://github.com/Cleverrobot996/Tokeru/security/policy
+    about: 漏洞与敏感数据问题请私下报告，不要公开开 Issue。
   - name: 给 AI Agent 的说明
     url: https://github.com/Cleverrobot996/Tokeru/blob/main/AGENTS.md
     about: 提交代码或生成 PR 前，先读 AGENTS.md 和 README。

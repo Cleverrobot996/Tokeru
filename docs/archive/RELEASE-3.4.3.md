@@ -87,4 +87,4 @@ Tokeru: 旧版 exe 正在运行，已改名为 C:\Users\...\Tokeru\tokero.exe.ol
 - 安装器不联网下载 WebView2（`webviewInstallMode: skip`）；Windows 10/11 一般自带，确实缺失时需先装 Edge WebView2 Runtime。
 - 改名回退要求安装目录允许 Rename；如果旧 exe 被安全软件以独占方式锁死，连改名也失败，安装器会显示中文提示，需临时关闭实时扫描或重启。
 - 旧进程继续运行时，系统里会短暂同时存在“旧进程 + 新 exe”；旧进程退出后下次启动走新版本，残留 `.old` 会被启动清理删除。
-- 3.4.3 没有新增应用功能；3.4 的 E2E 证据见 `docs/RELEASE-3.4.md`。
+- 3.4.3 没有新增应用功能；3.4 的 E2E 证据见 `RELEASE-3.4.md`。

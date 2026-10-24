@@ -1,7 +1,7 @@
 # Tokeru 源码报告（3.4.1）
 
 > 本报告基于 3.4.1 源码，生成日期 2026-10-23；3.4.1 只改安装器 preinstall 钩子、手动清理脚本和版本号，应用代码与 3.4.0 相同。3.3 的结论保留，3.4 的改动集中在第 13 节，涉及命令数/页面/表结构处已同步改正文；安装修复见 `RELEASE-3.4.1.md`。
-> 路径均相对 `Tokeru/`。报告以 `docs/SOURCE-MAP.md` 为入口，但关键结论都用 read/grep 抽查过源码；与源码不一致处集中列在第 12 节。
+> 路径均相对 `Tokeru/`。报告以 `../SOURCE-MAP.md` 为入口，但关键结论都用 read/grep 抽查过源码；与源码不一致处集中列在第 12 节。
 
 ## 0. 阅读方式
 
@@ -706,7 +706,7 @@ blankDriven = sharedMaterial 存在
 
 契约/后端：`src/lib/types.ts`、`src/lib/api.ts`、`src/lib/mock.ts`、`src-tauri/src/models.rs`、`db.rs`、`repo.rs`、`ai.rs`、`commands.rs`、`main.rs`。
 
-文档/样例：`README.md`、`docs/RELEASE-3.4.md`、`docs/SOURCE-MAP.md`、本报告、`tools/fixtures/2024-math-ii.*`、`dist-portable/Tokeru/samples/2024-math-ii.*`。
+文档/样例：`README.md`、`RELEASE-3.4.md`、`../SOURCE-MAP.md`、本报告、`tools/fixtures/2024-math-ii.*`、`dist-portable/Tokeru/samples/2024-math-ii.*`。
 
 ### 13.9 交付与验证边界
 

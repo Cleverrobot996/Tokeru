@@ -8,7 +8,7 @@
 
 ## 0. 一句话结论
 
-**3.5.0 安装器的设计是非管理员安装：manifest 为 asInvoker、生成脚本为 currentUser / RequestExecutionLevel user、只写当前用户 LocalAppData 与 HKCU、快捷方式也放当前用户目录。** 本次还用一个不触发 UAC 的 CreateProcess 探测确认：3.5.0 与 3.4.4 的 setup 都能以当前 Medium integrity 进程直接启动，没有返回 ERROR_ELEVATION_REQUIRED。  
+**3.5.0 安装器的设计是非管理员安装：manifest 为 asInvoker、生成脚本为 currentUser / RequestExecutionLevel user、只写当前用户 LocalAppData 与 HKCU、快捷方式也放当前用户目录。** 本次还用一个不触发 UAC 的 CreateProcess 探测确认：3.5.0 与 3.4.4 的 setup 都能以当前 Medium integrity 进程直接启动，没有返回 ERROR_ELEVATION_REQUIRED。
 **但用户实际看到的“必须管理员”还没有被复现。** 现有本机安装状态也不干净：快捷方式指向的 app-3.5.0-1 目录 owner 是 BUILTIN\Administrators，且里面是未签名的旧构建；不能把这份机器状态当成“非管理员安装已验收”的证据。要定位用户问题，必须拿到实际 setup 的路径/哈希/截图。
 
 ---
@@ -61,7 +61,7 @@
 
 ### 1.5 一个文档与代码不一致的点
 
-`docs/RELEASE-3.5.md:10` 写“安装前用真实文件写入验证目录权限，失败给中文提示”。  
+`RELEASE-3.5.md:10` 写“安装前用真实文件写入验证目录权限，失败给中文提示”。
 实际 `installer-hooks.nsh:37-45` 失败只 `DetailPrint "Tokeru: 写测试未通过（继续尝试安装）"`，随后继续 `File` 写入；GUI 安装时用户可能只看到 NSIS 的通用写入错误，而不是“需要管理员”的明确说明。这个不一致会放大“装不上 = 要管理员”的误判。
 
 ---
@@ -102,7 +102,7 @@ C:\Users\19646\Desktop\学习与效率工具\折腾\dsh_zone_common\Tokeru\src-t
 | Tokeru_3.4.3_x64-setup.exe | 71,209,059 B | NotSigned | asInvoker |
 | Tokeru_3.5.0_x64-setup.exe | 4,716,672 B | Valid（本机自签名） | asInvoker |
 
-桌面另有 `Tokeru_3.4.4_x64-setup.exe`：71,206,501 B、NotSigned、asInvoker、无 Zone.Identifier。  
+桌面另有 `Tokeru_3.4.4_x64-setup.exe`：71,206,501 B、NotSigned、asInvoker、无 Zone.Identifier。
 **重要：旧包大 70 MB 级别，不能直接推断是 WebView2；3.5 删掉内置 TEM4 样卷/音频后体积才降到 4.7 MB。** 旧包是否走 WebView2/perMachine，需要旧包的生成脚本或实际运行证据，当前仓库没有保留。
 
 ### 2.3 机器身份与 ACL
@@ -163,7 +163,7 @@ Tokeru 3.4.4 setup | CREATE_OK (suspended, terminated) | procId=10220
 notepad control    | CREATE_OK (suspended, terminated) | procId=36092
 ```
 
-**含义：** 3.5.0 与 3.4.4 的 setup 在当前 Medium integrity、Administrators deny-only 的进程里都能直接创建，不存在“PE manifest 要求提升”的问题。  
+**含义：** 3.5.0 与 3.4.4 的 setup 在当前 Medium integrity、Administrators deny-only 的进程里都能直接创建，不存在“PE manifest 要求提升”的问题。
 **边界：** `CreateProcess` 不经过 ShellExecute，也不模拟双击；它证明的是“二进制启动不要求提权”，不等于“用户双击一定不会看到 UAC”。双击路径的 UAC 行为需要单独复现。
 
 ### 3.3 一次未定论的 `Start-Process` 尝试
@@ -271,7 +271,7 @@ notepad control    | CREATE_OK (suspended, terminated) | procId=36092
 - `src-tauri/target/release/nsis/x64/installer.nsi:38-41,101-106,521,537-538,582-671,698-724,737-747,877-879,910-973`
 - `src-tauri/nsis/installer-hooks.nsh:4,9-31,37-45,51-56,60-67,69-73`
 - `src-tauri/target/release/nsis/x64/utils.nsh:3-19`
-- `docs/RELEASE-3.5.md:10,49,64-68,72`
+- `RELEASE-3.5.md:10,49,64-68,72`
 
 ### 7.2 setup 哈希/签名
 

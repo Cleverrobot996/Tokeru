@@ -1,8 +1,8 @@
-# Tokeru 源码地图（4.0.0）
+# Tokeru 源码地图（0.0.1）
 
-> 4.0.0 在 3.5 的基础上加入内嵌 MCP Server、PDF 50 页 / 单文件 100 MB、导入时视觉 OCR 与按 bbox 分图、HTML5 拖拽修复。第 1–12 节已按当前代码更新；3.4 的增量地图保留在第 13 节，4.0 的增量与关键坑见第 14 节。
+> 0.0.1 是首个公开版本，功能基线来自内部 4.0：内嵌 MCP Server、PDF 50 页 / 单文件 100 MB、导入时视觉 OCR 与按 bbox 分图、HTML5 拖拽修复。第 1–12 节按当前代码更新；3.4 与 4.0 的增量地图作为历史记录保留在第 13–14 节。
 
-这份文档给接手的人 / 子智能体一个**不必先翻遍全仓**的入口：每个文件负责什么、数据怎么流、命令怎么对应、哪里容易踩坑。源码报告见 `SOURCE-REPORT.md`。
+这份文档给接手的人 / 子智能体一个**不必先翻遍全仓**的入口：每个文件负责什么、数据怎么流、命令怎么对应、哪里容易踩坑。源码报告见 `archive/SOURCE-REPORT.md`。
 
 ## 1. 技术栈与目录
 
@@ -65,7 +65,7 @@ Tokeru/
 │  ├─ seed/math_2024.json       # 可选导入样例（不再自动播种）
 │  └─ media/                    # 用户媒体文件
 ├─ tools/                       # 截图/调试/测试脚本，不参与打包
-├─ docs/                        # 版本说明、QA、源码报告
+├─ docs/                        # 使用与开发文档；archive/ 为历史记录
 └─ dist-portable/               # 便携包产物
 ```
 
@@ -146,7 +146,7 @@ Tokeru/
 
 ## 8. 导入与判分
 
-- 导入规范只有一份：`shared/import-spec.md`（785 行，9 种题型、一层 set/分区/题、答案结构、标签/文件夹、图片规则）。前端 `src/lib/importPrompt.ts` 用 `?raw` 引入，后端 MCP 用 `include_str!` 提供 `get_import_spec`，不要复制成两份。
+- 导入规范只有一份：`shared/import-spec.md`（784 行，9 种题型、一层 set/分区/题、答案结构、标签/文件夹、图片规则）。前端 `src/lib/importPrompt.ts` 用 `?raw` 引入，后端 MCP 用 `include_str!` 提供 `get_import_spec`，不要复制成两份。
 - `ImportPage` 第一步支持拖入/选择 PDF/MD/TXT/JSON 或粘贴 Markdown；PDF 上限 **100 MB / 50 页**，渲染 1400px JPEG；复制/预览提示词即使材料为空也启用。
 - 视觉导入 `src/lib/visionImport.ts`：把页面压到 300 KB、按 4 页/8 MB 分批调 `ai_vision_ocr`；后端每批最多 8 页，提示词要求返回每页 Markdown + figures（id/bbox/caption），图片占位用 `[[FIG:id]]`；合并后转 `{{fig:id}}`，再交给 `aiComplete` 清洗成规范 JSON；最后按 bbox 用 `cropPage` 裁图（不把整页图当题图），替换为 `<figure class="q-figure"><img ...></figure>`。无 bbox 的图保留「（原题有图，见原卷）」提示。
 - `aiComplete` 的材料上限是 **120000 字符**，超出会截断并显式提示；50 页 OCR Markdown 不应再被 24000 截断。
@@ -168,8 +168,8 @@ pnpm tauri build --bundles nsis
 - 安装器：`src-tauri/nsis/installer-hooks.nsh` 的 `NSIS_HOOK_PREINSTALL` **不 taskkill、不覆盖旧 exe**：从 `%LOCALAPPDATA%\Tokeru\app-<版本>` 开始用数字后缀找空目录，`CreateDirectory` 父/子目录，`SetOutPath` 后用相对文件名 `.tokero-write-test` 做真实写入测试（绝对路径 FileOpen 在中文启动目录下会误报），失败只 `DetailPrint`，由安装器自己的错误页兜底；POSTINSTALL 把开始菜单/桌面快捷方式重定向到 `$INSTDIR\tokeru.exe`；PREUNINSTALL 清理 `.bak`。
 - 3.5 起安装器写 `%LOCALAPPDATA%\Tokeru`、HKCU 和当前用户快捷方式，`webviewInstallMode: skip` 不联网下载 WebView2；中文路径下 `/S` 已实测退出 0。旧版本目录不会自动删除，多个版本并列保留。
 - 静默安装用 PowerShell `Start-Process -ArgumentList '/S' -Wait`；Git Bash 会把 `/S` 转成 `S:/`，用 `MSYS_NO_PATHCONV=1`。不要点击安装窗口。
-- **注意**：`--bundles nsis` 会 patch `release/tokeru.exe` 的 bundle 标记，hash 会变；要交付干净的便携 exe，最后再执行一次 `pnpm tauri build --no-bundle`，然后重签。
-- 4.0.0 的最终产物、大小与 SHA-256 见 `docs/RELEASE-4.0.md`；本机签名脚本 `tools/sign-local.ps1`。
+- **注意**：`--bundles nsis` 会 patch `release/tokeru.exe` 的 bundle 标记，hash 会变；要交付干净的便携 exe，最后再执行一次 `pnpm tauri build --no-bundle`。发布产物不做代码签名。
+- 内部 4.0 的最终产物、大小与 SHA-256 见 `archive/RELEASE-4.0.md`；发布产物不做代码签名。
 
 ## 10. 调试 / 截图
 
@@ -182,13 +182,13 @@ pnpm tauri build --bundles nsis
 
 ## 11. 已知限制 / 易踩坑
 
-- 没有前端单元测试；`pnpm test` 当前会 "No test files found"，不要把它当通过。
+- 前端有 8 个单元测试（`src/lib/visionImport.test.ts`，`pnpm test` 运行）；目前只覆盖视觉导入解析，页面与裁剪仍靠手动验证。
 - 自动分图的真实视觉模型未做验收；mock 只验证链路。
 - 题库详细模式中，合并后的材料题组没有逐题选择圈，可用「全选本卷/分区全选」或切到简要模式逐题选。
 - 速查/题库在 1024px 宽度下左侧题号栏会变成横向条，内部可横向滚动。
 - PDF 矢量图（公式/几何）本质是矢量绘制，视觉模型给框的准确率取决于模型；扫描件也可，但慢。
 - 字体只支持 Windows 系统字体枚举；自定义字体文件只在当前会话生效（>5.6 MB 不落库）。
-- 安装包与 exe 已做本机自签名（CN=Tokeru，SHA-1 `9F74324389BD46A7D098B6B05F18C060470AFF2A`）：本机不提示未知发布者，换机器仍会提示；WebView2 缺失需用户自己装 Runtime。
+- 发布包与安装器不做代码签名（NotSigned），Windows SmartScreen 可能提示；不要用本机自签名证书签发布产物。WebView2 缺失需用户自己装 Runtime。
 - 导入的题目图片存进 SQLite 文本，题干上限 8 MB。
 
 ## 12. 给接手者的建议
@@ -239,7 +239,7 @@ pnpm tauri build --bundles nsis
 - 标签颜色只认 `violet/teal/amber/rose/slate`，在 `TagChips`/`TagBoard` 内映射到主题变量；不要写死 hex。
 - 安装器静默验收见第 9 节；3.5 起从中文路径 `/S` 已修复，但 Git Bash 会把 `/S` 转成 `S:/`，请用 PowerShell `Start-Process` 或 `MSYS_NO_PATHCONV=1`。
 
-## 14. 4.0.0 增量地图
+## 14. 4.0 增量地图（历史）
 
 ### 14.1 新增文件
 
@@ -249,7 +249,7 @@ pnpm tauri build --bundles nsis
 | `shared/import-spec.md` | 导入规范唯一来源（9 题型/三层结构/图片规则） | 前端 `?raw`、MCP `get_import_spec` |
 | `src/lib/visionImport.ts` | 视觉 OCR→合并→AI 清洗→bbox 裁图→preview | `visionCleanPipeline`、`parseVisionOcr`、`buildFigureMap` |
 | `docs/MCP.md` | 外部 Agent 接入说明 | 配置/工具/安全/排错 |
-| `docs/MCP-RESEARCH.md` | 同类项目 MCP 调研与改进建议 | 思源笔记等 |
+| `archive/MCP-RESEARCH.md` | 同类项目 MCP 调研与改进建议（历史） | 思源笔记等 |
 
 ### 14.2 MCP Server
 
@@ -276,12 +276,12 @@ pnpm tauri build --bundles nsis
 - `src/lib/richText.ts` 对含 figure/img 的题干和材料走白名单：只允许 `figure`/`figcaption`/`img`/`br`，`img.src` 仅允许 `data:image/(png|jpeg|webp|gif)`；未知标签丢弃、只保留纯文本，事件属性/远程 URL 不进入 DOM。渲染层统一调用，旧数据也会被收敛。
 - `mcp.rs` 的 `StreamableHttpServerConfig` 把请求体上限调到 16 MiB（覆盖导入规范 8 MB 图片预算）。
 - `confirm_import` 会复查 preview 的 2 小时 TTL，过期返回明确错误。
-- 写工具目标存在性校验仍未补（`update_question` 等），见 `docs/MCP-RESEARCH.md` P0-2。
+- 写工具目标存在性校验仍未补（`update_question` 等），见 `archive/MCP-RESEARCH.md` P0-2。
 
-### 14.5 4.0 的坑
+### 14.5 4.0 的坑（历史）
 
 - MCP 端口被占用时服务启动失败但应用继续运行；`last_error` 会显示在设置页，改端口后保存重试。
 - 外部客户端必须支持 Streamable HTTP + Bearer header；只接受 stdio 的客户端需用 `mcp-remote` 之类桥接。
 - 视觉 OCR 结果仍是模型产出，必须经过 `preview_import` 校验和人工核对后才能 `confirm_import`；不要在 MCP 里提供绕过 preview 的直接写库工具。
 - `shared/import-spec.md` 是唯一规范；改规范要同时考虑前端提示词和 MCP `get_import_spec`，不要复制两份。
-- 安装器仍是 3.5 的“并列版本目录”设计；4.0 未改安装器，管理员问题调研见 `docs/INSTALLER-ADMIN-RESEARCH.md`。
+- 安装器仍是 3.5 的“并列版本目录”设计；4.0 未改安装器，管理员问题调研见 `archive/INSTALLER-ADMIN-RESEARCH.md`。

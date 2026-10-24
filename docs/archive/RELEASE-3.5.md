@@ -73,6 +73,6 @@
 - 便携 exe：Tokeru/src-tauri/target/release/tokeru.exe（16,138,696 B，SHA-256 `43f7a49c7213f47548864a96c7d0061a4a2a9742e234405246c2e8ca2a04be24`）
 - 便携包：Tokeru/dist-portable/Tokeru_3.5.0_x64_portable.zip（6,064,793 B，SHA-256 `94427a19f7fc23978911f3633973a2978018c6cd64cc960cdb6b4856ade71386`）
 - 便携包内 Tokeru.exe 与 release/tokeru.exe 哈希一致（16,138,696 B）。
-- 源码与文档：Tokeru/README.md、Tokeru/docs/RELEASE-3.5.md、Tokeru/docs/SOURCE-MAP.md、Tokeru/docs/SOURCE-REPORT.md
+- 源码与文档：Tokeru/README.md、Tokeru/RELEASE-3.5.md、Tokeru/../SOURCE-MAP.md、Tokeru/SOURCE-REPORT.md
 
 > 安装包和 exe 已做本机自签名，本机不再提示未知发布者；复制到其他电脑仍会提示。

@@ -57,4 +57,4 @@
 - 安装包未签名，Windows 可能提示“未知发布者”。
 - 安装器不联网下载 WebView2（`webviewInstallMode: skip`）；Windows 10/11 一般自带，确实缺失时需先装 Edge WebView2 Runtime。
 - 如果旧 Tokeru 以更高权限运行、被杀毒软件保护，或安装目录本身不可写，安装器无法强行覆盖；此时会显示中文提示，需手动退出 Tokeru / 检查权限 / 重启后重试。
-- 3.4.2 没有新增应用功能；3.4 的 E2E 证据见 `docs/RELEASE-3.4.md`。
+- 3.4.2 没有新增应用功能；3.4 的 E2E 证据见 `RELEASE-3.4.md`。
