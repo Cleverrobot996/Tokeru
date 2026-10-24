@@ -108,6 +108,7 @@
 }
 
 .import-file-label { cursor: pointer; }
+.import-extra { max-width: 620px; margin: 0 0 14px; }
 
 .import-drop {
   margin-top: 16px;
@@ -660,6 +661,27 @@
 .settings-thinking { display: grid; gap: 2px; }
 .settings-thinking .settings-switch-row { min-height: 34px; }
 .settings-thinking .settings-switch-row span:last-child { color: var(--text-2); }
+
+.model-field { position: relative; }
+.model-line { position: relative; }
+.model-line .input { padding-right: 38px; }
+.model-toggle {
+  position: absolute; top: 50%; right: 8px; transform: translateY(-50%);
+  width: 26px; height: 26px; display: grid; place-items: center;
+  border: 0; border-radius: 8px; background: transparent; color: var(--text-3); cursor: pointer;
+}
+.model-toggle:hover { background: var(--surface-2); color: var(--text); }
+.model-menu {
+  position: absolute; z-index: 30; left: 0; right: 0; top: calc(100% + 4px);
+  max-height: 220px; overflow-y: auto; padding: 4px;
+  border: 1px solid var(--line); border-radius: 12px; background: var(--surface);
+  box-shadow: 0 10px 28px rgba(20, 16, 12, 0.12);
+}
+.model-option {
+  display: block; width: 100%; padding: 7px 10px; border: 0; border-radius: 8px;
+  background: transparent; color: var(--text); text-align: left; font-size: 13px; cursor: pointer;
+}
+.model-option:hover { background: var(--accent-soft); }
 .settings-page .settings-check { margin-top: 12px; }
 .settings-page .settings-prompt { min-height: 84px; }
 .settings-page .settings-off {

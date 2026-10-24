@@ -106,13 +106,18 @@ export default function HomePage() {
   /* 删卷会连带删掉该卷题目与练习记录，先弹确认再动手。 */
   const remove = useMutation({
     mutationFn: (id: number) => api.deleteSet(id),
-    onSuccess: async () => {
+    onSuccess: async (_data, id) => {
       setPendingDelete(null);
+      qc.removeQueries({ queryKey: ["set", id] });
       toast.success("试卷已删除");
       await Promise.all([
         qc.invalidateQueries({ queryKey: ["sets"] }),
-        qc.invalidateQueries({ queryKey: ["records"] }),
+        qc.invalidateQueries({ queryKey: ["bank", "all"] }),
+        qc.invalidateQueries({ queryKey: ["tags"] }),
+        qc.invalidateQueries({ queryKey: ["tagGroups"] }),
         qc.invalidateQueries({ queryKey: ["folders"] }),
+        qc.invalidateQueries({ queryKey: ["records"] }),
+        qc.invalidateQueries({ queryKey: ["mistakes"] }),
       ]);
     },
     onError: (e) => toast.error("删除失败：" + errText(e)),

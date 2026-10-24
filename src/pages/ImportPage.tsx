@@ -15,7 +15,6 @@ import {
   Folder,
   Loader2,
   RotateCcw,
-  Sparkles,
   Tag,
   Upload,
   Wand2,
@@ -23,6 +22,7 @@ import {
 import { toast } from "sonner";
 import { api } from "../lib/api";
 import { buildPrompt, IMPORT_SPEC, JSON_TEMPLATE } from "../lib/importPrompt";
+import { richInlineHtml, richStemHtml } from "../lib/richText";
 import type { ImportPreview, Question } from "../lib/types";
 import { PaperDoc } from "../components/PaperView";
 import type { PaperGroup } from "../components/PaperView";
@@ -180,7 +180,7 @@ function answerText(q: Question) {
   if (a.accepted && a.accepted.length) return a.accepted.slice(0, 3).join(" / ");
   if (a.reference && a.reference.trim()) {
     const t = a.reference.trim();
-    return t.length > 40 ? t.slice(0, 40) + "…" : t;
+    return t.length > 120 ? t.slice(0, 120) + "…" : t;
   }
   return "—";
 }
@@ -226,6 +226,7 @@ export default function ImportPage() {
   const [windowDrag, setWindowDrag] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragDepth = useRef(0);
+  const windowDragDepth = useRef(0);
 
   const materialCheck = useMemo(() => inspectMaterial(text), [text]);
   const prompt = useMemo(
@@ -372,12 +373,12 @@ export default function ImportPage() {
       setWindowDrag(false);
       return;
     }
-    let depth = 0;
+    windowDragDepth.current = 0;
     const hasFiles = (e: DragEvent) => Array.from(e.dataTransfer?.types ?? []).includes("Files");
     const onEnter = (e: DragEvent) => {
       if (!hasFiles(e)) return;
       e.preventDefault();
-      depth += 1;
+      windowDragDepth.current += 1;
       setWindowDrag(true);
     };
     const onOver = (e: DragEvent) => {
@@ -386,13 +387,13 @@ export default function ImportPage() {
     };
     const onLeave = (e: DragEvent) => {
       if (!hasFiles(e)) return;
-      depth = Math.max(0, depth - 1);
-      if (depth === 0) setWindowDrag(false);
+      windowDragDepth.current = Math.max(0, windowDragDepth.current - 1);
+      if (windowDragDepth.current === 0) setWindowDrag(false);
     };
     const onDrop = (e: DragEvent) => {
       if (!hasFiles(e)) return;
       e.preventDefault();
-      depth = 0;
+      windowDragDepth.current = 0;
       setWindowDrag(false);
       const file = e.dataTransfer?.files?.[0];
       if (file) void loadFile(file);
@@ -402,6 +403,7 @@ export default function ImportPage() {
     window.addEventListener("dragleave", onLeave);
     window.addEventListener("drop", onDrop);
     return () => {
+      windowDragDepth.current = 0;
       window.removeEventListener("dragenter", onEnter);
       window.removeEventListener("dragover", onOver);
       window.removeEventListener("dragleave", onLeave);
@@ -593,6 +595,16 @@ export default function ImportPage() {
             </div>
           </div>
 
+          <label className="field import-extra">
+            <span>额外要求（可选）</span>
+            <input
+              className="input"
+              value={extra}
+              onChange={(e) => setExtra(e.target.value)}
+              placeholder="例如：听力原文放进 answer.reference；每题 2 分"
+            />
+          </label>
+
           <div
             className={"import-drop" + (dragging ? " is-over" : "")}
             data-on={dragging}
@@ -615,7 +627,9 @@ export default function ImportPage() {
               e.preventDefault();
               e.stopPropagation();
               dragDepth.current = 0;
+              windowDragDepth.current = 0;
               setDragging(false);
+              setWindowDrag(false);
               if (!fileLoading) void loadFile(e.dataTransfer.files?.[0]);
             }}
           >
@@ -671,11 +685,6 @@ export default function ImportPage() {
                 <strong>{materialCheck.jsonish ? "JSON 还没写完" : "原始材料不是 JSON"}</strong>
                 <span>{materialCheck.reason} 复制提示词交给任意 AI，把返回的 JSON 粘回来。</span>
               </div>
-              <div className="import-check-actions">
-                <Button size="sm" variant="primary" onClick={copyMaterialPrompt}>
-                  <Copy size={15} /> 复制清洗提示词
-                </Button>
-              </div>
             </div>
           ) : null}
 
@@ -692,39 +701,6 @@ export default function ImportPage() {
       ) : null}
       {step === 1 ? (
         <div className="import-generate">
-          <section className="panel panel-pad import-card">
-            <div className="import-card-head">
-              <span className="import-badge"><Sparkles size={16} /></span>
-              <div>
-                <div className="panel-title">复制提示词，交给任意 AI</div>
-                <div className="panel-sub">规范覆盖 9 种题型，AI 照着填就能直接导入。</div>
-              </div>
-            </div>
-            <div className="import-meta">
-              <span><strong>{SPEC_LINES}</strong> 行规范</span>
-              <span><strong>9</strong> 种题型</span>
-              <span><strong>JSON</strong> 严格输出</span>
-            </div>
-            <label className="field">
-              <span>额外要求（可选）</span>
-              <input
-                className="input"
-                value={extra}
-                onChange={(e) => setExtra(e.target.value)}
-                placeholder="例如：听力原文放进 answer.reference；每题 2 分"
-              />
-            </label>
-            <div className="import-card-actions">
-              <Button variant="primary" onClick={() => void copyText(prompt, "已复制提示词，粘到 AI 对话框即可")}>
-                <Copy size={15} /> 复制提示词
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => setPromptPreviewOpen(true)}>
-                预览提示词
-              </Button>
-            </div>
-            <div className="import-prompt-hint">提示词里已带完整规范和 JSON 骨架，末尾自动附上本次材料。</div>
-          </section>
-
           <section className="panel panel-pad import-card">
             <div className="import-card-head">
               <span className="import-badge"><FileJson size={16} /></span>
@@ -955,8 +931,14 @@ export default function ImportPage() {
                             <tr key={q.id}>
                               <td className="col-no"><span className="q-no">{q.number}</span></td>
                               <td className="col-type"><span className="import-type">{qtypeLabel(q.qtype)}</span></td>
-                              <td className="col-stem">{q.stem || <span className="muted">（空题干）</span>}</td>
-                              <td className="col-answer mono-num">{answerText(q)}</td>
+                              <td className="col-stem">
+                                {q.stem
+                                  ? <span dangerouslySetInnerHTML={{ __html: richStemHtml(q.stem) }} />
+                                  : <span className="muted">（空题干）</span>}
+                              </td>
+                              <td className="col-answer mono-num">
+                                <span dangerouslySetInnerHTML={{ __html: richInlineHtml(answerText(q)) }} />
+                              </td>
                               <td className="col-tags">
                                 {q.tags?.length ? (
                                   <div className="import-qtags" title={q.tags.join(" / ")}>
@@ -1050,9 +1032,6 @@ export default function ImportPage() {
         <div className="import-actions import-actions-plain">
           <span className="spacer" />
           <Button variant="ghost" onClick={() => setPromptPreviewOpen(false)}>关闭</Button>
-          <Button variant="primary" onClick={() => void copyMaterialPrompt()}>
-            <ClipboardCopy size={15} /> 复制提示词
-          </Button>
         </div>
       </Modal>
     </main>

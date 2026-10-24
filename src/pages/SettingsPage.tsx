@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Check, Copy, Database, Eye, Globe, KeyRound, Loader2, Palette, Plug, Plus, RefreshCw, Save, Sparkles, Timer, Type, X } from "lucide-react";
+import { Check, ChevronDown, Copy, Database, Eye, Globe, KeyRound, Loader2, Palette, Plug, Plus, RefreshCw, Save, Sparkles, Timer, Type, X } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "../lib/api";
 import type { AiProvider, AppSettings, McpStatus } from "../lib/types";
@@ -78,6 +78,7 @@ export default function SettingsPage() {
   const [endpoint, setEndpoint] = useState<Endpoint>("none");
   const [models, setModels] = useState<{ chat: string[]; vision: string[] }>({ chat: [], vision: [] });
   const [listing, setListing] = useState<"chat" | "vision" | null>(null);
+  const [modelMenu, setModelMenu] = useState<"chat" | "vision" | null>(null);
   const [presetInput, setPresetInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [testing, setTesting] = useState<"chat" | "vision" | null>(null);
@@ -182,8 +183,10 @@ export default function SettingsPage() {
     try {
       const list = await api.aiModels(cfg, kind);
       setModels((m) => ({ ...m, [kind]: list }));
-      if (list.length) toast.success("找到 " + list.length + " 个模型");
-      else toast.error("服务没有返回模型列表，可以直接手填模型名。");
+      if (list.length) {
+        setModelMenu(kind);
+        toast.success("找到 " + list.length + " 个模型");
+      } else toast.error("服务没有返回模型列表，可以直接手填模型名。");
     } catch (e) {
       toast.error("获取模型失败：" + errText(e), { duration: 10000 });
     } finally {
@@ -419,18 +422,31 @@ export default function SettingsPage() {
                 />
               </Field>
               <Field label="模型">
-                <input
-                  className="input"
-                  list="ai-model-list"
-                  value={form.model}
-                  onChange={(e) => setForm({ ...form, model: e.target.value })}
-                  placeholder="gpt-4o-mini / deepseek-chat / qwen2.5:7b"
-                />
-                <datalist id="ai-model-list">
-                  {models.chat.map((m) => (
-                    <option key={m} value={m} />
-                  ))}
-                </datalist>
+                <div className="model-field">
+                  <div className="model-line">
+                    <input
+                      className="input"
+                      value={form.model}
+                      onChange={(e) => setForm({ ...form, model: e.target.value })}
+                      onBlur={() => setTimeout(() => setModelMenu((m) => (m === "chat" ? null : m)), 120)}
+                      spellCheck={false}
+                    />
+                    {models.chat.length ? (
+                      <button type="button" className="model-toggle" onClick={() => setModelMenu((m) => (m === "chat" ? null : "chat"))} aria-label="选择模型">
+                        <ChevronDown size={14} />
+                      </button>
+                    ) : null}
+                  </div>
+                  {modelMenu === "chat" && models.chat.length ? (
+                    <div className="model-menu" onMouseDown={(e) => e.preventDefault()}>
+                      {models.chat.map((m) => (
+                        <button key={m} type="button" className="model-option" onClick={() => { setForm((f) => ({ ...f, model: m })); setModelMenu(null); }}>
+                          {m}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
                 <div className="form-actions">
                   <Button size="sm" variant="ghost" onClick={() => void fetchModels("chat")} disabled={listing !== null}>
                     {listing === "chat" ? <Loader2 size={13} className="spin" /> : <RefreshCw size={13} />} 获取模型
@@ -447,19 +463,31 @@ export default function SettingsPage() {
                 />
               </Field>
               <Field label="多模态模型（自动分图）" hint="留空沿用上面的模型。">
-                <input
-                  className="input"
-                  list="ai-vision-list"
-                  value={form.visionModel}
-                  onChange={(e) => setForm({ ...form, visionModel: e.target.value })}
-                  placeholder="例如 gpt-4o / qwen2.5-vl-72b-instruct"
-                  spellCheck={false}
-                />
-                <datalist id="ai-vision-list">
-                  {models.vision.map((m) => (
-                    <option key={m} value={m} />
-                  ))}
-                </datalist>
+                <div className="model-field">
+                  <div className="model-line">
+                    <input
+                      className="input"
+                      value={form.visionModel}
+                      onChange={(e) => setForm({ ...form, visionModel: e.target.value })}
+                      onBlur={() => setTimeout(() => setModelMenu((m) => (m === "vision" ? null : m)), 120)}
+                      spellCheck={false}
+                    />
+                    {models.vision.length ? (
+                      <button type="button" className="model-toggle" onClick={() => setModelMenu((m) => (m === "vision" ? null : "vision"))} aria-label="选择视觉模型">
+                        <ChevronDown size={14} />
+                      </button>
+                    ) : null}
+                  </div>
+                  {modelMenu === "vision" && models.vision.length ? (
+                    <div className="model-menu" onMouseDown={(e) => e.preventDefault()}>
+                      {models.vision.map((m) => (
+                        <button key={m} type="button" className="model-option" onClick={() => { setForm((f) => ({ ...f, visionModel: m })); setModelMenu(null); }}>
+                          {m}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
                 <div className="form-actions">
                   <Button size="sm" variant="ghost" onClick={() => void fetchModels("vision")} disabled={listing !== null}>
                     {listing === "vision" ? <Loader2 size={13} className="spin" /> : <RefreshCw size={13} />} 获取模型

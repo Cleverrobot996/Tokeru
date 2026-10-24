@@ -8,6 +8,17 @@
 
 - 主分支许可证从 Apache-2.0 切换到 AGPL-3.0-only；已发布的 v0.0.1 保持发布时的许可证。
 
+## [0.1.1] - 2026-10-24
+
+### Fixed
+
+- 删除试卷后题库仍显示旧卷：删除后同时失效题库、标签、文件夹、错题与单卷缓存；浏览器预览同步过滤已删除试卷。
+- 获取模型后看不到候选：模型与视觉模型改为输入框下方的可见列表，可点选；删除输入框里的示例模型。
+- 导入拖放后全窗口覆盖层常驻：窗口拖拽计数改为组件级引用，内层放下时同步清零；拖入 PDF 时直接预加载。
+- 导入页重复的复制提示词入口：只保留材料区一个复制与预览入口，删除生成页、原始材料卡和预览弹窗里的重复按钮。
+- 自动分图不精确：支持 0–1/0–100/0–1000 归一化坐标与对象框，按题号精确匹配和范围展开，多题共用图分别写入；页内越界结果不再夹到首尾页；提高页面与裁图分辨率，视觉请求改用高细节图并要求贴合框选。
+- 导入校验表格不支持公式：题干与答案改用富文本渲染，LaTeX、表格与题图都可显示。
+
 ## [0.1.0] - 2026-10-24
 
 ### Added
@@ -47,6 +58,7 @@
 - 内置 MCP Server（默认只读、仅监听 127.0.0.1）。
 - NSIS 安装包与 GitHub Actions 发布流程。
 
-[Unreleased]: https://github.com/Cleverrobot996/Tokeru/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/Cleverrobot996/Tokeru/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/Cleverrobot996/Tokeru/releases/tag/v0.1.1
 [0.1.0]: https://github.com/Cleverrobot996/Tokeru/releases/tag/v0.1.0
 [0.0.1]: https://github.com/Cleverrobot996/Tokeru/releases/tag/v0.0.1

@@ -87,11 +87,11 @@ pub async fn vision_test(key: &str, base: &str, model: &str, provider: &str, thi
     post_chat(body, key, base, model, provider, thinking).await
 }
 
-const VISION_SYSTEM: &str = "你是试卷排版分析器。你的任务是找出每道题真正需要的图（几何图、函数图、流程图、示意图等），只返回图形本身的位置，不提取文字、选项、表格或答案。位置必须用相对页面宽高的归一化坐标，不要用像素。只输出 JSON，不要解释。";
+const VISION_SYSTEM: &str = "你是试卷排版分析器。你的任务是找出每道题真正需要的图（几何图、函数图、流程图、示意图等），只返回图形本身的位置，不提取文字、选项、表格或答案。位置必须用相对页面宽高的归一化比例，不要用像素。只输出 JSON，不要解释。";
 
 /// 自动分图：把页面图片和题目清单交给视觉模型。
-/// 约定返回 {"figures":[{"question":"1","page":1,"bbox":[x,y,w,h],"caption":"..."}]}，
-/// bbox 为相对该页的 [左上 x, 左上 y, 宽, 高]，取值 0..1。
+/// 约定返回 {"figures":[{"question":"1","page":1,"bbox":{"x":0.1,"y":0.2,"w":0.3,"h":0.25},"caption":"..."}]}，
+/// bbox 为相对该页的左上角 x/y 与宽高，取值 0..1。
 pub async fn vision_segment(pages: &[String], questions: &[VisionQuestion], key: &str, base: &str, model: &str, provider: &str, thinking: bool) -> Result<AiResult, String> {
     if base.trim().is_empty() || model.trim().is_empty() {
         return Err("未配置视觉模型，请先在设置里填写多模态模型与 API 地址。".into());
@@ -104,14 +104,15 @@ pub async fn vision_segment(pages: &[String], questions: &[VisionQuestion], key:
     let user_text = format!(
         "同一份试卷共 {} 页图像，按 PAGE 1 到 PAGE {} 的顺序排列。\n\
          请找出下面每道题需要的图形，并给出图形在该页中的位置。\n\
-         只返回 JSON：{{\"figures\":[{{\"question\":\"1\",\"page\":1,\"bbox\":[0.1,0.2,0.3,0.25],\"caption\":\"简短说明\"}}]}}\n\
+         只返回 JSON：{{\"figures\":[{{\"question\":\"1\",\"page\":1,\"bbox\":{{\"x\":0.1,\"y\":0.2,\"w\":0.3,\"h\":0.25}},\"caption\":\"简短说明\"}}]}}\n\
          要求：\n\
-         1. bbox 是 [左上角 x, 左上角 y, 宽, 高]，相对该页宽高归一化到 0..1，不要用像素。\n\
-         2. 只框图形本身，不要包含题干、选项、表格、答案或大片空白。\n\
+         1. bbox 是对象 {{x,y,w,h}}：左上角 x/y 与宽高，相对该页宽高归一化到 0..1，不要用像素。\n\
+         2. 只框图形本身，不要包含题干、选项、表格、答案或大片空白；框要贴合图形。\n\
          3. 一道题有多张图就输出多条；没有图的题不要输出。\n\
-         4. question 用题目清单里的题号，page 用图像页码（从 1 开始）。\n\
-         5. 不确定的图不要输出。\n\n题目清单：\n{}",
-        pages.len(), pages.len(), question_list
+         4. question 必须原样复制题目清单里的题号；一张图服务多道题时，question 写题号范围，如 \"41-45\"。\n\
+         5. page 是本次图像顺序号（1..{}），不要超过页数。\n\
+         6. 不确定的图不要输出。\n\n题目清单：\n{}",
+        pages.len(), pages.len(), pages.len(), question_list
     );
     let mut content: Vec<Value> = vec![json!({"type": "text", "text": user_text})];
     for (index, page) in pages.iter().enumerate() {
@@ -119,7 +120,7 @@ pub async fn vision_segment(pages: &[String], questions: &[VisionQuestion], key:
             return Err("页面图像格式不正确，请重新选择 PDF 或图片。".into());
         }
         content.push(json!({"type": "text", "text": format!("PAGE {}", index + 1)}));
-        content.push(json!({"type": "image_url", "image_url": {"url": page}}));
+        content.push(json!({"type": "image_url", "image_url": {"url": page, "detail": "high"}}));
     }
     let mut body = json!({
         "model": model,
@@ -128,7 +129,7 @@ pub async fn vision_segment(pages: &[String], questions: &[VisionQuestion], key:
             {"role": "user", "content": content}
         ],
         "temperature": 0,
-        "max_tokens": 3000
+        "max_tokens": 6000
     });
     with_thinking(&mut body, provider, thinking);
     post_chat(body, key, base, model, provider, thinking).await

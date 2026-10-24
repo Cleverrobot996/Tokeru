@@ -27,10 +27,11 @@ interface RawFigure {
   caption: string;
 }
 
-/* 后端单次最多 20 页，按 12 页一批请求，避免请求体过大；所有批次返回的 figures 最后合并。 */
-const PAGE_BATCH = 12;
+/* 后端单次最多 20 页；每批 8 页并请求高细节图，兼顾精度与请求体大小。 */
+const PAGE_BATCH = 8;
 
-const cleanLabel = (value: string) => value.replace(/[()\s．.、第题]/g, "").toLowerCase();
+const cleanLabel = (value: string) =>
+  value.trim().replace(/^第\s*/, "").replace(/\s*题$/, "").replace(/[\s．.、]/g, "").toLowerCase();
 
 function num(value: unknown, fallback = 0) {
   const n = typeof value === "number" ? value : Number(value);
@@ -40,15 +41,17 @@ function num(value: unknown, fallback = 0) {
 function readBox(value: unknown): Box | null {
   if (Array.isArray(value) && value.length >= 4) {
     let [x, y, w, h] = value.map((v) => num(v));
-    const max = Math.max(x, y, w, h);
-    if (max > 1) {
-      if (max > 100) return null;
-      x /= 100;
-      y /= 100;
-      w /= 100;
-      h /= 100;
-    }
-    return [x, y, w, h];
+    const max = Math.max(Math.abs(x), Math.abs(y), Math.abs(w), Math.abs(h));
+    const scale = max <= 1 ? 1 : max <= 100 ? 100 : max <= 1000 ? 1000 : max <= 10000 ? 10000 : 0;
+    if (!scale) return null;
+    x /= scale;
+    y /= scale;
+    w /= scale;
+    h /= scale;
+    if (![x, y, w, h].every(Number.isFinite)) return null;
+    if (x < -0.01 || y < -0.01 || w <= 0.004 || h <= 0.004) return null;
+    if (x + w > 1.02 || y + h > 1.02) return null;
+    return [Math.max(0, x), Math.max(0, y), Math.min(w, 1 - Math.max(0, x)), Math.min(h, 1 - Math.max(0, y))];
   }
   if (value && typeof value === "object") {
     const v = value as Record<string, unknown>;
@@ -84,20 +87,15 @@ export function parseFigures(text: string): { figures: RawFigure[]; skipped: num
     const f = item as Record<string, unknown>;
     const bbox = readBox(f.bbox ?? f.box ?? f.rect);
     const question = String(f.question ?? f.label ?? f.q ?? "").trim();
-    const page = Math.max(1, Math.round(num(f.page ?? f.page_no ?? 1, 1)));
-    if (!bbox || !question) {
-      skipped += 1;
-      continue;
-    }
-    const [x, y, w, h] = bbox;
-    if (w <= 0.004 || h <= 0.004) {
+    const page = Math.round(num(f.page ?? f.page_no ?? 0, 0));
+    if (!bbox || !question || page < 1) {
       skipped += 1;
       continue;
     }
     figures.push({
       question,
       page,
-      bbox: [Math.min(1, Math.max(0, x)), Math.min(1, Math.max(0, y)), Math.min(1, Math.max(0, w)), Math.min(1, Math.max(0, h))],
+      bbox,
       caption: String(f.caption ?? f.note ?? f.description ?? "").trim(),
     });
   }
@@ -116,15 +114,23 @@ function targetMap(questions: Question[]) {
   return map;
 }
 
-function matchQuestion(value: string, questions: Question[], map: Map<string, Question>): Question | null {
-  const direct = map.get(cleanLabel(value));
-  if (direct) return direct;
-  const words = value.match(/\d+/g);
-  if (words?.length) {
-    const number = Number(words[words.length - 1]);
-    return questions.find((q) => q.number === number) ?? null;
+/* 只认明确的题号：单个数字、第 N 题、N-M 范围，或逗号分隔的多个题号；不从题干里猜数字。 */
+function matchQuestions(value: string, questions: Question[], map: Map<string, Question>): Question[] {
+  const key = cleanLabel(value);
+  const direct = map.get(key);
+  if (direct) return [direct];
+  const plain = value.trim().match(/^(?:第)?\s*(\d+)\s*(?:题)?$/);
+  if (plain) return questions.filter((q) => q.number === Number(plain[1]));
+  const range = value.trim().match(/^(\d+)\s*[-–—~至]\s*(\d+)$/);
+  if (range) {
+    const a = Number(range[1]);
+    const b = Number(range[2]);
+    const low = Math.min(a, b);
+    const high = Math.max(a, b);
+    return questions.filter((q) => q.number >= low && q.number <= high);
   }
-  return null;
+  const parts = value.split(/[,，、;；\s]+/).map((part) => map.get(cleanLabel(part))).filter(Boolean) as Question[];
+  return [...new Map(parts.map((q) => [q.id, q])).values()];
 }
 
 export default function AutoFigures({
@@ -206,12 +212,13 @@ export default function AutoFigures({
     setStatus("视觉模型正在找图，页面多时需要几十秒…");
     const questionPayload = questions.map((q) => ({
       label: (q.label ?? "").trim() || String(q.number),
-      stem: q.stem,
+      stem: q.stem.slice(0, 160),
     }));
     const batches = Math.ceil(chosen.length / PAGE_BATCH);
     try {
       const figures: RawFigure[] = [];
       let skipped = 0;
+      let outOfRange = 0;
       for (let batchIndex = 0; batchIndex < batches; batchIndex += 1) {
         const start = batchIndex * PAGE_BATCH;
         const batch = chosen.slice(start, start + PAGE_BATCH);
@@ -233,45 +240,61 @@ export default function AutoFigures({
         const parsed = parseFigures(result.content);
         skipped += parsed.skipped;
         for (const figure of parsed.figures) {
-          /* 视觉模型按每批的 PAGE 1 起编号，这里换算成 chosen 里的位置。 */
-          const pageIndex = Math.min(batch.length, Math.max(1, figure.page)) - 1;
-          figures.push({ ...figure, page: start + pageIndex + 1 });
+          /* 模型按本批 PAGE 1 起编号；越界结果直接丢弃，不夹到首尾页。 */
+          if (figure.page > batch.length) {
+            outOfRange += 1;
+            continue;
+          }
+          figures.push({ ...figure, page: start + figure.page });
         }
       }
       if (!figures.length) {
-        setStatus("模型没有找到需要单独成图的图形。" + (skipped ? "（跳过 " + skipped + " 条无效结果）" : ""));
+        setStatus(
+          "模型没有找到需要单独成图的图形。" +
+            (skipped || outOfRange ? "（跳过 " + (skipped + outOfRange) + " 条无效结果）" : ""),
+        );
         return;
       }
       const baseKey = Date.now();
       const prepared: FigureRow[] = [];
+      let unmatched = 0;
       for (let i = 0; i < figures.length; i += 1) {
         const f = figures[i];
-        const page = chosen[Math.min(chosen.length, Math.max(1, f.page)) - 1];
-        const q = matchQuestion(f.question, questions, map);
+        const page = chosen[f.page - 1];
+        const matched = matchQuestions(f.question, questions, map);
+        if (!matched.length) {
+          unmatched += 1;
+          continue;
+        }
         let crop = "";
         let note = "";
-        if (!q) note = "没有匹配到题目，已跳过。";
-        else {
-          try {
-            crop = await cropPage(page, f.bbox);
-          } catch (e) {
-            note = e instanceof Error ? e.message : String(e);
-          }
+        try {
+          crop = await cropPage(page, f.bbox);
+        } catch (e) {
+          note = e instanceof Error ? e.message : String(e);
         }
-        prepared.push({
-          key: String(baseKey + i),
-          questionLabel: f.question,
-          qid: q?.id ?? null,
-          page: page.page,
-          bbox: f.bbox,
-          caption: f.caption,
-          crop,
-          selected: !!q && !!crop,
-          note,
-        });
+        for (const q of matched) {
+          prepared.push({
+            key: baseKey + "-" + i + "-" + q.id,
+            questionLabel: f.question,
+            qid: q.id,
+            page: page.page,
+            bbox: f.bbox,
+            caption: f.caption,
+            crop,
+            selected: !!crop,
+            note,
+          });
+        }
       }
       setRows(prepared);
-      setStatus("找到 " + prepared.length + " 处图形，确认后写入题干。" + (skipped ? " 另有 " + skipped + " 条被忽略。" : ""));
+      const ignored = skipped + outOfRange + unmatched;
+      setStatus(
+        "找到 " +
+          prepared.length +
+          " 处图形，确认后写入题干。" +
+          (ignored ? " 另有 " + ignored + " 条未采用。" : ""),
+      );
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
       setStatus("");
@@ -293,6 +316,7 @@ export default function AutoFigures({
     setApplying(true);
     setError("");
     const stems = new Map(questions.map((q) => [q.id, q.stem]));
+    const done = new Set<string>();
     let ok = 0;
     let failed = 0;
     for (const row of chosen) {
@@ -302,14 +326,16 @@ export default function AutoFigures({
       try {
         await api.updateQuestion(qid, undefined, undefined, current + figure);
         stems.set(qid, current + figure);
+        done.add(row.key);
         ok += 1;
       } catch {
         failed += 1;
       }
     }
+    setRows((prev) => prev.filter((row) => !done.has(row.key)));
     setApplying(false);
     await onApplied();
-    if (failed) toast.error("已写入 " + ok + " 张图，" + failed + " 张失败。");
+    if (failed) toast.error("已写入 " + ok + " 张图，" + failed + " 张失败，可重试失败项。");
     else toast.success("已写入 " + ok + " 张题图");
     if (!failed) onClose();
   }

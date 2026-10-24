@@ -687,7 +687,8 @@ export async function mockCommand<T>(name: string, args: Record<string, any> = {
     }
     case "list_bank": {
       const f = (args.filters ?? {}) as BankFilters;
-      let list = questions.filter((q) => !q.archived);
+      const deleted = state.deletedSets ?? [];
+      let list = questions.filter((q) => !q.archived && !deleted.includes(q.set_id));
       if (f.set_id) list = list.filter((q) => q.set_id === f.set_id);
       if (f.set_ids?.length) list = list.filter((q) => f.set_ids!.includes(q.set_id));
       if (f.section_id) list = list.filter((q) => q.section_id === f.section_id);

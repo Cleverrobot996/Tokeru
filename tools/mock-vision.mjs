@@ -24,6 +24,12 @@ const server = http.createServer((req, res) => {
   if (req.method === "GET" && url.pathname === "/sample.pdf") {
     return send(res, 200, fs.readFileSync(path.join(ROOT, "autofig-sample.pdf")), "application/pdf");
   }
+  if (req.method === "GET" && url.pathname.endsWith("/api/tags")) {
+    return send(res, 200, JSON.stringify({ models: [{ name: "mock-chat" }, { name: "mock-vision" }] }));
+  }
+  if (req.method === "GET" && url.pathname.endsWith("/models")) {
+    return send(res, 200, JSON.stringify({ data: [{ id: "mock-chat" }, { id: "mock-vision" }] }));
+  }
   if (req.method === "POST" && url.pathname.endsWith("/chat/completions")) {
     let raw = "";
     req.on("data", (c) => { raw += c; });
@@ -34,8 +40,9 @@ const server = http.createServer((req, res) => {
       const content = JSON.stringify({
         figures: hasImages
           ? [
-              { question: "1", page: 1, bbox: [0.16, 0.3, 0.52, 0.22], caption: "矩形与对角线（模拟）" },
-              { question: "2", page: 1, bbox: [0.9, 0.9, 0.05, 0.05], caption: "太小，应被裁切跳过" },
+              { question: "1", page: 1, bbox: { x: 0.16, y: 0.3, w: 0.52, h: 0.22 }, caption: "对象框（模拟）" },
+              { question: "1-2", page: 1, bbox: { x: 0.15, y: 0.62, w: 0.55, h: 0.2 }, caption: "多题共用图（模拟）" },
+              { question: "2", page: 9, bbox: { x: 0.2, y: 0.2, w: 0.2, h: 0.2 }, caption: "页码越界，应丢弃" },
             ]
           : [],
       });

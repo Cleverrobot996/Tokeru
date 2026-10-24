@@ -12,10 +12,10 @@ export interface PageImage {
 }
 
 const MAX_PAGES = 50;
-const MAX_WIDTH = 1400;
+const MAX_WIDTH = 1800;
 
 function canvasToJpeg(canvas: HTMLCanvasElement) {
-  return canvas.toDataURL("image/jpeg", 0.84);
+  return canvas.toDataURL("image/jpeg", 0.86);
 }
 
 /** 把一张位图画到限宽的画布上，返回 JPEG data URL 与实际尺寸。 */
@@ -145,11 +145,13 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
 export async function cropPage(page: PageImage, bbox: [number, number, number, number]): Promise<string> {
   const img = await loadImage(page.dataUrl);
   const [x, y, w, h] = bbox;
-  const pad = 0.012;
-  const sx = Math.max(0, Math.floor((x - pad) * page.width));
-  const sy = Math.max(0, Math.floor((y - pad) * page.height));
-  const sw = Math.min(page.width - sx, Math.ceil((w + pad * 2) * page.width));
-  const sh = Math.min(page.height - sy, Math.ceil((h + pad * 2) * page.height));
+  /* 小图多留边，大图少留边，避免把相邻题目的文字裁进来。 */
+  const padX = Math.min(0.018, Math.max(0.005, w * 0.06));
+  const padY = Math.min(0.018, Math.max(0.005, h * 0.06));
+  const sx = Math.max(0, Math.floor((x - padX) * page.width));
+  const sy = Math.max(0, Math.floor((y - padY) * page.height));
+  const sw = Math.min(page.width - sx, Math.ceil((w + padX * 2) * page.width));
+  const sh = Math.min(page.height - sy, Math.ceil((h + padY * 2) * page.height));
   if (sw < 6 || sh < 6) throw new Error("模型给出的图形范围太小，已跳过。");
   const canvas = document.createElement("canvas");
   canvas.width = sw;
@@ -159,5 +161,5 @@ export async function cropPage(page: PageImage, bbox: [number, number, number, n
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, sw, sh);
   ctx.drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh);
-  return canvas.toDataURL("image/jpeg", 0.9);
+  return canvas.toDataURL("image/jpeg", 0.92);
 }
